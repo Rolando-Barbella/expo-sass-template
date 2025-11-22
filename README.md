@@ -1,6 +1,6 @@
 # Expo Sass Template 💵
 
-I haven't done much yet, but this template is base on [Expo](https://expo.dev), some backend with [Supabase](https://supabase.com/), payments with [Stripe](https://stripe.com/), and [Google cloud](https://console.cloud.google.com/) social media sign in.
+I haven't done much yet, but this template will be based on [Expo](https://expo.dev), some backend with [Supabase](https://supabase.com/), payments with [Stripe](https://stripe.com/), and [Google cloud](https://console.cloud.google.com/) social media sign-in.
 
 ## Get started
 
