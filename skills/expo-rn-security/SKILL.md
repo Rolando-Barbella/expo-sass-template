@@ -24,6 +24,7 @@ Use this skill to audit Expo/React Native apps for insecure storage and to gener
 
 - Identify AsyncStorage usage (imports and direct usage).
 - Identify any storage of auth tokens, passwords, API keys/secrets.
+- Verify protected routes follow Expo Router guidance: https://docs.expo.dev/router/advanced/protected/
 - Suggest secure storage replacements and migration steps.
 - Flag hardcoded secrets in code or config files if discovered.
 

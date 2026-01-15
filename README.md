@@ -28,6 +28,21 @@ In the output, you'll find options to open the app in a
 To learn more about developing your project with Expo, look at the following resources:
 - [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
 
+## Todo (full SaaS template)
+
+- Authentication (email/password + OAuth)
+- Protected routes and auth guards
+- User profiles and account management
+- Subscription billing (Stripe)
+- Feature flags and plan gating
+- Supabase database schema + policies
+- File storage and uploads
+- In-app notifications and email
+- Analytics and error tracking
+- Admin dashboard
+- CI/CD and environment setup
+- Security review and audit checklist
+
 ## Expo community
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
