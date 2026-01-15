@@ -2,6 +2,8 @@
 
 Use rnsec to generate a baseline security report for React Native apps.
 
+Repo: https://github.com/adnxy/rnsec
+
 ## Minimal flow
 
 1) From the app root, run:
