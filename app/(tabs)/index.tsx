@@ -1,13 +1,16 @@
-import { Image, Platform, StyleSheet } from 'react-native';
-import { Link } from 'expo-router';
+import { Image, Platform, Pressable, StyleSheet } from 'react-native';
+import { Link, useRouter } from 'expo-router';
 
 import { HelloWave } from '@/components/hello-wave';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Colors } from '@/constants/theme';
+import { useThemeColor } from '@/hooks/use-theme-color';
 
 export default function HomeScreen() {
+  const router = useRouter();
+  const borderColor = useThemeColor({}, 'border');
   return (
     <ParallaxScrollView
       headerBackgroundColor={{
@@ -68,7 +71,20 @@ export default function HomeScreen() {
         </ThemedText>
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
+        <ThemedText type="subtitle">Step 3: Sign in</ThemedText>
+        <Pressable
+          onPress={() => router.push('/login-sheet')}
+          style={({ pressed }) => [
+            styles.signInButton,
+            { borderColor },
+            pressed && styles.signInButtonPressed,
+          ]}
+        >
+          <ThemedText type="link">Open login sheet</ThemedText>
+        </Pressable>
+      </ThemedView>
+      <ThemedView style={styles.stepContainer}>
+        <ThemedText type="subtitle">Step 4: Get a fresh start</ThemedText>
         <ThemedText>
           {`When you're ready, run `}
           <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
@@ -90,6 +106,16 @@ const styles = StyleSheet.create({
   stepContainer: {
     gap: 8,
     marginBottom: 8,
+  },
+  signInButton: {
+    alignSelf: 'flex-start',
+    borderRadius: 12,
+    borderWidth: 1,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+  },
+  signInButtonPressed: {
+    opacity: 0.7,
   },
   reactLogo: {
     height: 178,
