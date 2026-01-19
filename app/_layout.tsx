@@ -17,8 +17,12 @@ export default function RootLayout() {
           name="login-sheet" 
           options={{ 
             presentation: 'formSheet', 
-            title: '',
+            headerShown: false,
+            contentStyle: { backgroundColor: '#ffffff' },
             sheetGrabberVisible: true,
+            sheetAllowedDetents: [0.70],
+            sheetInitialDetentIndex: 0,
+            sheetExpandsWhenScrolledToEdge: false,
           }} 
         />
       </Stack>
