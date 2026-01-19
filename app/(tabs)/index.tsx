@@ -71,17 +71,18 @@ export default function HomeScreen() {
         </ThemedText>
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Sign in</ThemedText>
         <Pressable
           onPress={() => router.push('/login-sheet')}
           style={({ pressed }) => [
-            styles.signInButton,
             { borderColor },
             pressed && styles.signInButtonPressed,
           ]}
         >
-          <ThemedText type="link">Open login sheet</ThemedText>
+          <ThemedText type="subtitle">Step 3: Sign in</ThemedText>
         </Pressable>
+        <ThemedText>
+          {`Tap the display button sheet login.`}
+        </ThemedText>
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
         <ThemedText type="subtitle">Step 4: Get a fresh start</ThemedText>
