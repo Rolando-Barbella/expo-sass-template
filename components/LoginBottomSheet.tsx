@@ -11,8 +11,6 @@ type GoogleSignInSheetProps = {
 };
 
 const googleLogo = require('../assets/images/google-sign-in.png');
-type SignInWithIdToken = (params: { provider: 'google'; token: string }) => Promise<{ error: Error | null }>;
-
 export function GoogleSignInSheet({ onSuccess }: GoogleSignInSheetProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -44,10 +42,7 @@ export function GoogleSignInSheet({ onSuccess }: GoogleSignInSheetProps) {
         throw new Error('Missing Google ID token');
       }
 
-      const signInWithIdToken = (supabase.auth as unknown as { signInWithIdToken: SignInWithIdToken })
-        .signInWithIdToken;
-        
-      const { error } = await signInWithIdToken({
+      const { error } = await supabase.auth.signInWithIdToken({
         provider: 'google',
         token: idToken,
       });
