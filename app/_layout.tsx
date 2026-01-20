@@ -20,7 +20,7 @@ export default function RootLayout() {
             headerShown: false,
             contentStyle: { backgroundColor: '#ffffff' },
             sheetGrabberVisible: true,
-            sheetAllowedDetents: [0.70],
+            sheetAllowedDetents: [0.50],
             sheetInitialDetentIndex: 0,
             sheetExpandsWhenScrolledToEdge: false,
           }}

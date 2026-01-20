@@ -119,9 +119,7 @@ export function GoogleSignInSheet({ onSuccess, showAppleButton = false }: Google
   }, [onSuccess, router]);
 
   return (
-    <View
-      style={styles.container}
-    >
+    <View style={styles.container}>
       <View style={[styles.card, { backgroundColor }]}>
         <View style={styles.content}>
           <ThemedText type="title" style={styles.title}>
@@ -154,19 +152,16 @@ export function GoogleSignInSheet({ onSuccess, showAppleButton = false }: Google
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    // alignSelf: 'center',
+    // alignItems: 'flex-start',
+    // justifyContent: 'flex-start',
     paddingHorizontal: 20,
   },
   card: {
-    borderColor: 'red',
-    borderWidth: 1,
     width: '100%',
     borderRadius: 24,
     paddingVertical: 28,
     paddingHorizontal: 10,
-    justifyContent: 'center',
-    textAlign: 'center',
   },
   content: {
     alignItems: 'center',
