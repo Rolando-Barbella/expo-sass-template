@@ -1,16 +1,16 @@
+import { GoogleSignInButton } from '@/components/GoogleSignInButton';
 import { ThemedText } from '@/components/themed-text';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { supabase } from '@/lib/supabase';
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 import { useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { ActivityIndicator, Image, Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 type GoogleSignInSheetProps = {
   onSuccess?: () => void;
 };
 
-const googleLogo = require('../assets/images/google-sign-in.png');
 export function GoogleSignInSheet({ onSuccess }: GoogleSignInSheetProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -26,7 +26,6 @@ export function GoogleSignInSheet({ onSuccess }: GoogleSignInSheetProps) {
   });
 
   const backgroundColor = useThemeColor({}, 'background');
-  const borderColor = useThemeColor({}, 'border');
   const dangerColor = useThemeColor({}, 'danger');
 
   const handleGoogleSignIn = useCallback(async () => {
@@ -82,19 +81,7 @@ export function GoogleSignInSheet({ onSuccess }: GoogleSignInSheetProps) {
           Sign in to sync your account across devices.
         </ThemedText>
 
-        <Pressable
-          style={({ pressed }) => [
-            styles.button,
-            { borderColor },
-            pressed && styles.buttonPressed,
-          ]}
-          onPress={handleGoogleSignIn}
-          disabled={isLoading}
-        >
-          <Image source={googleLogo} style={styles.logo} resizeMode="contain" />
-          <ThemedText type="link">Sign in with Google</ThemedText>
-          {isLoading ? <ActivityIndicator size="small" /> : <View style={styles.spacer} />}
-        </Pressable>
+        <GoogleSignInButton onPress={handleGoogleSignIn} isLoading={isLoading} />
 
         {errorMessage ? (
           <ThemedText style={[styles.error, { color: dangerColor }]}>{errorMessage}</ThemedText>
@@ -119,25 +106,6 @@ const styles = StyleSheet.create({
   subtitle: {
     marginBottom: 20,
     opacity: 0.7,
-  },
-  button: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-  },
-  buttonPressed: {
-    opacity: 0.7,
-  },
-  logo: {
-    width: 22,
-    height: 22,
-  },
-  spacer: {
-    width: 16,
   },
   error: {
     marginTop: 16,
