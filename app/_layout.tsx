@@ -13,17 +13,14 @@ export default function RootLayout() {
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-        <Stack.Screen 
-          name="login-sheet" 
-          options={{ 
-            presentation: 'formSheet', 
+        <Stack.Screen
+          name="login-sheet"
+          options={{
+            presentation: 'transparentModal',
             headerShown: false,
+            animation: 'fade',
             contentStyle: { backgroundColor: '#ffffff' },
-            sheetGrabberVisible: true,
-            sheetAllowedDetents: [0.70],
-            sheetInitialDetentIndex: 0,
-            sheetExpandsWhenScrolledToEdge: false,
-          }} 
+          }}
         />
       </Stack>
       <StatusBar style="auto" />

@@ -72,10 +72,11 @@ export function GoogleSignInSheet({ onSuccess }: GoogleSignInSheetProps) {
   }, [onSuccess, router]);
 
   return (
-    <View style={[styles.container, { backgroundColor }]}>
-      <View style={styles.content}>
+    <View style={styles.container}>
+      <View style={[styles.card, { backgroundColor }]}>
+        <View style={styles.content}>
         <ThemedText type="title" style={styles.title}>
-          Continue with Google
+          Sign In
         </ThemedText>
         <ThemedText style={styles.subtitle}>
           Sign in to sync your account across devices.
@@ -86,6 +87,7 @@ export function GoogleSignInSheet({ onSuccess }: GoogleSignInSheetProps) {
         {errorMessage ? (
           <ThemedText style={[styles.error, { color: dangerColor }]}>{errorMessage}</ThemedText>
         ) : null}
+        </View>
       </View>
     </View>
   );
@@ -94,20 +96,31 @@ export function GoogleSignInSheet({ onSuccess }: GoogleSignInSheetProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 24,
+  },
+  card: {
+    width: '86%',
+    maxWidth: 360,
+    borderRadius: 24,
+    paddingVertical: 28,
+    paddingHorizontal: 24,
   },
   content: {
-    flex: 1,
-    paddingHorizontal: 24,
-    paddingTop: 12,
+    alignItems: 'center',
   },
   title: {
     marginBottom: 8,
+    textAlign: 'center',
   },
   subtitle: {
     marginBottom: 20,
     opacity: 0.7,
+    textAlign: 'center',
   },
   error: {
     marginTop: 16,
+    textAlign: 'center',
   },
 });
