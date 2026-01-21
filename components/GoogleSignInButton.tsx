@@ -20,8 +20,8 @@ export function GoogleSignInButton({ onPress, isLoading = false, disabled = fals
       onPress={onPress}
       disabled={disabled || isLoading}
     >
-      <Image source={googleLogo} style={styles.logo} resizeMode="contain" />
-      <ThemedText type="link">Sign in with Google</ThemedText>
+      <Image source={googleLogo} style={styles.googleIcon} resizeMode="contain" />
+      <ThemedText style={styles.googleButtonText}>Sign in with Google</ThemedText>
       {isLoading ? <ActivityIndicator size="small" /> : <View style={styles.spacer} />}
     </Pressable>
   );
@@ -31,21 +31,27 @@ const styles = StyleSheet.create({
   button: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 12,
+    backgroundColor: Colors.light.background,
+    borderRadius: 20,
     borderWidth: 1,
-    width: '100%',
     borderColor: Colors.light.border,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    justifyContent: 'center',
+    width: '100%',
+  },
+  googleIcon: {
+    width: 24,
+    height: 24,
+    marginRight: 10,
+  },
+  googleButtonText: {
+    color: Colors.light.text,
+    fontSize: 16,
+    fontWeight: '500',
   },
   buttonPressed: {
     opacity: 0.7,
-  },
-  logo: {
-    width: 22,
-    height: 22,
   },
   spacer: {
     width: 16,
