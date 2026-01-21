@@ -1,5 +1,5 @@
-import { Image, Platform, Pressable, StyleSheet } from 'react-native';
 import { Link, useRouter } from 'expo-router';
+import { Image, Platform, Pressable, StyleSheet } from 'react-native';
 
 import { HelloWave } from '@/components/hello-wave';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
@@ -11,10 +11,7 @@ export default function HomeScreen() {
   const router = useRouter();
   return (
     <ParallaxScrollView
-      headerBackgroundColor={{
-        light: Colors.light.headerPrimary,
-        dark: Colors.dark.headerPrimary,
-      }}
+      headerStyle={styles.headerBackground}
       headerImage={
         <Image
           source={require('@/assets/images/partial-react-logo.png')}
@@ -119,5 +116,8 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     position: 'absolute',
+  },
+  headerBackground: {
+    backgroundColor: Colors.light.headerPrimary,
   },
 });
