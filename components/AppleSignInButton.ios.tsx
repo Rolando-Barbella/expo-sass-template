@@ -6,6 +6,7 @@ type AppleSignInButtonProps = {
   isLoading?: boolean;
 };
 
+
 export function AppleSignInButton({ onPress, isLoading = false }: AppleSignInButtonProps) {
   return (
     <AppleAuthentication.AppleAuthenticationButton
