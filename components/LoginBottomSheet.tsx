@@ -1,3 +1,4 @@
+import { AppleSignInButton } from '@/components/AppleSignInButton';
 import { GoogleSignInButton } from '@/components/GoogleSignInButton';
 import { ThemedText } from '@/components/themed-text';
 import { Colors } from '@/constants/theme';
@@ -6,14 +7,14 @@ import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-si
 import * as AppleAuthentication from 'expo-apple-authentication';
 import { useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { Platform, StyleSheet, View, useWindowDimensions } from 'react-native';
+import { StyleSheet, View, useWindowDimensions } from 'react-native';
 
 type GoogleSignInSheetProps = {
   onSuccess?: () => void;
   showAppleButton?: boolean;
 };
 
-export function GoogleSignInSheet({ onSuccess, showAppleButton = false }: GoogleSignInSheetProps) {
+export function GoogleSignInSheet({ onSuccess }: GoogleSignInSheetProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -128,15 +129,7 @@ export function GoogleSignInSheet({ onSuccess, showAppleButton = false }: Google
           </ThemedText>
 
           <GoogleSignInButton onPress={handleGoogleSignIn} isLoading={isLoading} />
-          {Platform.OS === 'ios' ? (
-            <AppleAuthentication.AppleAuthenticationButton
-              buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
-              buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
-              cornerRadius={18}
-              style={styles.appleButton}
-              onPress={isLoading ? () => {} : handleAppleSignIn}
-            />
-          ) : null}
+          <AppleSignInButton onPress={handleAppleSignIn} isLoading={isLoading} />
 
           {errorMessage ? <ThemedText style={styles.error}>{errorMessage}</ThemedText> : null}
         </View>
@@ -174,10 +167,5 @@ const styles = StyleSheet.create({
   error: {
     marginTop: 16,
     color: Colors.light.danger,
-  },
-  appleButton: {
-    width: '100%',
-    height: 50,
-    marginTop: 12,
   },
 });
