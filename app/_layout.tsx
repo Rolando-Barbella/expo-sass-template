@@ -1,7 +1,9 @@
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
+
 import { Colors } from '@/constants/theme';
 
 export const unstable_settings = {
@@ -19,11 +21,12 @@ export default function RootLayout() {
           options={{
             presentation: 'formSheet',
             headerShown: false,
-            contentStyle: { backgroundColor: Colors.light.background, flex: 1 },
+            contentStyle: styles.loginSheetContent,
             sheetGrabberVisible: true,
             sheetAllowedDetents: [0.50],
             sheetInitialDetentIndex: 0,
             sheetExpandsWhenScrolledToEdge: false,
+            sheetCornerRadius: 20,
           }}
         />
       </Stack>
@@ -31,3 +34,10 @@ export default function RootLayout() {
     </GestureHandlerRootView>
   );
 }
+
+const styles = StyleSheet.create({
+  loginSheetContent: {
+    backgroundColor: Colors.light.background,
+    flex: 1,
+  },
+});

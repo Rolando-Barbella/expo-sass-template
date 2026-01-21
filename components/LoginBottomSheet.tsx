@@ -1,12 +1,12 @@
 import { GoogleSignInButton } from '@/components/GoogleSignInButton';
 import { ThemedText } from '@/components/themed-text';
-import { useThemeColor } from '@/hooks/use-theme-color';
+import { Colors } from '@/constants/theme';
 import { supabase } from '@/lib/supabase';
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import { useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { Platform, ScrollView, StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View, useWindowDimensions } from 'react-native';
 
 type GoogleSignInSheetProps = {
   onSuccess?: () => void;
@@ -17,6 +17,7 @@ export function GoogleSignInSheet({ onSuccess, showAppleButton = false }: Google
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const { height: windowHeight } = useWindowDimensions();
 
   GoogleSignin.configure({
     scopes: ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/userinfo.profile'],
@@ -26,9 +27,6 @@ export function GoogleSignInSheet({ onSuccess, showAppleButton = false }: Google
     forceCodeForRefreshToken: true,
     profileImageSize: 120,
   });
-
-  const backgroundColor = useThemeColor({}, 'background');
-  const dangerColor = useThemeColor({}, 'danger');
 
   const handleGoogleSignIn = useCallback(async () => {
     try {
@@ -119,8 +117,8 @@ export function GoogleSignInSheet({ onSuccess, showAppleButton = false }: Google
   }, [onSuccess, router]);
 
   return (
-    <View style={styles.container}>
-      <View style={[styles.card, { backgroundColor }]}>
+    <View style={[styles.container, { height: windowHeight * 0.5 }]}>
+      <View style={styles.card}>
         <View style={styles.content}>
           <ThemedText type="title" style={styles.title}>
             Sign In
@@ -140,9 +138,7 @@ export function GoogleSignInSheet({ onSuccess, showAppleButton = false }: Google
             />
           ) : null}
 
-          {errorMessage ? (
-            <ThemedText style={[styles.error, { color: dangerColor }]}>{errorMessage}</ThemedText>
-          ) : null}
+          {errorMessage ? <ThemedText style={styles.error}>{errorMessage}</ThemedText> : null}
         </View>
       </View>
     </View>
@@ -151,17 +147,16 @@ export function GoogleSignInSheet({ onSuccess, showAppleButton = false }: Google
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    // alignSelf: 'center',
-    // alignItems: 'flex-start',
-    // justifyContent: 'flex-start',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
     paddingHorizontal: 20,
   },
   card: {
     width: '100%',
-    borderRadius: 24,
     paddingVertical: 28,
     paddingHorizontal: 10,
+    backgroundColor: Colors.light.background,
   },
   content: {
     alignItems: 'center',
@@ -178,6 +173,7 @@ const styles = StyleSheet.create({
   },
   error: {
     marginTop: 16,
+    color: Colors.light.danger,
   },
   appleButton: {
     width: '100%',

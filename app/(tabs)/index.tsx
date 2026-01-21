@@ -71,7 +71,6 @@ export default function HomeScreen() {
       <ThemedView style={styles.stepContainer}>
         <Pressable
           onPress={() => router.push('/login-sheet')}
-          style={({ pressed }) => [styles.signInButton, pressed && styles.signInButtonPressed]}
         >
           <ThemedText type="subtitle">Step 3: Sign in</ThemedText>
         </Pressable>

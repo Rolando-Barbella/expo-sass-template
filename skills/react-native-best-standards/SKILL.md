@@ -1,6 +1,6 @@
 ---
 name: react-native-best-standards
-description: Enforces React Native best coding standards, including TypeScript checks for all files, no use of type any, 2-space indentation, and theme-based colors for styles.
+description: Enforces React Native best coding standards, including TypeScript checks for all files, no use of type any, 2-space indentation, and Colors.light tokens in StyleSheet-based colors.
 ---
 
 # React Native Best Coding Standards
@@ -22,5 +22,6 @@ Use this skill when creating or editing React Native code in this repo.
 
 ## Styling
 
-- All color values must come from the theme color source in this repo.
-- Do not hardcode hex/rgb values in styles; reference theme tokens instead.
+- All color values must come from `Colors.light` in `constants/theme.ts`.
+- Do not use `useThemeColor`; set colors directly in `StyleSheet.create` (example: `backgroundColor: Colors.light.background`).
+- Do not hardcode hex/rgb values in styles; reference `Colors.light` tokens instead.

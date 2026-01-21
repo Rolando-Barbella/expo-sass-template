@@ -3,14 +3,10 @@ import { StyleSheet, View, type ViewProps } from 'react-native';
 import { Colors } from '@/constants/theme';
 
 export type ThemedViewProps = ViewProps & {
-  lightColor?: string;
-  darkColor?: string;
 };
 
-export function ThemedView({ style, lightColor, darkColor: _darkColor, ...otherProps }: ThemedViewProps) {
-  const backgroundColor = lightColor ?? Colors.light.background;
-
-  return <View style={[styles.container, { backgroundColor }, style]} {...otherProps} />;
+export function ThemedView({ style, ...otherProps }: ThemedViewProps) {
+  return <View style={[styles.container, style]} {...otherProps} />;
 }
 
 const styles = StyleSheet.create({
