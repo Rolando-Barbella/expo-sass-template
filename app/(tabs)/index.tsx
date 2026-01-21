@@ -6,11 +6,9 @@ import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Colors } from '@/constants/theme';
-import { useThemeColor } from '@/hooks/use-theme-color';
 
 export default function HomeScreen() {
   const router = useRouter();
-  const borderColor = useThemeColor({}, 'border');
   return (
     <ParallaxScrollView
       headerBackgroundColor={{
@@ -73,10 +71,7 @@ export default function HomeScreen() {
       <ThemedView style={styles.stepContainer}>
         <Pressable
           onPress={() => router.push('/login-sheet')}
-          style={({ pressed }) => [
-            { borderColor },
-            pressed && styles.signInButtonPressed,
-          ]}
+          style={({ pressed }) => [styles.signInButton, pressed && styles.signInButtonPressed]}
         >
           <ThemedText type="subtitle">Step 3: Sign in</ThemedText>
         </Pressable>
@@ -112,6 +107,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     borderRadius: 12,
     borderWidth: 1,
+    borderColor: Colors.light.border,
     paddingHorizontal: 14,
     paddingVertical: 10,
   },

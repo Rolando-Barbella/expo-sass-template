@@ -1,5 +1,5 @@
-import { useThemeColor } from '@/hooks/use-theme-color';
 import { ActivityIndicator, Image, Pressable, StyleSheet, View } from 'react-native';
+import { Colors } from '@/constants/theme';
 import { ThemedText } from './themed-text';
 
 const googleLogo = require('../assets/images/google-sign-in.png');
@@ -11,13 +11,10 @@ type GoogleSignInButtonProps = {
 };
 
 export function GoogleSignInButton({ onPress, isLoading = false, disabled = false }: GoogleSignInButtonProps) {
-  const borderColor = useThemeColor({}, 'border');
-
   return (
     <Pressable
       style={({ pressed }) => [
         styles.button,
-        { borderColor },
         pressed && styles.buttonPressed,
       ]}
       onPress={onPress}
@@ -41,6 +38,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     width: '100%',
+    borderColor: Colors.light.border,
   },
   buttonPressed: {
     opacity: 0.7,
