@@ -26,7 +26,7 @@ export default function RootLayout() {
             sheetAllowedDetents: [UI.loginSheet.heightRatio],
             sheetInitialDetentIndex: 0,
             sheetExpandsWhenScrolledToEdge: true,
-            sheetCornerRadius: 20,
+            sheetCornerRadius: 20
           }}
         />
       </Stack>

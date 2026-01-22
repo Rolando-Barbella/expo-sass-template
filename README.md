@@ -1,8 +1,11 @@
 # Expo Sass Template 💵
 
-I haven't done much yet, but this template will be based on [Expo](https://expo.dev), some backend with [Supabase](https://supabase.com/), payments with [Stripe](https://stripe.com/), and [Google cloud](https://console.cloud.google.com/) social media sign-in.
+This template is based on [Expo](https://expo.dev), backend with [Supabase](https://supabase.com/), one-off payments with [Stripe](https://stripe.com/), subscribtions with [RevenueCat](https://www.revenuecat.com/) and [Google cloud](https://console.cloud.google.com/) social media sign-in.
 
 ## Get started
+Assuming you have [Xcode](https://developer.apple.com/xcode/), [Android Studio](https://developer.android.com/studio) install, follow the next steps
+
+* I highly recommend [Orbit](https://expo.dev/orbit) for when running emulators
 
 1. Install dependencies
 
