@@ -1,7 +1,7 @@
 import { AppleSignInButton } from '@/components/AppleSignInButton.ios';
 import { GoogleSignInButton } from '@/components/GoogleSignInButton';
 import { ThemedText } from '@/components/themed-text';
-import { Colors } from '@/constants/theme';
+import { Colors, UI } from '@/constants/theme';
 import { supabase } from '@/lib/supabase';
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 import * as AppleAuthentication from 'expo-apple-authentication';
@@ -118,7 +118,7 @@ export function GoogleSignInSheet({ onSuccess }: GoogleSignInSheetProps) {
   }, [onSuccess, router]);
 
   return (
-    <View style={[styles.container, { height: windowHeight * 0.5 }]}>
+    <View style={[styles.container, { height: windowHeight * UI.loginSheet.heightRatio}]}>
       <View style={styles.card}>
         <View style={styles.content}>
           <ThemedText type="title" style={styles.title}>
@@ -127,10 +127,8 @@ export function GoogleSignInSheet({ onSuccess }: GoogleSignInSheetProps) {
           <ThemedText style={styles.subtitle}>
             Sign in to sync your account across devices.
           </ThemedText>
-
           <GoogleSignInButton onPress={handleGoogleSignIn} isLoading={isLoading} />
           <AppleSignInButton onPress={handleAppleSignIn} isLoading={isLoading} />
-
           {errorMessage ? <ThemedText style={styles.error}>{errorMessage}</ThemedText> : null}
         </View>
       </View>
@@ -149,12 +147,12 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingVertical: 28,
     paddingHorizontal: 10,
-    backgroundColor: Colors.light.background,
   },
   content: {
     alignItems: 'center',
     justifyContent: 'center',
     textAlign: 'center',
+    bottom: 10,
   },
   title: {
     marginBottom: 8,

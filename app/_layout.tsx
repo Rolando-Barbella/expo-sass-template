@@ -4,7 +4,7 @@ import { StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 
-import { Colors } from '@/constants/theme';
+import { Colors, UI } from '@/constants/theme';
 
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -23,7 +23,7 @@ export default function RootLayout() {
             headerShown: false,
             contentStyle: styles.loginSheetContent,
             sheetGrabberVisible: true,
-            sheetAllowedDetents: [0.50],
+            sheetAllowedDetents: [UI.loginSheet.heightRatio],
             sheetInitialDetentIndex: 0,
             sheetExpandsWhenScrolledToEdge: false,
             sheetCornerRadius: 20,

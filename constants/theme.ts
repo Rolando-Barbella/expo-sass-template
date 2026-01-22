@@ -39,6 +39,9 @@ export const UI = {
   radii: {
     authButton: 20,
   },
+  loginSheet: {
+    heightRatio: 0.40,
+  },
 };
 
 export const Fonts = Platform.select({
