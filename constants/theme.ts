@@ -35,6 +35,12 @@ export const Colors = {
   },
 };
 
+export const UI = {
+  radii: {
+    authButton: 20,
+  },
+};
+
 export const Fonts = Platform.select({
   ios: {
     /** iOS `UIFontDescriptorSystemDesignDefault` */

@@ -1,4 +1,4 @@
-import { AppleSignInButton } from '@/components/AppleSignInButton';
+import { AppleSignInButton } from '@/components/AppleSignInButton.ios';
 import { GoogleSignInButton } from '@/components/GoogleSignInButton';
 import { ThemedText } from '@/components/themed-text';
 import { Colors } from '@/constants/theme';

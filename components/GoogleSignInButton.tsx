@@ -1,5 +1,5 @@
 import { ActivityIndicator, Image, Pressable, StyleSheet, View } from 'react-native';
-import { Colors } from '@/constants/theme';
+import { Colors, UI } from '@/constants/theme';
 import { ThemedText } from './themed-text';
 
 const googleLogo = require('../assets/images/google-sign-in.png');
@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Colors.light.background,
-    borderRadius: 20,
+    borderRadius: UI.radii.authButton,
     borderWidth: 1,
     borderColor: Colors.light.border,
     paddingVertical: 10,
