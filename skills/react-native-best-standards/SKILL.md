@@ -9,9 +9,11 @@ Use this skill when creating or editing React Native code in this repo.
 
 ## TypeScript rules
 
-- Prefer TypeScript for all source files; use `.ts`/`.tsx` where applicable.
+- TypeScript for all source files; use `.ts`/`.tsx` where applicable.
 - Avoid `any` in types, props, and state. Use explicit types or generics instead.
 - Keep types close to usage (local type aliases or interfaces inside files) unless shared.
+- Make sure NO typescript warnings or presented in any file
+- Prefer formSheet from the router instead of @gorhom/bottom-sheet'
 
 ## Formatting
 
@@ -22,6 +24,6 @@ Use this skill when creating or editing React Native code in this repo.
 
 ## Styling
 
-- All color values must come from `Colors.light` in `constants/theme.ts`.
+- All color values must come from color pallete from the `constants/theme.ts` file.
 - Do not use `useThemeColor`; set colors directly in `StyleSheet.create` (example: `backgroundColor: Colors.light.background`).
-- Do not hardcode hex/rgb values in styles; reference `Colors.light` tokens instead.
+- Do not hardcode hex/rgb values in styles; reference `Colors.ligh or Color.dark` tokens instead.
