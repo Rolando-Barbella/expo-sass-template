@@ -25,7 +25,7 @@ export default function RootLayout() {
             sheetGrabberVisible: true,
             sheetAllowedDetents: [UI.loginSheet.heightRatio],
             sheetInitialDetentIndex: 0,
-            sheetExpandsWhenScrolledToEdge: false,
+            sheetExpandsWhenScrolledToEdge: true,
             sheetCornerRadius: 20,
           }}
         />
