@@ -43,18 +43,18 @@ https://skills.sh/trending
 
 ## Todo (full SaaS template)
 
-- Authentication (email/password + OAuth)
-- Protected routes and auth guards
-- User profiles and account management
-- Subscription billing (Stripe)
-- Feature flags and plan gating
-- Supabase database schema + policies
-- File storage and uploads
-- In-app notifications and email
-- Analytics and error tracking
-- Admin dashboard
-- CI/CD and environment setup
-- Security review and audit checklist
+- [ ] Authentication (email/password + OAuth)
+- [ ] Protected routes and auth guards
+- [ ] User profiles and account management
+- [ ] Subscription billing (Stripe)
+- [ ] Feature flags and plan gating
+- [ ] Supabase database schema + policies
+- [ ] File storage and uploads
+- [ ] In-app notifications and email
+- [ ] Analytics and error tracking
+- [ ] Admin dashboard
+- [ ] CI/CD and environment setup
+- [ ] Security review and audit checklist
 
 ## Expo community
 
