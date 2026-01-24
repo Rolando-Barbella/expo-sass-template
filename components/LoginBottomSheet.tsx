@@ -16,7 +16,8 @@ type GoogleSignInSheetProps = {
 
 export function GoogleSignInSheet({ onSuccess }: GoogleSignInSheetProps) {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [isAppleLoading, setIsAppleLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { height: windowHeight } = useWindowDimensions();
 
@@ -31,7 +32,7 @@ export function GoogleSignInSheet({ onSuccess }: GoogleSignInSheetProps) {
 
   const handleGoogleSignIn = useCallback(async () => {
     try {
-      setIsLoading(true);
+      setIsGoogleLoading(true);
       setErrorMessage(null);
 
       await GoogleSignin.hasPlayServices();
@@ -68,13 +69,13 @@ export function GoogleSignInSheet({ onSuccess }: GoogleSignInSheetProps) {
 
       setErrorMessage(error instanceof Error ? error.message : 'Google sign-in failed');
     } finally {
-      setIsLoading(false);
+      setIsGoogleLoading(false);
     }
   }, [onSuccess, router]);
 
   const handleAppleSignIn = useCallback(async () => {
     try {
-      setIsLoading(true);
+      setIsAppleLoading(true);
       setErrorMessage(null);
 
       const credential = await AppleAuthentication.signInAsync({
@@ -113,7 +114,7 @@ export function GoogleSignInSheet({ onSuccess }: GoogleSignInSheetProps) {
       console.error('Apple sign-in error:', error);
       setErrorMessage(error instanceof Error ? error.message : 'Apple sign-in failed');
     } finally {
-      setIsLoading(false);
+      setIsAppleLoading(false);
     }
   }, [onSuccess, router]);
 
@@ -127,8 +128,8 @@ export function GoogleSignInSheet({ onSuccess }: GoogleSignInSheetProps) {
           <ThemedText style={styles.subtitle}>
             Sign in to sync your account across devices.
           </ThemedText>
-          <GoogleSignInButton onPress={handleGoogleSignIn} isLoading={isLoading} />
-          <AppleSignInButton onPress={handleAppleSignIn} isLoading={isLoading} />
+          <GoogleSignInButton onPress={handleGoogleSignIn} isLoading={isGoogleLoading} />
+          <AppleSignInButton onPress={handleAppleSignIn} isLoading={isAppleLoading} />
           {errorMessage ? <ThemedText style={styles.error}>{errorMessage}</ThemedText> : null}
         </View>
       </View>
