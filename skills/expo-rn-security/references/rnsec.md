@@ -1,6 +1,6 @@
 # rnsec usage
 
-Use rnsec to generate a baseline security report for React Native apps.
+Use rnsec to generate a baseline security report for React Native apps done by [@adnansahinovich](https://x.com/adnansahinovich)
 
 Repo: https://github.com/adnxy/rnsec
 
