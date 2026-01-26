@@ -11,7 +11,6 @@ import { StyleSheet, View, useWindowDimensions } from 'react-native';
 
 type GoogleSignInSheetProps = {
   onSuccess?: () => void;
-  showAppleButton?: boolean;
 };
 
 export function GoogleSignInSheet({ onSuccess }: GoogleSignInSheetProps) {
@@ -85,18 +84,60 @@ export function GoogleSignInSheet({ onSuccess }: GoogleSignInSheetProps) {
         ],
       });
 
+      debugger;
+
       if (!credential.identityToken) {
         throw new Error('Missing Apple identity token');
       }
 
-      const { error } = await supabase.auth.signInWithIdToken({
+      const { error: appleAuthError } = await supabase.auth.signInWithIdToken({
         provider: 'apple',
         token: credential.identityToken,
       });
 
-      if (error) {
-        console.error('Supabase auth error:', error);
-        throw error;
+      if (appleAuthError) {
+        console.error('Supabase apple auth error:', appleAuthError);
+        throw appleAuthError;
+      }
+
+      debugger;
+
+      const { data: authData, error: authError } = await supabase.auth.getUser();
+
+      if (authError) {
+        debugger;
+        console.error('Supabase could not get user after Apple sign-in', authError);
+        throw authError;
+      }
+
+      if (!authData.user) {
+        throw new Error('Missing user after Apple sign-in');
+      }
+
+      const name = credential.fullName?.givenName;
+      const surname = credential.fullName?.familyName;
+      const email = credential.email ?? authData.user.email ?? '';
+      const image = (authData.user.user_metadata?.avatar_url as string | undefined) ?? '';
+
+      debugger;
+
+      const { error: profileError } = await supabase.from('users').upsert(
+        {
+          id: authData.user.id,
+          email,
+          name,
+          image,
+          surname: surname || '',
+          is_pay: false,
+          expo_push_token: null,
+          created_at: new Date().toISOString(),
+        },
+        { onConflict: 'id' },
+      );
+
+      if (profileError) {
+        console.error('Supabase user upsert error:', profileError);
+        throw profileError;
       }
 
       onSuccess?.();
@@ -110,7 +151,7 @@ export function GoogleSignInSheet({ onSuccess }: GoogleSignInSheetProps) {
       ) {
         return;
       }
-
+      debugger;
       console.error('Apple sign-in error:', error);
       setErrorMessage(error instanceof Error ? error.message : 'Apple sign-in failed');
     } finally {
