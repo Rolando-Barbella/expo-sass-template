@@ -3,20 +3,20 @@ import { Animated, StyleSheet } from 'react-native';
 import { Colors, UI } from '@/constants/theme';
 
 export function AuthSkeleton() {
-  const pulse = useRef(new Animated.Value(0)).current;
+  const pulse = useRef(new Animated.Value(0.3)).current;
 
   useEffect(() => {
     const animation = Animated.loop(
       Animated.sequence([
         Animated.timing(pulse, {
-          toValue: 1,
+          toValue: 0.9,
           duration: 800,
-          useNativeDriver: false,
+          useNativeDriver: true,
         }),
         Animated.timing(pulse, {
-          toValue: 0,
+          toValue: 0.3,
           duration: 800,
-          useNativeDriver: false,
+          useNativeDriver: true,
         }),
       ]),
     );
@@ -32,8 +32,8 @@ export function AuthSkeleton() {
 
   return (
     <Animated.View style={styles.container}>
-      <Animated.View style={[styles.button, styles.google, { backgroundColor }]} />
-      <Animated.View style={[styles.button, styles.apple, { backgroundColor }]} />
+      <Animated.View style={[styles.button, { backgroundColor }]} />
+      <Animated.View style={[styles.button, { backgroundColor }]} />
     </Animated.View>
   );
 }
@@ -45,17 +45,10 @@ const styles = StyleSheet.create({
   },
   button: {
     width: '100%',
-    backgroundColor: Colors.light.background,
     borderRadius: UI.radii.authButton,
     borderWidth: 1,
-    borderColor: Colors.light.border,
-  },
-  google: {
-    height: 44,
-  },
-  apple: {
-    width: '100%',
+    borderColor: Colors.light.skeletonBase,
     height: 50,
-    marginTop: 12,
+    marginBottom: 12,
   },
 });
