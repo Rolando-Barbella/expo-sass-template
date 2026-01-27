@@ -25,6 +25,10 @@ Use this skill when creating or editing React Native code in this repo.
 - After a new dependency is installed, running npx expo prebuild it's need it to be run to check the installation went smoothly or not
 - If the prebuild went well, it is time to run npx expo start -c
 
+# Effects and updates
+
+- Since Expo SDK 54 React Compiler in React Native lets you delete most useMemo and useCallback. The compiler automatically handles memoization and referential stability at compile time, avoid useCallback and useMemo in most cases, useEffects only when there is no other way
+
 ## Styling
 
 - All color values must come from the color pallete from the `constants/theme.ts` file.

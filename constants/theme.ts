@@ -19,7 +19,7 @@ export const Colors = {
     headerPrimary: '#A1CEDC',
     headerSecondary: '#D0D0D0',
     border: '#E2E2E2',
-    skeletonBase: '#F1F3F5',
+    skeletonBase: '#E1E2E3',
     skeletonHighlight: '#F8F9FA',
     danger: '#CC2A2A',
   },

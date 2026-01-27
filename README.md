@@ -21,12 +21,6 @@ Assuming you have [Xcode](https://developer.apple.com/xcode/), [Android Studio](
 
 In the output, you'll find options to open the app in a
 
-Apple sign in
-eas build -p ios
-mascot
-
-https://masko.ai/
-
 - [development build](https://docs.expo.dev/develop/development-builds/introduction/)
 - [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
 - [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
@@ -41,9 +35,86 @@ To learn more about developing your project with Expo, look at the following res
 
 https://skills.sh/trending
 
+## Authentication (Google + Apple Sign In)
+
+This template uses Supabase Auth with native OAuth providers. Users authenticate with Google or Apple, and Supabase handles session management.
+
+### Prerequisites
+
+1. Create a [Supabase](https://supabase.com/) project
+2. Create a [Google Cloud](https://console.cloud.google.com/) project
+3. Have an [Apple Developer](https://developer.apple.com/) account (for Apple Sign In)
+
+### Environment Variables
+
+Create a `.env` file in the root directory with:
+
+```bash
+EXPO_PUBLIC_SUPABASE_URL=your_supabase_project_url
+EXPO_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+EXPO_PUBLIC_WEB_CLIENT_ID=your_google_web_client_id
+EXPO_PUBLIC_IOS_CLIENT_ID=your_google_ios_client_id
+```
+
+### Google Sign In
+
+1. **Google Cloud Console**
+   - Go to [Google Cloud Console](https://console.cloud.google.com/)
+   - Create OAuth 2.0 credentials (OAuth client ID)
+   - Create both **Web** and **iOS** client types
+   - For iOS, add your bundle identifier: `com.rolandobarbella.exposass`
+   - Copy the Web Client ID to `EXPO_PUBLIC_WEB_CLIENT_ID`
+   - Copy the iOS Client ID to `EXPO_PUBLIC_IOS_CLIENT_ID`
+
+2. **Supabase Dashboard**
+   - Go to Authentication > Providers > Google
+   - Enable Google provider
+   - Add your Google Client ID and Client Secret (from Web credentials)
+
+3. **app.json** (already configured)
+   - The `@react-native-google-signin/google-signin` plugin is configured with the iOS URL scheme
+
+### Apple Sign In
+
+1. **Apple Developer Portal**
+   - Enable "Sign In with Apple" capability for your App ID
+   - Create a Services ID for web authentication (used by Supabase)
+   - Configure the return URL: `https://<your-project>.supabase.co/auth/v1/callback`
+
+2. **Supabase Dashboard**
+   - Go to Authentication > Providers > Apple
+   - Enable Apple provider
+   - Add your Services ID and generate a secret key
+
+3. **app.json** (already configured)
+   - `"usesAppleSignIn": true` is set in the iOS config
+   - `"expo-apple-authentication"` plugin is included
+
+### Building for Testing
+
+Apple Sign In requires a **development build** (not Expo Go):
+
+```bash
+# Build for iOS
+eas build -p ios --profile development
+
+# Build for Android (Google only)
+eas build -p android --profile development
+```
+
+### How It Works
+
+1. User taps Google/Apple sign-in button
+2. Native OAuth dialog appears
+3. User authenticates with provider
+4. App receives identity token (JWT)
+5. Token is sent to Supabase for validation
+6. Supabase creates/retrieves user session
+7. User profile is synced to `users` table
+
 ## Todo (full SaaS template)
 
-- [ ] Authentication (email/password + OAuth)
+- [x] Authentication (Google + Apple sign in)
 - [ ] Protected routes and auth guards
 - [ ] User profiles and account management
 - [ ] Subscription billing (Stripe)

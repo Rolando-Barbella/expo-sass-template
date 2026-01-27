@@ -1,4 +1,4 @@
-import { ActivityIndicator, Image, Pressable, StyleSheet, View } from 'react-native';
+import { Image, Pressable, StyleSheet, View } from 'react-native';
 import { Colors, UI } from '@/constants/theme';
 import { ThemedText } from './themed-text';
 
@@ -22,7 +22,7 @@ export function GoogleSignInButton({ onPress, isLoading = false, disabled = fals
     >
       <Image source={googleLogo} style={styles.googleIcon} resizeMode="contain" />
       <ThemedText style={styles.googleButtonText}>Sign in with Google</ThemedText>
-      {isLoading ? <ActivityIndicator size="small" /> : <View style={styles.spacer} />}
+      <View style={styles.spacer} />
     </Pressable>
   );
 }

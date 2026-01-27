@@ -33,7 +33,6 @@ export function GoogleSignInSheet({ onSuccess }: GoogleSignInSheetProps) {
   const [isAppleLoading, setIsAppleLoading] = useState(false);
   const [isProfileSyncing, setIsProfileSyncing] = useState(false);
   const appleSkeletonTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const googleSkeletonTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { height: windowHeight } = useWindowDimensions();
 
@@ -49,17 +48,17 @@ export function GoogleSignInSheet({ onSuccess }: GoogleSignInSheetProps) {
   const handleGoogleSignIn = async () => {
     try {
       setIsGoogleLoading(true);
-      if (googleSkeletonTimer.current) {
-        clearTimeout(googleSkeletonTimer.current);
-      }
-      googleSkeletonTimer.current = setTimeout(() => {
-        setIsProfileSyncing(true);
-      }, 2000);
       setErrorMessage(null);
+      debugger
 
       await GoogleSignin.hasPlayServices();
       const googleSignInResult = await GoogleSignin.signIn();
+      
+      if(googleSignInResult.type === 'cancelled') {
+        return;
+      }
       const { idToken } = await GoogleSignin.getTokens();
+
 
       if (!idToken) {
         throw new Error('Missing Google ID token');
@@ -128,7 +127,13 @@ export function GoogleSignInSheet({ onSuccess }: GoogleSignInSheetProps) {
           ? (error as { code?: string }).code
           : undefined;
 
-      if (errorCode === statusCodes.SIGN_IN_CANCELLED) {
+      const isCancelled =
+        errorCode === statusCodes.SIGN_IN_CANCELLED ||
+        errorCode === 'SIGN_IN_CANCELLED' ||
+        (error instanceof Error && /cancel/i.test(error.message));
+
+      if (isCancelled) {
+        setErrorMessage(null);
         return;
       }
 
@@ -137,11 +142,6 @@ export function GoogleSignInSheet({ onSuccess }: GoogleSignInSheetProps) {
       setErrorMessage(error instanceof Error ? error.message : 'Google sign-in failed');
     } finally {
       setIsGoogleLoading(false);
-      setIsProfileSyncing(false);
-      if (googleSkeletonTimer.current) {
-        clearTimeout(googleSkeletonTimer.current);
-        googleSkeletonTimer.current = null;
-      }
     }
   };
 
