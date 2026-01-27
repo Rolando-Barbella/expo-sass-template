@@ -19,6 +19,8 @@ export const Colors = {
     headerPrimary: '#A1CEDC',
     headerSecondary: '#D0D0D0',
     border: '#E2E2E2',
+    skeletonBase: '#F1F3F5',
+    skeletonHighlight: '#F8F9FA',
     danger: '#CC2A2A',
   },
   dark: {
@@ -31,6 +33,8 @@ export const Colors = {
     headerPrimary: '#1D3D47',
     headerSecondary: '#353636',
     border: '#2A2F33',
+    skeletonBase: '#2C3136',
+    skeletonHighlight: '#3A4046',
     danger: '#FF6B6B',
   },
 };
