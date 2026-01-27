@@ -4,13 +4,26 @@ import { ThemedText } from '@/components/themed-text';
 import { Colors, UI } from '@/constants/theme';
 import { supabase } from '@/lib/supabase';
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
+import type { Provider } from '@supabase/auth-js';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import { useRouter } from 'expo-router';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { StyleSheet, View, useWindowDimensions } from 'react-native';
 
 type GoogleSignInSheetProps = {
   onSuccess?: () => void;
+};
+
+
+type UserRow = {
+  id: string;
+  email: string;
+  name: string;
+  image: string;
+  surname: string;
+  is_pay: boolean;
+  expo_push_token: string | null;
+  created_at: string;
 };
 
 export function GoogleSignInSheet({ onSuccess }: GoogleSignInSheetProps) {
@@ -29,7 +42,7 @@ export function GoogleSignInSheet({ onSuccess }: GoogleSignInSheetProps) {
     profileImageSize: 120,
   });
 
-  const handleGoogleSignIn = useCallback(async () => {
+  const handleGoogleSignIn = async () => {
     try {
       setIsGoogleLoading(true);
       setErrorMessage(null);
@@ -70,9 +83,9 @@ export function GoogleSignInSheet({ onSuccess }: GoogleSignInSheetProps) {
     } finally {
       setIsGoogleLoading(false);
     }
-  }, [onSuccess, router]);
+  };
 
-  const handleAppleSignIn = useCallback(async () => {
+  const handleAppleSignIn = async () => {
     try {
       setIsAppleLoading(true);
       setErrorMessage(null);
@@ -84,28 +97,26 @@ export function GoogleSignInSheet({ onSuccess }: GoogleSignInSheetProps) {
         ],
       });
 
-      debugger;
 
-      if (!credential.identityToken) {
+      if (!credential.identityToken || typeof credential.identityToken !== 'string') {
         throw new Error('Missing Apple identity token');
       }
 
-      const { error: appleAuthError } = await supabase.auth.signInWithIdToken({
-        provider: 'apple',
+      const appleProvider: Provider = 'apple';
+
+      const appleAuthResult = await supabase.auth.signInWithIdToken({
+        provider: appleProvider,
         token: credential.identityToken,
       });
 
-      if (appleAuthError) {
-        console.error('Supabase apple auth error:', appleAuthError);
-        throw appleAuthError;
+      if (appleAuthResult.error) {
+        console.error('Supabase apple auth error:', appleAuthResult.error);
+        throw appleAuthResult.error;
       }
-
-      debugger;
 
       const { data: authData, error: authError } = await supabase.auth.getUser();
 
       if (authError) {
-        debugger;
         console.error('Supabase could not get user after Apple sign-in', authError);
         throw authError;
       }
@@ -114,26 +125,47 @@ export function GoogleSignInSheet({ onSuccess }: GoogleSignInSheetProps) {
         throw new Error('Missing user after Apple sign-in');
       }
 
-      const name = credential.fullName?.givenName;
-      const surname = credential.fullName?.familyName;
-      const email = credential.email ?? authData.user.email ?? '';
-      const image = (authData.user.user_metadata?.avatar_url as string | undefined) ?? '';
+      if (!authData.user.id || typeof authData.user.id !== 'string') {
+        throw new Error('Missing user id after Apple sign-in');
+      }
 
-      debugger;
+      const name = typeof credential.fullName?.givenName === 'string' ? credential.fullName.givenName : '';
+      const surname = typeof credential.fullName?.familyName === 'string' ? credential.fullName.familyName : '';
+      const fullName = [name, surname].filter((value) => value.length > 0).join(' ');
+      const email =
+        typeof credential.email === 'string'
+          ? credential.email
+          : typeof authData.user.email === 'string'
+            ? authData.user.email
+            : '';
+      const image =
+        typeof authData.user.user_metadata?.avatar_url === 'string' ? authData.user.user_metadata.avatar_url : '';
 
-      const { error: profileError } = await supabase.from('users').upsert(
-        {
-          id: authData.user.id,
-          email,
-          name,
-          image,
-          surname: surname || '',
-          is_pay: false,
-          expo_push_token: null,
-          created_at: new Date().toISOString(),
-        },
-        { onConflict: 'id' },
-      );
+      if (fullName.length > 0 && typeof authData.user.user_metadata?.full_name !== 'string') {
+        const { error: updateAuthError } = await supabase.auth.updateUser({
+          data: { full_name: fullName },
+        });
+
+        if (updateAuthError) {
+          console.error('Supabase user metadata update error:', updateAuthError);
+          throw updateAuthError;
+        }
+      }
+
+      const userRow = {
+        id: authData.user.id,
+        email,
+        name,
+        image,
+        surname,
+        is_pay: false,
+        expo_push_token: null,
+        created_at: new Date().toISOString(),
+      } satisfies UserRow;
+
+      const { error: profileError } = await supabase
+      .from('users')
+      .upsert(userRow, { onConflict: 'id' });
 
       if (profileError) {
         console.error('Supabase user upsert error:', profileError);
@@ -151,13 +183,12 @@ export function GoogleSignInSheet({ onSuccess }: GoogleSignInSheetProps) {
       ) {
         return;
       }
-      debugger;
       console.error('Apple sign-in error:', error);
       setErrorMessage(error instanceof Error ? error.message : 'Apple sign-in failed');
     } finally {
       setIsAppleLoading(false);
     }
-  }, [onSuccess, router]);
+  };
 
   return (
     <View style={[styles.container, { height: windowHeight * UI.loginSheet.heightRatio}]}>
