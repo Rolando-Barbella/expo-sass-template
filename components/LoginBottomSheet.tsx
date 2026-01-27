@@ -8,7 +8,7 @@ import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-si
 import type { Provider } from '@supabase/auth-js';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { StyleSheet, View, useWindowDimensions } from 'react-native';
 
 type GoogleSignInSheetProps = {
@@ -32,6 +32,8 @@ export function GoogleSignInSheet({ onSuccess }: GoogleSignInSheetProps) {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isAppleLoading, setIsAppleLoading] = useState(false);
   const [isProfileSyncing, setIsProfileSyncing] = useState(false);
+  const appleSkeletonTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const googleSkeletonTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { height: windowHeight } = useWindowDimensions();
 
@@ -47,24 +49,75 @@ export function GoogleSignInSheet({ onSuccess }: GoogleSignInSheetProps) {
   const handleGoogleSignIn = async () => {
     try {
       setIsGoogleLoading(true);
+      if (googleSkeletonTimer.current) {
+        clearTimeout(googleSkeletonTimer.current);
+      }
+      googleSkeletonTimer.current = setTimeout(() => {
+        setIsProfileSyncing(true);
+      }, 2000);
       setErrorMessage(null);
 
       await GoogleSignin.hasPlayServices();
-      await GoogleSignin.signIn();
+      const googleSignInResult = await GoogleSignin.signIn();
       const { idToken } = await GoogleSignin.getTokens();
 
       if (!idToken) {
         throw new Error('Missing Google ID token');
       }
 
-      const { error } = await supabase.auth.signInWithIdToken({
-        provider: 'google',
+      const googleProvider: Provider = 'google';
+      const googleAuthResult = await supabase.auth.signInWithIdToken({
+        provider: googleProvider,
         token: idToken,
       });
 
-      if (error) {
-        console.error('Supabase auth error:', error);
-        throw error;
+      if (googleAuthResult.error) {
+        console.error('Supabase auth error:', googleAuthResult.error);
+        throw googleAuthResult.error;
+      }
+
+      const { data: authData, error: authError } = await supabase.auth.getUser();
+
+      if (authError) {
+        console.error('Supabase could not get user after Google sign-in', authError);
+        throw authError;
+      }
+
+      if (!authData.user) {
+        throw new Error('Missing user after Google sign-in');
+      }
+
+      if (!authData.user.id || typeof authData.user.id !== 'string') {
+        throw new Error('Missing user id after Google sign-in');
+      }
+
+      const googleUser = googleSignInResult?.data?.user;
+      const name = typeof googleUser?.givenName === 'string' ? googleUser.givenName : '';
+      const surname = typeof googleUser?.familyName === 'string' ? googleUser.familyName : '';
+      const email =
+        typeof googleUser?.email === 'string'
+          ? googleUser.email
+          : typeof authData.user.email === 'string'
+            ? authData.user.email
+            : '';
+      const image = typeof googleUser?.photo === 'string' ? googleUser.photo : '';
+
+      const userRow = {
+        id: authData.user.id,
+        email,
+        name,
+        image,
+        surname,
+        is_pay: false,
+        expo_push_token: null,
+        created_at: new Date().toISOString(),
+      } satisfies UserRow;
+
+      const { error: profileError } = await supabase.from('users').upsert(userRow, { onConflict: 'id' });
+
+      if (profileError) {
+        console.error('Supabase user upsert error:', profileError);
+        throw profileError;
       }
 
       onSuccess?.();
@@ -84,6 +137,11 @@ export function GoogleSignInSheet({ onSuccess }: GoogleSignInSheetProps) {
       setErrorMessage(error instanceof Error ? error.message : 'Google sign-in failed');
     } finally {
       setIsGoogleLoading(false);
+      setIsProfileSyncing(false);
+      if (googleSkeletonTimer.current) {
+        clearTimeout(googleSkeletonTimer.current);
+        googleSkeletonTimer.current = null;
+      }
     }
   };
 
@@ -107,7 +165,12 @@ export function GoogleSignInSheet({ onSuccess }: GoogleSignInSheetProps) {
   const handleAppleSignIn = async () => {
     try {
       setIsAppleLoading(true);
-      setIsProfileSyncing(true);
+      if (appleSkeletonTimer.current) {
+        clearTimeout(appleSkeletonTimer.current);
+      }
+      appleSkeletonTimer.current = setTimeout(() => {
+        setIsProfileSyncing(true);
+      }, 2000);
       setErrorMessage(null);
 
       // Step 1: Trigger native Apple Sign-In dialog
@@ -218,6 +281,10 @@ export function GoogleSignInSheet({ onSuccess }: GoogleSignInSheetProps) {
     } finally {
       setIsAppleLoading(false);
       setIsProfileSyncing(false);
+      if (appleSkeletonTimer.current) {
+        clearTimeout(appleSkeletonTimer.current);
+        appleSkeletonTimer.current = null;
+      }
     }
   };
 
