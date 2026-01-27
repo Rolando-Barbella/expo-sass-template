@@ -5,7 +5,7 @@ This template is based on [Expo](https://expo.dev), backend with [Supabase](http
 ## Get started
 Assuming you have [Xcode](https://developer.apple.com/xcode/), [Android Studio](https://developer.android.com/studio) install, follow the next steps
 
-* I highly recommend [Orbit](https://expo.dev/orbit) for when running emulators
+* I highly recommend [Orbit](https://expo.dev/orbit) for running emulators
 
 1. Install dependencies
 
@@ -126,6 +126,12 @@ eas build -p android --profile development
 - [ ] Admin dashboard
 - [ ] CI/CD and environment setup
 - [ ] Security review and audit checklist
+
+
+## Troubleshooting
+1. Clear caches — npx expo start --clear
+2. Clean prebuild — npx expo prebuild --clean
+3. Review console warnings — Legacy modules log compatibility warnings
 
 ## Expo community
 
