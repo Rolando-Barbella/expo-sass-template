@@ -107,6 +107,7 @@ export function GoogleSignInSheet({ onSuccess }: GoogleSignInSheetProps) {
   const handleAppleSignIn = async () => {
     try {
       setIsAppleLoading(true);
+      setIsProfileSyncing(true);
       setErrorMessage(null);
 
       // Step 1: Trigger native Apple Sign-In dialog
@@ -138,8 +139,6 @@ export function GoogleSignInSheet({ onSuccess }: GoogleSignInSheetProps) {
       }
 
       // Step 4: Fetch the authenticated user from Supabase
-      setIsProfileSyncing(true);
-
       const { data: authData, error: authError } = await supabase.auth.getUser();
 
       if (authError) {
