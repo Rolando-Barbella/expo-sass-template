@@ -11,7 +11,7 @@ import { useRouter } from 'expo-router';
 import { useRef, useState } from 'react';
 import { StyleSheet, View, useWindowDimensions } from 'react-native';
 
-type GoogleSignInSheetProps = {
+type LoginBottomSheetProps = {
   onSuccess?: () => void;
 };
 
@@ -27,13 +27,13 @@ type UserRow = {
   created_at: string;
 };
 
-export function GoogleSignInSheet({ onSuccess }: GoogleSignInSheetProps) {
+export function LoginBottomSheet({ onSuccess }: LoginBottomSheetProps) {
   const router = useRouter();
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isAppleLoading, setIsAppleLoading] = useState(false);
   const [isProfileSyncing, setIsProfileSyncing] = useState(false);
-  const appleSkeletonTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const appleSkeletonTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { height: windowHeight } = useWindowDimensions();
 
   GoogleSignin.configure({
@@ -53,7 +53,7 @@ export function GoogleSignInSheet({ onSuccess }: GoogleSignInSheetProps) {
 
       await GoogleSignin.hasPlayServices();
       const googleSignInResult = await GoogleSignin.signIn();
-      
+
       if(googleSignInResult.type === 'cancelled') {
         return;
       }

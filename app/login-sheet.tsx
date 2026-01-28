@@ -1,5 +1,5 @@
-import { GoogleSignInSheet } from '@/components/LoginBottomSheet';
+import { LoginBottomSheet } from '@/components/LoginBottomSheet';
 
 export default function LoginSheetScreen() {
-  return <GoogleSignInSheet />;
+  return <LoginBottomSheet />;
 }
