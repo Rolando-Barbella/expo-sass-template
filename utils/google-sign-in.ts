@@ -34,7 +34,6 @@ export async function handleGoogleSignIn({ onLoadingChange, onError, onSuccess }
   try {
     onLoadingChange(true);
     onError(null);
-    debugger;
 
     await GoogleSignin.hasPlayServices();
     const googleSignInResult = await GoogleSignin.signIn();

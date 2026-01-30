@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "expo-sass",
-    "slug": "expo-sass",
+    "slug": "Expo SaaS",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -62,7 +62,8 @@
       ],
       [
         "expo-apple-authentication"
-      ]
+      ],
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true,
