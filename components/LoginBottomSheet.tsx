@@ -1,7 +1,7 @@
 import { AppleSignInButton } from '@/components/AppleSignInButton';
 import { AuthSkeleton } from '@/components/AuthSkeleton';
 import { GoogleSignInButton } from '@/components/GoogleSignInButton';
-import { ThemedText } from '@/components/themed-text';
+import { ThemedText } from '@/components/ThemedText';
 import { Colors, UI } from '@/constants/theme';
 import { handleAppleSignIn } from '@/utils/apple-sign-in';
 import { configureGoogleSignIn, handleGoogleSignIn } from '@/utils/google-sign-in';

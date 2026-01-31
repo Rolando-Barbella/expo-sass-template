@@ -1,6 +1,6 @@
 import { Image, Pressable, StyleSheet, View } from 'react-native';
 import { Colors, UI } from '@/constants/theme';
-import { ThemedText } from './themed-text';
+import { ThemedText } from './ThemedText';
 
 const googleLogo = require('../assets/images/google-sign-in.png');
 

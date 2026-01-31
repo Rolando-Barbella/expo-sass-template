@@ -3,8 +3,8 @@ import { ActivityIndicator, Pressable, ScrollView, StyleSheet } from 'react-nati
 import { useRouter } from 'expo-router';
 import type { Session } from '@supabase/supabase-js';
 
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
+import { ThemedText } from '@/components/ThemedText';
+import { ThemedView } from '@/components/ThemedView';
 import { Colors } from '@/constants/theme';
 import { supabase } from '@/lib/supabase';
 
