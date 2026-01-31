@@ -8,6 +8,27 @@ import { ThemedView } from '@/components/ThemedView';
 import { Colors } from '@/constants/theme';
 import { supabase } from '@/lib/supabase';
 
+function getDisplayName(session: Session | null) {
+  if (!session) {
+    return 'User';
+  }
+
+  const metadata = session.user.user_metadata;
+  const fullName = typeof metadata?.full_name === 'string' ? metadata.full_name : '';
+  if (fullName.length > 0) {
+    return fullName;
+  }
+
+  const name = typeof metadata?.name === 'string' ? metadata.name : '';
+  if (name.length > 0) {
+    return name;
+  }
+
+  return typeof session.user.email === 'string' && session.user.email.length > 0
+    ? session.user.email
+    : 'User';
+}
+
 export default function HomeScreen() {
   const router = useRouter();
   const [session, setSession] = useState<Session | null>(null);
@@ -86,27 +107,6 @@ export default function HomeScreen() {
       </Pressable>
     </ScrollView>
   );
-}
-
-function getDisplayName(session: Session | null) {
-  if (!session) {
-    return 'User';
-  }
-
-  const metadata = session.user.user_metadata;
-  const fullName = typeof metadata?.full_name === 'string' ? metadata.full_name : '';
-  if (fullName.length > 0) {
-    return fullName;
-  }
-
-  const name = typeof metadata?.name === 'string' ? metadata.name : '';
-  if (name.length > 0) {
-    return name;
-  }
-
-  return typeof session.user.email === 'string' && session.user.email.length > 0
-    ? session.user.email
-    : 'User';
 }
 
 const styles = StyleSheet.create({
