@@ -30,7 +30,7 @@ export function LoginBottomSheet({ onSuccess }: LoginBottomSheetProps) {
       onError: setErrorMessage,
       onSuccess: () => {
         onSuccess?.();
-        router.replace('/dashboard');
+        router.replace('/home');
       },
     });
   };
@@ -42,7 +42,7 @@ export function LoginBottomSheet({ onSuccess }: LoginBottomSheetProps) {
       onError: setErrorMessage,
       onSuccess: () => {
         onSuccess?.();
-        router.replace('/dashboard');
+        router.replace('/home');
       },
       skeletonTimer: appleSkeletonTimer,
     });

@@ -8,10 +8,6 @@ import { Colors, UI } from '@/constants/theme';
 import { supabase } from '@/lib/supabase';
 import type { Session } from '@supabase/supabase-js';
 
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
-
 export default function RootLayout() {
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -48,7 +44,8 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="explore" options={{ headerShown: false }} />
         <Stack.Protected guard={Boolean(session)}>
           <Stack.Screen name="(app)" options={{ headerShown: false }} />
         </Stack.Protected>

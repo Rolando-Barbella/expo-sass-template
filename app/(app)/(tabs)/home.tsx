@@ -8,7 +8,7 @@ import { ThemedView } from '@/components/themed-view';
 import { Colors } from '@/constants/theme';
 import { supabase } from '@/lib/supabase';
 
-export default function DashboardScreen() {
+export default function HomeScreen() {
   const router = useRouter();
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -67,7 +67,7 @@ export default function DashboardScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <ThemedText type="title">Dashboard</ThemedText>
+      <ThemedText type="title">Home</ThemedText>
       <ThemedText style={styles.subtitle}>Welcome, {displayName}</ThemedText>
 
       <ThemedView style={styles.card}>
