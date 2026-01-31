@@ -27,6 +27,7 @@ export function LoginBottomSheet({ onSuccess }: LoginBottomSheetProps) {
   const onGoogleSignIn = () => {
     handleGoogleSignIn({
       onLoadingChange: setIsGoogleLoading,
+      onProfileSyncingChange: setIsProfileSyncing,
       onError: setErrorMessage,
       onSuccess: () => {
         onSuccess?.();

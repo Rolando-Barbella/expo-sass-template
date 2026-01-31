@@ -17,6 +17,7 @@ type GoogleSignInCallbacks = {
   onLoadingChange: (isLoading: boolean) => void;
   onError: (message: string | null) => void;
   onSuccess: () => void;
+  onProfileSyncingChange: (isSyncing: boolean) => void;
 };
 
 export function configureGoogleSignIn() {
@@ -30,7 +31,7 @@ export function configureGoogleSignIn() {
   });
 }
 
-export async function handleGoogleSignIn({ onLoadingChange, onError, onSuccess }: GoogleSignInCallbacks) {
+export async function handleGoogleSignIn({ onLoadingChange, onError, onSuccess, onProfileSyncingChange }: GoogleSignInCallbacks) {
   try {
     onLoadingChange(true);
     onError(null);
@@ -38,12 +39,16 @@ export async function handleGoogleSignIn({ onLoadingChange, onError, onSuccess }
     await GoogleSignin.hasPlayServices();
     const googleSignInResult = await GoogleSignin.signIn();
 
+    onProfileSyncingChange(true);
+
     if (googleSignInResult.type === 'cancelled') {
+      onProfileSyncingChange(false);
       return;
     }
     const { idToken } = await GoogleSignin.getTokens();
 
     if (!idToken) {
+      onProfileSyncingChange(false);
       throw new Error('Missing Google ID token');
     }
 
@@ -52,8 +57,9 @@ export async function handleGoogleSignIn({ onLoadingChange, onError, onSuccess }
       provider: googleProvider,
       token: idToken,
     });
-
+    // debugger;
     if (googleAuthResult.error) {
+     onProfileSyncingChange(false);
       console.error('Supabase auth error:', googleAuthResult.error);
       throw googleAuthResult.error;
     }
@@ -61,18 +67,21 @@ export async function handleGoogleSignIn({ onLoadingChange, onError, onSuccess }
     const { data: authData, error: authError } = await supabase.auth.getUser();
 
     if (authError) {
+      onProfileSyncingChange(false);
       console.error('Supabase could not get user after Google sign-in', authError);
       throw authError;
     }
 
     if (!authData.user) {
+      onProfileSyncingChange(false);
       throw new Error('Missing user after Google sign-in');
     }
 
     if (!authData.user.id || typeof authData.user.id !== 'string') {
+      onProfileSyncingChange(false);
       throw new Error('Missing user id after Google sign-in');
     }
-
+    // debugger;
     const googleUser = googleSignInResult?.data?.user;
     const name = typeof googleUser?.givenName === 'string' ? googleUser.givenName : '';
     const surname = typeof googleUser?.familyName === 'string' ? googleUser.familyName : '';
