@@ -57,7 +57,7 @@ export async function handleGoogleSignIn({ onLoadingChange, onError, onSuccess, 
       provider: googleProvider,
       token: idToken,
     });
-    // debugger;
+
     if (googleAuthResult.error) {
      onProfileSyncingChange(false);
       console.error('Supabase auth error:', googleAuthResult.error);
@@ -77,20 +77,15 @@ export async function handleGoogleSignIn({ onLoadingChange, onError, onSuccess, 
       throw new Error('Missing user after Google sign-in');
     }
 
-    if (!authData.user.id || typeof authData.user.id !== 'string') {
+    if (!authData.user.id) {
       onProfileSyncingChange(false);
       throw new Error('Missing user id after Google sign-in');
     }
-    // debugger;
+
     const googleUser = googleSignInResult?.data?.user;
     const name = typeof googleUser?.givenName === 'string' ? googleUser.givenName : '';
     const surname = typeof googleUser?.familyName === 'string' ? googleUser.familyName : '';
-    const email =
-      typeof googleUser?.email === 'string'
-        ? googleUser.email
-        : typeof authData.user.email === 'string'
-          ? authData.user.email
-          : '';
+    const email = googleUser?.email || authData.user.email || '';
     const image = typeof googleUser?.photo === 'string' ? googleUser.photo : '';
 
     const userRow = {
@@ -99,7 +94,7 @@ export async function handleGoogleSignIn({ onLoadingChange, onError, onSuccess, 
       name,
       image,
       surname,
-      is_pay: false,
+      is_pay: false, 
       expo_push_token: null,
       created_at: new Date().toISOString(),
     } satisfies UserRow;

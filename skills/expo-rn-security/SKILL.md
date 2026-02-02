@@ -13,7 +13,7 @@ Use this skill to audit Expo/React Native apps for insecure storage and to gener
 2) Run rnsec and capture findings. See `references/rnsec.md` for usage steps.
 3) Review storage usage and enforce the storage policy below.
 4) Produce a security report with actionable fixes.
-5) `expo-auth-session` can be use only for non critical data and sessions
+5) `expo-auth-session` can be use only for non critical data and sessions, supabase sessions are fine
 
 
 ## Storage policy (non-negotiable)
