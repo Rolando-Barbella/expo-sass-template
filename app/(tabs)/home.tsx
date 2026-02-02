@@ -2,18 +2,13 @@ import { useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import type { Session } from '@supabase/supabase-js';
-
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { Colors } from '@/constants/theme';
 import { supabase } from '@/lib/supabase';
 
 function getDisplayName(session: Session | null) {
-  if (!session) {
-    return 'User';
-  }
-
-  const metadata = session.user.user_metadata;
+  const metadata = session?.user.user_metadata;
   const fullName = typeof metadata?.full_name === 'string' ? metadata.full_name : '';
   if (fullName.length > 0) {
     return fullName;
@@ -24,8 +19,8 @@ function getDisplayName(session: Session | null) {
     return name;
   }
 
-  return typeof session.user.email === 'string' && session.user.email.length > 0
-    ? session.user.email
+  return typeof session?.user.email === 'string' && session?.user.email.length > 0
+    ? session?.user.email
     : 'User';
 }
 
@@ -72,19 +67,6 @@ export default function HomeScreen() {
       </ThemedView>
     );
   }
-
-  // if (!session) {
-  //   return (
-  //     <ThemedView style={styles.centered}>
-  //       <ThemedText style={styles.subtitle}>No active session.</ThemedText>
-  //       <Pressable style={styles.primaryButton} onPress={() => router.replace('/login-sheet')}>
-  //         <ThemedText type="defaultSemiBold" style={styles.primaryButtonText}>
-  //           Sign in
-  //         </ThemedText>
-  //       </Pressable>
-  //     </ThemedView>
-  //   );
-  // }
 
   return (
     <ScrollView contentContainerStyle={styles.container}>

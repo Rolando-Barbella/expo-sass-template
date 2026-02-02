@@ -1,30 +1,201 @@
-# Expo Sass Template 💵
+# Expo SaaS Template 💵
 
-This template is based on [Expo](https://expo.dev), backend with [Supabase](https://supabase.com/), one-off payments with [Stripe](https://stripe.com/), subscribtions with [RevenueCat](https://www.revenuecat.com/) and [Google cloud](https://console.cloud.google.com/) social media sign-in.
+A production-ready React Native template built with [Expo](https://expo.dev), [Supabase](https://supabase.com/) authentication, [Stripe](https://stripe.com/) payments, [RevenueCat](https://www.revenuecat.com/) subscriptions, and native Google/Apple Sign-In.
 
-## Get started
-Assuming you have [Xcode](https://developer.apple.com/xcode/), [Android Studio](https://developer.android.com/studio) install, follow the next steps
+## Features
 
-* I highly recommend [Orbit](https://expo.dev/orbit) for running emulators
+- ✅ Native Google Sign-In (iOS & Android)
+- ✅ Apple Sign-In (iOS)
+- ✅ Supabase authentication & backend
+- ✅ Protected routes with auth guards
+- ✅ Bottom sheet login UI
+- ✅ TypeScript
+- ✅ ESLint + Prettier pre-commit hooks
+- ⏳ Stripe payments (coming soon)
+- ⏳ RevenueCat subscriptions (coming soon)
 
-1. Install dependencies
+## Prerequisites
 
+Before you start, make sure you have:
+
+- **Node.js** (v18 or higher) - [Download](https://nodejs.org/)
+- **npm** or **yarn** package manager
+- **Xcode** (for iOS development) - [Download](https://developer.apple.com/xcode/)
+- **Android Studio** (for Android development) - [Download](https://developer.android.com/studio)
+- **[Expo Orbit](https://expo.dev/orbit)** (highly recommended for running emulators)
+- **EAS CLI** - Install with `npm install -g eas-cli`
+
+## Quick Start
+
+### 1. Clone the Template
+
+```bash
+git clone https://github.com/yourusername/expo-sass-template.git my-app
+cd my-app
+```
+
+### 2. Configure Your Project
+
+You need to customize several files to make this template your own.
+
+#### A. Update `package.json`
+
+Open `package.json` and change:
+
+```json
+{
+  "name": "expo-sass",  // Change to your project name
+  "version": "1.0.0"
+}
+```
+
+#### B. Update `app.json`
+
+Open `app.json` and update the following fields:
+
+```json
+{
+  "expo": {
+    "name": "expo-sass",              // Your app display name
+    "slug": "Expo SaaS",              // URL-friendly identifier
+    "scheme": "exposass",             // Deep linking scheme (lowercase, no spaces)
+    "ios": {
+      "bundleIdentifier": "com.rolandobarbella.exposass"  // Your unique iOS bundle ID
+    },
+    "android": {
+      "package": "com.rolandobarbella.exposass"  // Your unique Android package name
+    },
+    "extra": {
+      "eas": {
+        "projectId": ""  // Leave empty for now, will be filled when you run 'eas build'
+      }
+    }
+  }
+}
+```
+
+**Important naming conventions:**
+- Bundle Identifier (iOS): Reverse domain notation (e.g., `com.yourcompany.appname`)
+- Package Name (Android): Same format as bundle identifier
+- Scheme: Lowercase, no spaces (e.g., `myapp`, `mycompanyapp`)
+
+### 3. Set Up External Services
+
+#### A. Create a Supabase Project
+
+1. Go to [Supabase](https://supabase.com/) and create a free account
+2. Click "New Project"
+3. Choose your organization and set a database password
+4. Wait for the project to finish setting up (~2 minutes)
+5. Go to **Settings** > **API** and copy:
+   - Project URL (e.g., `https://xxxxx.supabase.co`)
+   - Anon/Public Key (starts with `eyJ...`)
+
+#### B. Create a Google Cloud Project (for Google Sign-In)
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project or select an existing one
+3. Enable the **Google Sign-In API**:
+   - Go to **APIs & Services** > **Library**
+   - Search for "Google Sign-In"
+   - Click **Enable**
+
+4. Create OAuth 2.0 credentials:
+   - Go to **APIs & Services** > **Credentials**
+   - Click **Create Credentials** > **OAuth client ID**
+   
+5. Create **3 client IDs** (yes, you need all three):
+
+   **Web Client (required for Supabase):**
+   - Application type: **Web application**
+   - Name: "My App Web"
+   - Authorized redirect URIs: `https://YOUR-PROJECT-REF.supabase.co/auth/v1/callback`
+   - Copy the **Client ID** and **Client Secret**
+   
+   **iOS Client:**
+   - Application type: **iOS**
+   - Name: "My App iOS"
+   - Bundle ID: `com.yourcompany.yourapp` (must match `app.json`)
+   - Copy the **Client ID**
+   
+   **Android Client:**
+   - Application type: **Android**
+   - Name: "My App Android"
+   - Package name: `com.yourcompany.yourapp` (must match `app.json`)
+   - SHA-1 certificate fingerprint: Get this by running:
+     ```bash
+     # For development
+     keytool -keystore ~/.android/debug.keystore -list -v
+     # Password is usually 'android'
+     ```
+   - Copy the **Client ID**
+
+6. Update `app.json` with your iOS Web Client ID:
+   Find this section and replace with your iOS Web Client ID (reversed format):
+   ```json
+   {
+     "plugins": [
+       [
+         "@react-native-google-signin/google-signin",
+         {
+           "iosUrlScheme": "com.googleusercontent.apps.YOUR-IOS-WEB-CLIENT-ID"
+         }
+       ]
+     ]
+   }
+   ```
+   The iOS Web Client ID looks like: `1234567890-abc123def456.apps.googleusercontent.com`
+   You need to reverse it to: `com.googleusercontent.apps.1234567890-abc123def456`
+
+#### C. Configure Supabase Authentication
+
+1. In your Supabase dashboard, go to **Authentication** > **Providers**
+2. Enable **Google**:
+   - Enable the provider
+   - Add your **Web Client ID** and **Client Secret** from Google Cloud
+   - Save
+
+3. Enable **Apple** (optional, for iOS only):
+   - See the [Apple Sign-In Setup](#apple-sign-in-setup-optional) section below
+
+### 4. Configure Environment Variables
+
+1. Copy the example environment file:
    ```bash
-   npm install
+   cp .env.example .env
    ```
 
-2. Start the app
-
+2. Open `.env` and fill in your values:
    ```bash
-   npx expo start
+   # Google OAuth Client IDs (from Google Cloud Console)
+   EXPO_PUBLIC_ANDROID_CLIENT_ID=your-android-client-id.apps.googleusercontent.com
+   EXPO_PUBLIC_IOS_CLIENT_ID=your-ios-client-id.apps.googleusercontent.com
+   EXPO_PUBLIC_WEB_CLIENT_ID=your-web-client-id.apps.googleusercontent.com
+
+   # Supabase (from Supabase Dashboard > Settings > API)
+   EXPO_PUBLIC_SUPABASE_URL=https://xxxxx.supabase.co
+   EXPO_PUBLIC_SUPABASE_ANON_KEY=eyJxxxxxxx...
    ```
 
-In the output, you'll find options to open the app in a
+### 5. Install Dependencies
+
+```bash
+npm install
+```
+
+### 6. Run the App
+
+```bash
+npx expo start
+```
+
+In the output, you'll find options to open the app in:
 
 - [development build](https://docs.expo.dev/develop/development-builds/introduction/)
 - [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
 - [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+
+**Note:** Google and Apple Sign-In require a [development build](https://docs.expo.dev/develop/development-builds/create-a-build/), they won't work in Expo Go.
 
 ## More about expo
 

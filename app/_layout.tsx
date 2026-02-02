@@ -1,4 +1,4 @@
-import { Stack } from 'expo-router';
+import { Redirect, Stack, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet } from 'react-native';
@@ -11,6 +11,7 @@ import type { Session } from '@supabase/supabase-js';
 export default function RootLayout() {
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const segments = useSegments();
 
   useEffect(() => {
     let isMounted = true;
@@ -41,6 +42,10 @@ export default function RootLayout() {
     );
   }
 
+  if (session && segments[0] !== '(tabs)') {
+    return <Redirect href="/(tabs)/home" />;
+  }
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Stack>
@@ -49,21 +54,23 @@ export default function RootLayout() {
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         </Stack.Protected>
         <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-        <Stack.Screen
-          name="login-sheet"
-          options={{
-            presentation: 'formSheet',
-            animation: 'slide_from_bottom',
-            gestureEnabled: true,
-            headerShown: false,
-            contentStyle: styles.loginSheetContent,
-            sheetGrabberVisible: true,
-            sheetAllowedDetents: [UI.loginSheet.heightRatio],
-            sheetInitialDetentIndex: 0,
-            sheetExpandsWhenScrolledToEdge: true,
-            sheetCornerRadius: 20,
-          }}
-        />
+        <Stack.Protected guard={!Boolean(session)}>
+          <Stack.Screen
+            name="login-sheet"
+            options={{
+              presentation: 'formSheet',
+              animation: 'slide_from_bottom',
+              gestureEnabled: true,
+              headerShown: false,
+              contentStyle: styles.loginSheetContent,
+              sheetGrabberVisible: true,
+              sheetAllowedDetents: [UI.loginSheet.heightRatio],
+              sheetInitialDetentIndex: 0,
+              sheetExpandsWhenScrolledToEdge: true,
+              sheetCornerRadius: 20,
+            }}
+          />
+        </Stack.Protected>
       </Stack>
       <StatusBar style="auto" />
     </GestureHandlerRootView>
