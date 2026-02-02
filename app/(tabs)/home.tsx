@@ -73,18 +73,18 @@ export default function HomeScreen() {
     );
   }
 
-  if (!session) {
-    return (
-      <ThemedView style={styles.centered}>
-        <ThemedText style={styles.subtitle}>No active session.</ThemedText>
-        <Pressable style={styles.primaryButton} onPress={() => router.replace('/login-sheet')}>
-          <ThemedText type="defaultSemiBold" style={styles.primaryButtonText}>
-            Sign in
-          </ThemedText>
-        </Pressable>
-      </ThemedView>
-    );
-  }
+  // if (!session) {
+  //   return (
+  //     <ThemedView style={styles.centered}>
+  //       <ThemedText style={styles.subtitle}>No active session.</ThemedText>
+  //       <Pressable style={styles.primaryButton} onPress={() => router.replace('/login-sheet')}>
+  //         <ThemedText type="defaultSemiBold" style={styles.primaryButtonText}>
+  //           Sign in
+  //         </ThemedText>
+  //       </Pressable>
+  //     </ThemedView>
+  //   );
+  // }
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -96,7 +96,7 @@ export default function HomeScreen() {
           Session token
         </ThemedText>
         <ThemedText selectable style={styles.tokenText}>
-          {session.access_token}
+          {session?.access_token}
         </ThemedText>
       </ThemedView>
 
