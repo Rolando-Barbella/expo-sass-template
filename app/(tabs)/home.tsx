@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import type { Session } from '@supabase/supabase-js';
 import { ThemedText } from '@/components/ThemedText';
@@ -62,36 +63,44 @@ export default function HomeScreen() {
 
   if (isLoading) {
     return (
-      <ThemedView style={styles.centered}>
-        <ActivityIndicator color={Colors.light.tint} />
-      </ThemedView>
+      <SafeAreaView style={styles.safeArea}>
+        <ThemedView style={styles.centered}>
+          <ActivityIndicator color={Colors.light.tint} />
+        </ThemedView>
+      </SafeAreaView>
     );
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <ThemedText type="title">Home</ThemedText>
-      <ThemedText style={styles.subtitle}>Welcome, {displayName}</ThemedText>
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <ThemedText type="title">Home</ThemedText>
+        <ThemedText style={styles.subtitle}>Welcome, {displayName}</ThemedText>
 
-      <ThemedView style={styles.card}>
-        <ThemedText type="subtitle" style={styles.cardLabel}>
-          Session token
-        </ThemedText>
-        <ThemedText selectable style={styles.tokenText}>
-          {session?.access_token}
-        </ThemedText>
-      </ThemedView>
+        <ThemedView style={styles.card}>
+          <ThemedText type="subtitle" style={styles.cardLabel}>
+            Session token
+          </ThemedText>
+          <ThemedText selectable style={styles.tokenText}>
+            {session?.access_token}
+          </ThemedText>
+        </ThemedView>
 
-      <Pressable style={styles.secondaryButton} onPress={onSignOut} disabled={isSigningOut}>
-        <ThemedText type="defaultSemiBold" style={styles.secondaryButtonText}>
-          {isSigningOut ? 'Signing out...' : 'Sign out'}
-        </ThemedText>
-      </Pressable>
-    </ScrollView>
+        <Pressable style={styles.secondaryButton} onPress={onSignOut} disabled={isSigningOut}>
+          <ThemedText type="defaultSemiBold" style={styles.secondaryButtonText}>
+            {isSigningOut ? 'Signing out...' : 'Sign out'}
+          </ThemedText>
+        </Pressable>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: Colors.light.background,
+  },
   container: {
     flexGrow: 1,
     padding: 24,

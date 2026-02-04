@@ -9,10 +9,9 @@ A production-ready React Native template built with [Expo](https://expo.dev), [S
 - ✅ Supabase authentication & backend
 - ✅ Protected routes with auth guards
 - ✅ Bottom sheet login UI
-- ✅ TypeScript
-- ✅ ESLint + Prettier pre-commit hooks
 - ⏳ Stripe payments (coming soon)
 - ⏳ RevenueCat subscriptions (coming soon)
+- Push Notifications
 
 ## Prerequisites
 
