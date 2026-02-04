@@ -22,6 +22,7 @@ export const Colors = {
     skeletonBase: '#E1E2E3',
     skeletonHighlight: '#F8F9FA',
     danger: '#CC2A2A',
+    gray: '#9CA3AF',
   },
   dark: {
     text: '#ECEDEE',
@@ -36,6 +37,7 @@ export const Colors = {
     skeletonBase: '#2C3136',
     skeletonHighlight: '#3A4046',
     danger: '#FF6B6B',
+    gray: '#6B7280',
   },
 };
 

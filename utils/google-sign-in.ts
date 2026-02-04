@@ -6,7 +6,7 @@ export type UserRow = {
   id: string;
   email: string;
   name: string;
-  image: string;
+  image: string | null;
   surname: string;
   is_pay: boolean;
   expo_push_token: string | null;

@@ -13,12 +13,15 @@ export default function AppTabsLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: '#000',
-        tabBarInactiveTintColor: '#687076',
+        tabBarActiveTintColor: colorScheme === 'dark' ? Colors.dark.tabIconSelected : Colors.light.text,
+        tabBarInactiveTintColor: Colors[colorScheme ?? 'light'].tabIconDefault,
         tabBarShowLabel: false,
         headerShown: false,
         tabBarButton: HapticTab,
-        tabBarStyle: styles.tabBar,
+        tabBarStyle: {
+          ...styles.tabBar,
+          backgroundColor: Colors[colorScheme ?? 'light'].background,
+        },
       }}>
       <Tabs.Screen
         name="home"
@@ -44,7 +47,6 @@ export default function AppTabsLayout() {
 
 const styles = StyleSheet.create({
   tabBar: {
-    backgroundColor: Colors.light.background,
     height: 75,
     paddingBottom: 10,
     paddingTop: Platform.OS === 'android' ? 20 : 10,
@@ -52,7 +54,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderTopWidth: 0,
     // iOS shadow properties
-    shadowColor: '#000',
+    shadowColor: Colors.light.text,
     shadowOffset: {
       width: 0,
       height: -2,
