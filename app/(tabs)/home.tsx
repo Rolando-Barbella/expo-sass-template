@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import type { Session } from '@supabase/supabase-js';
+import { SymbolView } from 'expo-symbols';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { Colors } from '@/constants/theme';
@@ -79,11 +81,23 @@ export default function HomeScreen() {
 
         <ThemedView style={styles.card}>
           <ThemedText type="subtitle" style={styles.cardLabel}>
-            Session token
+            Session status
           </ThemedText>
-          <ThemedText selectable style={styles.tokenText}>
-            {session?.access_token}
-          </ThemedText>
+          <ThemedView style={styles.symbolContainer}>
+            <SymbolView
+              name="bolt.fill"
+              size={72}
+              type="hierarchical"
+              tintColor={Colors.light.tint}
+              animationSpec={{
+                effect: { type: 'bounce', wholeSymbol: true },
+                repeating: true,
+                speed: 1.2,
+              }}
+              fallback={<MaterialIcons name="bolt" size={72} color={Colors.light.tint} />}
+            />
+            <ThemedText style={styles.symbolLabel}>Connected</ThemedText>
+          </ThemedView>
         </ThemedView>
 
         <Pressable style={styles.secondaryButton} onPress={onSignOut} disabled={isSigningOut}>
@@ -121,9 +135,14 @@ const styles = StyleSheet.create({
   cardLabel: {
     opacity: 0.8,
   },
-  tokenText: {
-    fontFamily: 'monospace',
-    fontSize: 12,
+  symbolContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 8,
+    gap: 6,
+  },
+  symbolLabel: {
+    opacity: 0.8,
   },
   secondaryButton: {
     paddingVertical: 12,
