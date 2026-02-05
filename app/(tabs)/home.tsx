@@ -80,9 +80,6 @@ export default function HomeScreen() {
         <ThemedText style={styles.subtitle}>Welcome, {displayName}</ThemedText>
 
         <ThemedView style={styles.card}>
-          <ThemedText type="subtitle" style={styles.cardLabel}>
-            Session status
-          </ThemedText>
           <ThemedView style={styles.symbolContainer}>
             <SymbolView
               name="bolt.fill"
@@ -91,20 +88,14 @@ export default function HomeScreen() {
               tintColor={Colors.light.tint}
               animationSpec={{
                 effect: { type: 'bounce', wholeSymbol: true },
-                repeating: true,
-                speed: 1.2,
+                repeating: false,
+                speed: 0.5,
               }}
               fallback={<MaterialIcons name="bolt" size={72} color={Colors.light.tint} />}
             />
             <ThemedText style={styles.symbolLabel}>Connected</ThemedText>
           </ThemedView>
         </ThemedView>
-
-        <Pressable style={styles.secondaryButton} onPress={onSignOut} disabled={isSigningOut}>
-          <ThemedText type="defaultSemiBold" style={styles.secondaryButtonText}>
-            {isSigningOut ? 'Signing out...' : 'Sign out'}
-          </ThemedText>
-        </Pressable>
       </ScrollView>
     </SafeAreaView>
   );
@@ -126,9 +117,6 @@ const styles = StyleSheet.create({
   },
   card: {
     padding: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: Colors.light.border,
     backgroundColor: Colors.light.background,
     gap: 8,
   },
