@@ -83,17 +83,20 @@ export default function HomeScreen() {
           <ThemedView style={styles.symbolContainer}>
             <SymbolView
               name="bolt.fill"
-              size={72}
+              size={180}
               type="hierarchical"
               tintColor={Colors.light.tint}
+              resizeMode="scaleAspectFit"
+              scale="large"
+              weight="ultraLight"
               animationSpec={{
                 effect: { type: 'bounce', wholeSymbol: true },
-                repeating: false,
-                speed: 0.5,
+                repeating: true,
+                speed: 0.2,
               }}
               fallback={<MaterialIcons name="bolt" size={72} color={Colors.light.tint} />}
             />
-            <ThemedText style={styles.symbolLabel}>Connected</ThemedText>
+            {/* <ThemedText style={styles.symbolLabel}>Connected</ThemedText> */}
           </ThemedView>
         </ThemedView>
       </ScrollView>
@@ -119,11 +122,14 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: Colors.light.background,
     gap: 8,
+    flex: 1,
+    justifyContent: 'center',
   },
   cardLabel: {
     opacity: 0.8,
   },
   symbolContainer: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 8,

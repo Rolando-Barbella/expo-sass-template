@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "expo-sass",
-    "slug": "Expo SaaS",
+    "name": "Expo SaaS", 
+    "slug": "expo-sass",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
