@@ -11,7 +11,8 @@ A production-ready React Native template built with [Expo](https://expo.dev), [S
 - ✅ Bottom sheet login UI
 - ⏳ Stripe payments (coming soon)
 - ⏳ RevenueCat subscriptions (coming soon)
-- Push Notifications
+- ⏳ Push Notifications
+- ⏳ Emails with [resend](https://resend.com/emails)
 
 ## Prerequisites
 
