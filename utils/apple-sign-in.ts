@@ -2,17 +2,6 @@ import { supabase } from '@/lib/supabase';
 import type { Provider } from '@supabase/auth-js';
 import * as AppleAuthentication from 'expo-apple-authentication';
 
-export type UserRow = {
-  id: string;
-  email: string;
-  name: string;
-  image: string;
-  surname: string;
-  is_pay: boolean;
-  expo_push_token: string | null;
-  created_at: string;
-};
-
 type AppleSignInCallbacks = {
   onLoadingChange: (isLoading: boolean) => void;
   onProfileSyncingChange: (isSyncing: boolean) => void;
@@ -29,13 +18,12 @@ type AppleSignInCallbacks = {
  * 2. Requests user's full name and email (only provided on FIRST sign-in)
  * 3. Receives identity token (JWT) from Apple
  * 4. Authenticates with Supabase using the Apple identity token
- * 5. Syncs user profile to the 'users' table in Supabase
+ * 5. Optionally updates Supabase auth metadata with the full name
  *
  * Important Notes:
  * - Apple only provides name/email on the FIRST sign-in. On subsequent sign-ins,
  *   these fields will be null, so we fallback to Supabase auth data.
  * - The identity token is a JWT that Supabase validates with Apple's public keys.
- * - User profile is upserted (insert or update) to handle both new and returning users.
  * - If user cancels the dialog, we silently return without showing an error.
  */
 export async function handleAppleSignIn({
@@ -94,23 +82,11 @@ export async function handleAppleSignIn({
       throw new Error('Missing user after Apple sign-in');
     }
 
-    if (!authData.user.id || typeof authData.user.id !== 'string') {
-      throw new Error('Missing user id after Apple sign-in');
-    }
-
     // Step 5: Extract user profile data
     // Note: Apple only provides name/email on FIRST sign-in, so we use fallbacks
     const name = typeof credential.fullName?.givenName === 'string' ? credential.fullName.givenName : '';
     const surname = typeof credential.fullName?.familyName === 'string' ? credential.fullName.familyName : '';
     const fullName = [name, surname].filter((value) => value.length > 0).join(' ');
-    const email =
-      typeof credential.email === 'string'
-        ? credential.email
-        : typeof authData.user.email === 'string'
-          ? authData.user.email
-          : '';
-    const image =
-      typeof authData.user.user_metadata?.avatar_url === 'string' ? authData.user.user_metadata.avatar_url : '';
 
     // Step 6: Update Supabase auth metadata with full name (if available and not already set)
     if (fullName.length > 0 && typeof authData.user.user_metadata?.full_name !== 'string') {
@@ -122,25 +98,6 @@ export async function handleAppleSignIn({
         console.error('Supabase user metadata update error:', updateAuthError);
         throw updateAuthError;
       }
-    }
-
-    // Step 7: Upsert user profile to 'users' table (creates new or updates existing)
-    const userRow = {
-      id: authData.user.id,
-      email,
-      name,
-      image,
-      surname,
-      is_pay: false,
-      expo_push_token: null,
-      created_at: new Date().toISOString(),
-    } satisfies UserRow;
-
-    const { error: profileError } = await supabase.from('users').upsert(userRow, { onConflict: 'id' });
-
-    if (profileError) {
-      console.error('Supabase user upsert error:', profileError);
-      throw profileError;
     }
 
     onSuccess();

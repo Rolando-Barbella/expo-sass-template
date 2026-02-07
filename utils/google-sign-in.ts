@@ -2,17 +2,6 @@ import { supabase } from '@/lib/supabase';
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 import type { Provider } from '@supabase/auth-js';
 
-export type UserRow = {
-  id: string;
-  email: string;
-  name: string;
-  image: string | null;
-  surname: string;
-  is_pay: boolean;
-  expo_push_token: string | null;
-  created_at: string;
-};
-
 type GoogleSignInCallbacks = {
   onLoadingChange: (isLoading: boolean) => void;
   onError: (message: string | null) => void;
@@ -21,12 +10,23 @@ type GoogleSignInCallbacks = {
 };
 
 export function configureGoogleSignIn() {
+  const webClientId = process.env.EXPO_PUBLIC_WEB_CLIENT_ID;
+  const iosClientId = process.env.EXPO_PUBLIC_IOS_CLIENT_ID;
+
+  if (!webClientId) {
+    console.warn('Missing EXPO_PUBLIC_WEB_CLIENT_ID');
+  }
+  if (!iosClientId) {
+    console.warn('Missing EXPO_PUBLIC_IOS_CLIENT_ID');
+  }
+
   GoogleSignin.configure({
-    scopes: ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/userinfo.profile'],
-    webClientId: process.env.EXPO_PUBLIC_WEB_CLIENT_ID,
-    iosClientId: process.env.EXPO_PUBLIC_IOS_CLIENT_ID,
-    offlineAccess: true,
-    forceCodeForRefreshToken: true,
+    scopes: [
+      'https://www.googleapis.com/auth/userinfo.email',
+      'https://www.googleapis.com/auth/userinfo.profile',
+    ],
+    webClientId,
+    iosClientId,
     profileImageSize: 120,
   });
 }
@@ -38,80 +38,24 @@ export async function handleGoogleSignIn({ onLoadingChange, onError, onSuccess, 
 
     await GoogleSignin.hasPlayServices();
     const googleSignInResult = await GoogleSignin.signIn();
+    if (googleSignInResult.type === 'cancelled') return;
 
     onProfileSyncingChange(true);
 
-    if (googleSignInResult.type === 'cancelled') {
-      onProfileSyncingChange(false);
-      return;
-    }
     const { idToken } = await GoogleSignin.getTokens();
+    if (!idToken) throw new Error('Missing Google ID token');
 
-    if (!idToken) {
-      onProfileSyncingChange(false);
-      throw new Error('Missing Google ID token');
-    }
-
-    const googleProvider: Provider = 'google';
-    const googleAuthResult = await supabase.auth.signInWithIdToken({
-      provider: googleProvider,
+    const { error: signInError } = await supabase.auth.signInWithIdToken({
+      provider: 'google' as Provider,
       token: idToken,
     });
 
-    if (googleAuthResult.error) {
-     onProfileSyncingChange(false);
-      console.error('Supabase auth error:', googleAuthResult.error);
-      throw googleAuthResult.error;
-    }
-
-    const { data: authData, error: authError } = await supabase.auth.getUser();
-
-    if (authError) {
-      onProfileSyncingChange(false);
-      console.error('Supabase could not get user after Google sign-in', authError);
-      throw authError;
-    }
-
-    if (!authData.user) {
-      onProfileSyncingChange(false);
-      throw new Error('Missing user after Google sign-in');
-    }
-
-    if (!authData.user.id) {
-      onProfileSyncingChange(false);
-      throw new Error('Missing user id after Google sign-in');
-    }
-
-    const googleUser = googleSignInResult?.data?.user;
-    const name = typeof googleUser?.givenName === 'string' ? googleUser.givenName : '';
-    const surname = typeof googleUser?.familyName === 'string' ? googleUser.familyName : '';
-    const email = googleUser?.email || authData.user.email || '';
-    const image = typeof googleUser?.photo === 'string' ? googleUser.photo : '';
-
-    const userRow = {
-      id: authData.user.id,
-      email,
-      name,
-      image,
-      surname,
-      is_pay: false, 
-      expo_push_token: null,
-      created_at: new Date().toISOString(),
-    } satisfies UserRow;
-
-    const { error: profileError } = await supabase.from('users').upsert(userRow, { onConflict: 'id' });
-
-    if (profileError) {
-      console.error('Supabase user upsert error:', profileError);
-      throw profileError;
-    }
+    if (signInError) throw signInError;
 
     onSuccess();
   } catch (error: unknown) {
     const errorCode =
-      typeof error === 'object' && error !== null && 'code' in error
-        ? (error as { code?: string }).code
-        : undefined;
+      typeof error === 'object' && error !== null && 'code' in error ? (error as { code?: string }).code : undefined;
 
     const isCancelled =
       errorCode === statusCodes.SIGN_IN_CANCELLED ||
@@ -124,9 +68,9 @@ export async function handleGoogleSignIn({ onLoadingChange, onError, onSuccess, 
     }
 
     console.error('Google sign-in error:', error);
-
     onError(error instanceof Error ? error.message : 'Google sign-in failed');
   } finally {
+    onProfileSyncingChange(false);
     onLoadingChange(false);
   }
 }
