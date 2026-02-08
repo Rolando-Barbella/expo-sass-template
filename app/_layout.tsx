@@ -1,4 +1,4 @@
-import { Redirect, Stack, useSegments } from 'expo-router';
+import { Redirect, Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet } from 'react-native';
@@ -12,6 +12,7 @@ export default function RootLayout() {
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const segments = useSegments();
+  const router = useRouter();
 
   useEffect(() => {
     let isMounted = true;
@@ -33,6 +34,22 @@ export default function RootLayout() {
       authSubscription.subscription.unsubscribe();
     };
   }, []);
+
+
+  // Handle auth-based navigation after the navigator is mounted
+  // useEffect(() => {
+  //   if (isLoading) return;
+
+  //   const inTabsGroup = segments[0] === '(tabs)';
+
+  //   if (session && !inTabsGroup) {
+  //     // Redirect authenticated users to the tabs
+  //     router.replace('/(tabs)/home');
+  //   } else if (!session && inTabsGroup) {
+  //     // Redirect unauthenticated users away from protected routes
+  //     router.replace('/');
+  //   }
+  // }, [session, segments, isLoading]);
 
   if (isLoading) {
     return (
