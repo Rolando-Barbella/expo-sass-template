@@ -9,9 +9,9 @@ A production-ready React Native template built with [Expo](https://expo.dev), [S
 - ✅ Supabase authentication & backend
 - ✅ Protected routes with auth guards
 - ✅ Bottom sheet login UI
-- ⏳ Stripe payments (coming soon)
 - ⏳ RevenueCat subscriptions (coming soon)
-- ⏳ Push Notifications
+- ⏳ Stripe payments
+- ⏳ Push Notifications with firebase and expo
 - ⏳ Emails with [resend](https://resend.com/emails)
 
 ## Prerequisites
