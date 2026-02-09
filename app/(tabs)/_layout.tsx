@@ -49,7 +49,7 @@ export default function AppTabsLayout() {
   }
 
   if (session && segments[0] !== '(tabs)') {
-    return <Redirect href="/(tabs)/home" />;
+    return <Redirect href="/home" />;
   }
 
   return (
@@ -61,7 +61,6 @@ export default function AppTabsLayout() {
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarStyle: {
-          // display: segments[0] === '(tabs)' ? 'none' : 'flex',
           ...styles.tabBar,
           backgroundColor: Colors[colorScheme ?? 'light'].background,
         },
