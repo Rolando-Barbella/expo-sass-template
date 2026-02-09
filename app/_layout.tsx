@@ -1,93 +1,30 @@
-import { Redirect, Stack, useRouter, useSegments } from 'expo-router';
+import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import { Colors, UI } from '@/constants/theme';
-import { supabase } from '@/lib/supabase';
-import type { Session } from '@supabase/supabase-js';
 
 export default function RootLayout() {
-  const [session, setSession] = useState<Session | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const segments = useSegments();
-  const router = useRouter();
-
-  useEffect(() => {
-    let isMounted = true;
-
-    supabase.auth.getSession().then(({ data }) => {
-      if (isMounted) {
-        setSession(data.session ?? null);
-        setIsLoading(false);
-      }
-    });
-
-    const { data: authSubscription } = supabase.auth.onAuthStateChange((_event, nextSession) => {
-      setSession(nextSession);
-      setIsLoading(false);
-    });
-
-    return () => {
-      isMounted = false;
-      authSubscription.subscription.unsubscribe();
-    };
-  }, []);
-
-
-  // Handle auth-based navigation after the navigator is mounted
-  // useEffect(() => {
-  //   if (isLoading) return;
-
-  //   const inTabsGroup = segments[0] === '(tabs)';
-
-  //   if (session && !inTabsGroup) {
-  //     // Redirect authenticated users to the tabs
-  //     router.replace('/(tabs)/home');
-  //   } else if (!session && inTabsGroup) {
-  //     // Redirect unauthenticated users away from protected routes
-  //     router.replace('/');
-  //   }
-  // }, [session, segments, isLoading]);
-
-  if (isLoading) {
-    return (
-      <GestureHandlerRootView style={styles.loadingContainer}>
-        <ActivityIndicator color={Colors.light.tint} />
-      </GestureHandlerRootView>
-    );
-  }
-
-  if (session && segments[0] !== '(tabs)') {
-    return <Redirect href="/(tabs)/home" />;
-  }
-
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Protected guard={Boolean(session)}>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        </Stack.Protected>
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-        <Stack.Protected guard={!Boolean(session)}>
-          <Stack.Screen
-            name="login-sheet"
-            options={{
-              presentation: 'formSheet',
-              animation: 'slide_from_bottom',
-              gestureEnabled: true,
-              headerShown: false,
-              contentStyle: styles.loginSheetContent,
-              sheetGrabberVisible: true,
-              sheetAllowedDetents: [UI.loginSheet.heightRatio],
-              sheetInitialDetentIndex: 0,
-              sheetExpandsWhenScrolledToEdge: true,
-              sheetCornerRadius: 20,
-            }}
-          />
-        </Stack.Protected>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="login-sheet"
+          options={{
+            presentation: 'formSheet',
+            animation: 'slide_from_bottom',
+            gestureEnabled: true,
+            headerShown: false,
+            contentStyle: styles.loginSheetContent,
+            sheetGrabberVisible: true,
+            sheetAllowedDetents: [UI.loginSheet.heightRatio],
+            sheetInitialDetentIndex: 0,
+            sheetExpandsWhenScrolledToEdge: true,
+            sheetCornerRadius: 20,
+          }}
+        />
       </Stack>
       <StatusBar style="auto" />
     </GestureHandlerRootView>

@@ -1,14 +1,56 @@
-import { Tabs } from 'expo-router';
+import { Redirect, Tabs, useSegments } from 'expo-router';
 import React from 'react';
-import { StyleSheet, Platform } from 'react-native';
+import { useEffect, useState} from 'react';
+import { StyleSheet, Platform, ActivityIndicator} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-
 import { HapticTab } from '@/components/HapticTab';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import type { Session } from '@supabase/supabase-js';
+import { supabase } from '@/lib/supabase';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+
 
 export default function AppTabsLayout() {
   const colorScheme = useColorScheme();
+  const segments = useSegments();
+  const [isLoading, setIsLoading] = useState(true);
+  const [session, setSession] = useState<Session | null>(null);
+
+  console.log('segments',segments[0]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    supabase.auth.getSession().then(({ data }) => {
+      if (isMounted) {
+        setSession(data.session ?? null);
+        setIsLoading(false);
+      }
+    });
+
+    const { data: authSubscription } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+      setSession(nextSession);
+      setIsLoading(false);
+    });
+
+    return () => {
+      isMounted = false;
+      authSubscription.subscription.unsubscribe();
+    };
+  }, []);
+
+  if (isLoading) {
+    return (
+      <GestureHandlerRootView>
+        <ActivityIndicator color={Colors.light.tint} />
+      </GestureHandlerRootView>
+    );
+  }
+
+  if (session && segments[0] !== '(tabs)') {
+    return <Redirect href="/(tabs)/home" />;
+  }
 
   return (
     <Tabs
@@ -19,6 +61,7 @@ export default function AppTabsLayout() {
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarStyle: {
+          // display: segments[0] === '(tabs)' ? 'none' : 'flex',
           ...styles.tabBar,
           backgroundColor: Colors[colorScheme ?? 'light'].background,
         },
