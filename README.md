@@ -4,11 +4,11 @@ A production-ready React Native template built with [Expo](https://expo.dev), [S
 
 ## Features
 
-- ✅ Native Google Sign-In (iOS & Android)
+- ✅ Google Sign-In (iOS & Android)
 - ✅ Apple Sign-In (iOS)
 - ✅ Supabase authentication & backend
-- ✅ Protected routes with auth guards
 - ✅ Bottom sheet login UI
+### Todo
 - ⏳ RevenueCat subscriptions (coming soon)
 - ⏳ Stripe payments
 - ⏳ Push Notifications with firebase and expo

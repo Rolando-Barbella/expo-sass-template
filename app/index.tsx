@@ -1,4 +1,4 @@
-import { Link, Redirect, Stack, useRouter } from 'expo-router';
+import { Redirect, Stack, useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
@@ -11,11 +11,14 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { HelloWave } from '@/components/HelloWave';
 import { ThemedText } from '@/components/ThemedText';
 import { supabase } from '@/lib/supabase';
 import type { Session } from '@supabase/supabase-js';
+
+const googleLogo = require('@/assets/images/google-sign-in.png');
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -85,7 +88,7 @@ export default function HomeScreen() {
                   style={styles.logoGradient}
                 >
                   <Image
-                    source={require('@/assets/images/partial-react-logo.png')}
+                    source={require('@/assets/images/icon.png')}
                     style={styles.reactLogo}
                   />
                 </LinearGradient>
@@ -98,61 +101,6 @@ export default function HomeScreen() {
                 </View>
               </View>
 
-              <View style={styles.card}>
-                <ThemedText type="subtitle" style={styles.cardTitle}>
-                  Step 1: Try it
-                </ThemedText>
-                <ThemedText style={styles.cardText}>
-                  Edit{' '}
-                  <ThemedText type="defaultSemiBold" style={styles.textStrong}>
-                    app/(tabs)/index.tsx
-                  </ThemedText>{' '}
-                  to see changes. Press{' '}
-                  <ThemedText type="defaultSemiBold" style={styles.textStrong}>
-                    {Platform.select({
-                      ios: 'cmd + d',
-                      android: 'cmd + m',
-                      web: 'F12',
-                    })}
-                  </ThemedText>{' '}
-                  to open developer tools.
-                </ThemedText>
-              </View>
-
-              <View style={styles.card}>
-                <Link href="/modal">
-                  <Link.Trigger>
-                    <ThemedText type="subtitle" style={styles.cardTitle}>
-                      Step 2: Explore
-                    </ThemedText>
-                  </Link.Trigger>
-                  <Link.Preview />
-                  <Link.Menu>
-                    <Link.MenuAction
-                      title="Action"
-                      icon="cube"
-                      onPress={() => alert('Action pressed')}
-                    />
-                    <Link.MenuAction
-                      title="Share"
-                      icon="square.and.arrow.up"
-                      onPress={() => alert('Share pressed')}
-                    />
-                    <Link.Menu title="More" icon="ellipsis">
-                      <Link.MenuAction
-                        title="Delete"
-                        icon="trash"
-                        destructive
-                        onPress={() => alert('Delete pressed')}
-                      />
-                    </Link.Menu>
-                  </Link.Menu>
-                </Link>
-                <ThemedText style={styles.cardText}>
-                  {`Tap the Explore tab to learn more about what's included in this starter app.`}
-                </ThemedText>
-              </View>
-
               <Pressable
                 onPress={() => router.push('/login-sheet')}
                 style={({ pressed }) => [
@@ -160,36 +108,59 @@ export default function HomeScreen() {
                   pressed && styles.cardPressed,
                 ]}
               >
-                <ThemedText type="subtitle" style={styles.cardTitle}>
-                  Step 3: Sign in
-                </ThemedText>
+                <View style={styles.signInTitleRow}>
+                  <ThemedText type="subtitle" style={styles.cardTitle}>
+                    Sign in
+                  </ThemedText>
+                  <View style={styles.signInIcons}>
+                    <Image source={googleLogo} style={styles.signInGoogleIcon} resizeMode="contain" />
+                    <Ionicons name="logo-apple" size={18} color="#ffffff" />
+                  </View>
+                </View>
                 <ThemedText style={styles.cardText}>
-                  {`Tap the display button sheet login.`}
+                  {`Tap the display login button sheet.`}
                 </ThemedText>
               </Pressable>
 
               <View style={styles.card}>
-                <ThemedText type="subtitle" style={styles.cardTitle}>
-                  Step 4: Get a fresh start
-                </ThemedText>
-                <ThemedText style={styles.cardText}>
-                  {`When you're ready, run `}
-                  <ThemedText type="defaultSemiBold" style={styles.textStrong}>
-                    npm run reset-project
-                  </ThemedText>{' '}
-                  to get a fresh{' '}
-                  <ThemedText type="defaultSemiBold" style={styles.textStrong}>
-                    app
-                  </ThemedText>{' '}
-                  directory. This will move the current{' '}
-                  <ThemedText type="defaultSemiBold" style={styles.textStrong}>
-                    app
-                  </ThemedText>{' '}
-                  to{' '}
-                  <ThemedText type="defaultSemiBold" style={styles.textStrong}>
-                    app-example
+                <View style={styles.signInTitleRow}>
+                  <ThemedText type="subtitle" style={styles.cardTitle}>
+                    RevenueCat subscriptions
                   </ThemedText>
-                  .
+                  <View style={styles.signInIcons}>
+                    <Ionicons name="cash-outline" size={18} color="#ffffff" />
+                  </View>  
+                </View>
+                <ThemedText style={styles.cardText}>
+                  Setup RevenueCat subscriptions and manage payments.
+                </ThemedText>  
+              </View>
+
+              <View style={styles.card}>
+                <View style={styles.signInTitleRow}>
+                  <ThemedText type="subtitle" style={styles.cardTitle}>
+                    Push Notifications
+                  </ThemedText>
+                  <View style={styles.signInIcons}>
+                    <Ionicons name="notifications-outline" size={18} color="#ffffff" />
+                  </View>
+                </View>
+                <ThemedText style={styles.cardText}>
+                  {`Configure push notifications with Firebase and Expo and send them to your users.`}
+                </ThemedText>
+              </View>
+
+              <View style={styles.card}>
+                <View style={styles.signInTitleRow}>
+                <ThemedText type="subtitle" style={styles.cardTitle}>
+                  Emails with Resend
+                </ThemedText>
+                <View style={styles.signInIcons}>
+                  <Ionicons name="mail-outline" size={18} color="#ffffff" />
+                </View>
+                </View>
+                <ThemedText style={styles.cardText}>
+                  {`Configure emails with Resend and send them to your users.`}
                 </ThemedText>
               </View>
             </ScrollView>
@@ -271,6 +242,21 @@ const styles = StyleSheet.create({
     color: '#b8b8c8',
     fontSize: 15,
     lineHeight: 22,
+  },
+  signInTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    // justifyContent: 'space-between',
+  },
+  signInIcons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    left: 10,
+    gap: 8,
+  },
+  signInGoogleIcon: {
+    width: 18,
+    height: 18,
   },
   textStrong: {
     color: '#ffffff',
