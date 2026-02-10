@@ -1,5 +1,4 @@
 import { supabase } from '@/lib/supabase';
-import type { Provider } from '@supabase/auth-js';
 import * as AppleAuthentication from 'expo-apple-authentication';
 
 type AppleSignInCallbacks = {
@@ -58,10 +57,9 @@ export async function handleAppleSignIn({
 
     // Step 3: Authenticate with Supabase using Apple's identity token
     // Supabase validates the JWT with Apple's public keys server-side
-    const appleProvider: Provider = 'apple';
 
     const appleAuthResult = await supabase.auth.signInWithIdToken({
-      provider: appleProvider,
+      provider: 'apple',
       token: credential.identityToken,
     });
 

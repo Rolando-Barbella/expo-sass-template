@@ -56,7 +56,7 @@
       [
         "@react-native-google-signin/google-signin",
         {
-          "iosUrlScheme": "com.googleusercontent.apps.1002724165953-436erp4j4qr1eho4nm68onlrarf9lsdn"
+          "iosUrlScheme": "Your IOS URL Scheme, located in https://console.cloud.google.com/auth/clients/YOUR-PROJECT-REF"
         }
       ],
       [
