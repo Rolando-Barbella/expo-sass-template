@@ -1,6 +1,6 @@
 # Expo SaaS Template 💵
 
-A production-ready React Native template built with [Expo](https://expo.dev), [Supabase](https://supabase.com/) authentication, [Stripe](https://stripe.com/) payments, [RevenueCat](https://www.revenuecat.com/) subscriptions, and native Google/Apple Sign-In.
+A React Native template built with [Expo](https://expo.dev), [Supabase](https://supabase.com/) authentication, [Stripe](https://stripe.com/) payments, [RevenueCat](https://www.revenuecat.com/) subscriptions, and native Google/Apple Sign-In.
 
 ## Features
 
@@ -9,8 +9,9 @@ A production-ready React Native template built with [Expo](https://expo.dev), [S
 - ✅ Supabase authentication & backend
 - ✅ Bottom sheet login UI
 ### Todo
-- ⏳ RevenueCat subscriptions (coming soon)
-- ⏳ Stripe payments
+- ⏳ RevenueCat subscriptions (coming next)
+- ⏳ Apple payment
+- ⏳ Stripe payments 
 - ⏳ Push Notifications with firebase and expo
 - ⏳ Emails with [resend](https://resend.com/emails)
 
@@ -22,6 +23,9 @@ Before you start, make sure you have:
 - **npm** or **yarn** package manager
 - **Xcode** (for iOS development) - [Download](https://developer.apple.com/xcode/)
 - **Android Studio** (for Android development) - [Download](https://developer.android.com/studio)
+- **Apple developer account** For making your app live [Create](https://developer.apple.com/account) ($99 a year)
+
+## Nice to have
 - **[Expo Orbit](https://expo.dev/orbit)** (highly recommended for running emulators)
 - **EAS CLI** - Install with `npm install -g eas-cli`
 
@@ -79,46 +83,42 @@ Open `app.json` and update the following fields:
 - Package Name (Android): Same format as bundle identifier
 - Scheme: Lowercase, no spaces (e.g., `myapp`, `mycompanyapp`)
 
+
 ### 3. Set Up External Services
+
+Rename the .env.example file for .env.local or .env
 
 #### A. Create a Supabase Project
 
 1. Go to [Supabase](https://supabase.com/) and create a free account
-2. Click "New Project"
+2. Click "Start New project"
 3. Choose your organization and set a database password
-4. Wait for the project to finish setting up (~2 minutes)
-5. Go to **Settings** > **API** and copy:
-   - Project URL (e.g., `https://xxxxx.supabase.co`)
+4. On the left bar go to **Project Settings** > **Data API** > ***Project URL** and copy:
+   - URL (e.g., `https://jskokp.supabase.co`)
+5. On the left bar go to **Project Settings** > **API keys** > ***Legacy anon, service_role API keys tab** and copy:
    - Anon/Public Key (starts with `eyJ...`)
+6. Paste this two values on your `.env.local`, EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY
 
-#### B. Create a Google Cloud Project (for Google Sign-In)
+
+### 4. Create a Google Cloud Project (for Google Sign-In)
 
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+
 2. Create a new project or select an existing one
-3. Enable the **Google Sign-In API**:
-   - Go to **APIs & Services** > **Library**
-   - Search for "Google Sign-In"
-   - Click **Enable**
+google-claude-project
 
-4. Create OAuth 2.0 credentials:
-   - Go to **APIs & Services** > **Credentials**
-   - Click **Create Credentials** > **OAuth client ID**
-   
-5. Create **3 client IDs** (yes, you need all three):
+3. Add credentials
+   - Go to **APIs & Services** >  **Credentials** > **Create credentials**
+   - Configure the consent screen if you haven't already, select the **External** checkbox, then add the rest of the app information 
+   - Then  **Create Credentials** > **OAuth client ID**
 
-   **Web Client (required for Supabase):**
-   - Application type: **Web application**
-   - Name: "My App Web"
-   - Authorized redirect URIs: `https://YOUR-PROJECT-REF.supabase.co/auth/v1/callback`
-   - Copy the **Client ID** and **Client Secret**
-   
-   **iOS Client:**
+    **iOS Client:**
    - Application type: **iOS**
-   - Name: "My App iOS"
+   - Name: "My App iOS" or leave the default one
    - Bundle ID: `com.yourcompany.yourapp` (must match `app.json`)
-   - Copy the **Client ID**
-   
-   **Android Client:**
+   - Copy the **Client ID**, pasted the id in the .env.local file, EXPO_PUBLIC_IOS_CLIENT_ID
+
+     **Android Client:**
    - Application type: **Android**
    - Name: "My App Android"
    - Package name: `com.yourcompany.yourapp` (must match `app.json`)
@@ -128,9 +128,31 @@ Open `app.json` and update the following fields:
      keytool -keystore ~/.android/debug.keystore -list -v
      # Password is usually 'android'
      ```
-   - Copy the **Client ID**
+   - Copy the **Client ID**, Pasted the id in the .env.local file, EXPO_PUBLIC_ANDROID_CLIENT_ID
 
-6. Update `app.json` with your iOS Web Client ID:
+   **Web Client (required for Supabase):**
+   - Application type: **Web application**
+   - Name: "My App Web" or the defualt one
+   - On the Authorised JavaScript origins, add: `http://localhost:8081`
+   - Leave the Authorised redirect URIs empry for now (we will come back to in a next step)
+   <!-- - Authorized redirect URIs: `https://YOUR-PROJECT-REF.supabase.co/auth/v1/callback` -->
+   - Copy the **Client ID** and **Client Secret**
+   
+
+
+4. Supabase Auth setup
+
+1. Go to your project
+2. On the left bar, go to **Authentication** > **Sign In/Providers"** 
+3. Enable Apple and Google
+4.1 On Apple, add the client id: `com.yourcompany.appname`
+4.2 On Google, add the client id: with the following values: 
+`EXPO_PUBLIC_ANDROID_CLIENT_ID, + EXPO_PUBLIC_IOS_CLIENT_ID, + EXPO_PUBLIC_WEB_CLIENT_ID` (don't forget the commas)
+5.Copy the Callback URL (for OAuth) from Google or Apple
+6.Go back to your Web Client credential in Google claude and paste the adress in the Authorised redirect URIs field
+   
+
+5. Update `app.json` with your iOS Web Client ID:
    Find this section and replace with your iOS Web Client ID (reversed format):
    ```json
    {
@@ -138,7 +160,7 @@ Open `app.json` and update the following fields:
        [
          "@react-native-google-signin/google-signin",
          {
-           "iosUrlScheme": "com.googleusercontent.apps.YOUR-IOS-WEB-CLIENT-ID"
+           "iosUrlScheme": "com.googleusercontent.apps.EXPO_PUBLIC_IOS_CLIENT_ID"
          }
        ]
      ]
