@@ -1,6 +1,6 @@
 # Expo SaaS Template 💵
 
-A React Native template built with [Expo](https://expo.dev), [Supabase](https://supabase.com/) authentication, [Stripe](https://stripe.com/) payments, [RevenueCat](https://www.revenuecat.com/) subscriptions, and native Google/Apple Sign-In.
+A React Native opinionated template built with [Expo](https://expo.dev), [Supabase](https://supabase.com/) authentication, [Stripe](https://stripe.com/) payments, [RevenueCat](https://www.revenuecat.com/) subscriptions, and native Google/Apple Sign-In.
 
 ## Features
 
@@ -24,10 +24,11 @@ Before you start, make sure you have:
 - **Xcode** (for iOS development) - [Download](https://developer.apple.com/xcode/)
 - **Android Studio** (for Android development) - [Download](https://developer.android.com/studio)
 - **Apple developer account** For making your app live [Create](https://developer.apple.com/account) ($99 a year)
+- **Expo acccount** Create an account with [Expo](https://expo.dev/)
+- **EAS CLI** - Install with `npm install -g eas-cli`
 
 ## Nice to have
 - **[Expo Orbit](https://expo.dev/orbit)** (highly recommended for running emulators)
-- **EAS CLI** - Install with `npm install -g eas-cli`
 
 ## Quick Start
 
@@ -83,29 +84,26 @@ Open `app.json` and update the following fields:
 - Package Name (Android): Same format as bundle identifier
 - Scheme: Lowercase, no spaces (e.g., `myapp`, `mycompanyapp`)
 
-
-### 3. Set Up External Services
+### 3. ENV
 
 Rename the .env.example file for .env.local or .env
 
-#### A. Create a Supabase Project
+### 4. Create a Supabase Project
 
 1. Go to [Supabase](https://supabase.com/) and create a free account
 2. Click "Start New project"
 3. Choose your organization and set a database password
-4. On the left bar go to **Project Settings** > **Data API** > ***Project URL** and copy:
-   - URL (e.g., `https://jskokp.supabase.co`)
-5. On the left bar go to **Project Settings** > **API keys** > ***Legacy anon, service_role API keys tab** and copy:
-   - Anon/Public Key (starts with `eyJ...`)
+4. On the left bar, go to **Project Settings** > **Data API** > ***Project URL** and copy: URL (e.g., `https://jskokp.supabase.co`)
+5. On the left bar go to **Project Settings** > **API keys** > ***Legacy anon, service_role API keys tab** and copy: Anon/Public Key (starts with `eyJ...`)
 6. Paste this two values on your `.env.local`, EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY
 
-
-### 4. Create a Google Cloud Project (for Google Sign-In)
+### 5. Create a Google Cloud Project (for Google Sign-In)
 
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
 
 2. Create a new project or select an existing one
-google-claude-project
+
+![Google Cloud Project](assets/images/google-claude-project.png)
 
 3. Add credentials
    - Go to **APIs & Services** >  **Credentials** > **Create credentials**
@@ -130,17 +128,17 @@ google-claude-project
      ```
    - Copy the **Client ID**, Pasted the id in the .env.local file, EXPO_PUBLIC_ANDROID_CLIENT_ID
 
-   **Web Client (required for Supabase):**
+   **Web Client (required for the auth flow):**
    - Application type: **Web application**
    - Name: "My App Web" or the defualt one
-   - On the Authorised JavaScript origins, add: `http://localhost:8081`
+   - On the **Authorised JavaScript origins**, add: `http://localhost:8081`
    - Leave the Authorised redirect URIs empry for now (we will come back to in a next step)
-   <!-- - Authorized redirect URIs: `https://YOUR-PROJECT-REF.supabase.co/auth/v1/callback` -->
-   - Copy the **Client ID** and **Client Secret**
-   
+   - Copy the **Client ID** and added to the .env.local file, EXPO_PUBLIC_WEB_CLIENT_ID
 
 
-4. Supabase Auth setup
+💡 Helpful [video](http://youtube.com/watch?v=BDeKTPQzvR4) about all this Google setup
+
+### 4. Supabase Auth setup
 
 1. Go to your project
 2. On the left bar, go to **Authentication** > **Sign In/Providers"** 
@@ -148,13 +146,13 @@ google-claude-project
 4.1 On Apple, add the client id: `com.yourcompany.appname`
 4.2 On Google, add the client id: with the following values: 
 `EXPO_PUBLIC_ANDROID_CLIENT_ID, + EXPO_PUBLIC_IOS_CLIENT_ID, + EXPO_PUBLIC_WEB_CLIENT_ID` (don't forget the commas)
-5.Copy the Callback URL (for OAuth) from Google or Apple
-6.Go back to your Web Client credential in Google claude and paste the adress in the Authorised redirect URIs field
+5. Copy the Callback URL (for OAuth) from Google or Apple (looks like `https://dlugycn.supabase.co/auth/v1/callback`)
+6. Go back to your Web Client credential in Google claude and paste the adress in the **Authorised redirect URIs** field
    
+### 5. Update `app.json`  with your iOS Web Client ID:
+Find the plugging section and replace with your iOS Web Client ID (reversed format):
 
-5. Update `app.json` with your iOS Web Client ID:
-   Find this section and replace with your iOS Web Client ID (reversed format):
-   ```json
+```json
    {
      "plugins": [
        [
@@ -165,59 +163,32 @@ google-claude-project
        ]
      ]
    }
-   ```
-   The iOS Web Client ID looks like: `1234567890-abc123def456.apps.googleusercontent.com`
-   You need to reverse it to: `com.googleusercontent.apps.1234567890-abc123def456`
+```
 
-#### C. Configure Supabase Authentication
-
-1. In your Supabase dashboard, go to **Authentication** > **Providers**
-2. Enable **Google**:
-   - Enable the provider
-   - Add your **Web Client ID** and **Client Secret** from Google Cloud
-   - Save
-
-3. Enable **Apple** (optional, for iOS only):
-   - See the [Apple Sign-In Setup](#apple-sign-in-setup-optional) section below
-
-### 4. Configure Environment Variables
-
-1. Copy the example environment file:
-   ```bash
-   cp .env.example .env
-   ```
-
-2. Open `.env` and fill in your values:
-   ```bash
-   # Google OAuth Client IDs (from Google Cloud Console)
-   EXPO_PUBLIC_ANDROID_CLIENT_ID=your-android-client-id.apps.googleusercontent.com
-   EXPO_PUBLIC_IOS_CLIENT_ID=your-ios-client-id.apps.googleusercontent.com
-   EXPO_PUBLIC_WEB_CLIENT_ID=your-web-client-id.apps.googleusercontent.com
-
-   # Supabase (from Supabase Dashboard > Settings > API)
-   EXPO_PUBLIC_SUPABASE_URL=https://xxxxx.supabase.co
-   EXPO_PUBLIC_SUPABASE_ANON_KEY=eyJxxxxxxx...
-   ```
-
-### 5. Install Dependencies
+### 6. Install Dependencies and build
 
 ```bash
 npm install
 ```
 
-### 6. Run the App
+```bash
+npx expo prebuild
+```
+*This should create the ios and android folder
+
+### 7 Fully getting the apple login to work with eas
+
+1. eas build -p ios
+2. This should have created the credentianls in your [apple connect](https://developer.apple.com/account/resources/identifier)
+3. After creating the build succesfully, go to your project on [expo](https://expo.dev/), on the left bar click on Credential 
+
+### 7. Run the App (with your emulator running)
 
 ```bash
 npx expo start
 ```
 
-In the output, you'll find options to open the app in:
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-
-**Note:** Google and Apple Sign-In require a [development build](https://docs.expo.dev/develop/development-builds/create-a-build/), they won't work in Expo Go.
 
 ## More about expo
 
@@ -228,60 +199,8 @@ To learn more about developing your project with Expo, look at the following res
 
 https://skills.sh/trending
 
-## Authentication (Google + Apple Sign In)
-
-This template uses Supabase Auth with native OAuth providers. Users authenticate with Google or Apple, and Supabase handles session management.
-
-### Prerequisites
-
-1. Create a [Supabase](https://supabase.com/) project
-2. Create a [Google Cloud](https://console.cloud.google.com/) project
-3. Have an [Apple Developer](https://developer.apple.com/) account (for Apple Sign In)
-
-### Environment Variables
-
-Create a `.env` file in the root directory with:
-
-```bash
-EXPO_PUBLIC_SUPABASE_URL=your_supabase_project_url
-EXPO_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-EXPO_PUBLIC_WEB_CLIENT_ID=your_google_web_client_id
-EXPO_PUBLIC_IOS_CLIENT_ID=your_google_ios_client_id
-```
-
-### Google Sign In
-
-1. **Google Cloud Console**
-   - Go to [Google Cloud Console](https://console.cloud.google.com/)
-   - Create OAuth 2.0 credentials (OAuth client ID)
-   - Create both **Web** and **iOS** client types
-   - For iOS, add your bundle identifier: `com.rolandobarbella.exposass`
-   - Copy the Web Client ID to `EXPO_PUBLIC_WEB_CLIENT_ID`
-   - Copy the iOS Client ID to `EXPO_PUBLIC_IOS_CLIENT_ID`
-
-2. **Supabase Dashboard**
-   - Go to Authentication > Providers > Google
-   - Enable Google provider
-   - Add your Google Client ID and Client Secret (from Web credentials)
-
-3. **app.json** (already configured)
-   - The `@react-native-google-signin/google-signin` plugin is configured with the iOS URL scheme
-
 ### Apple Sign In
 
-1. **Apple Developer Portal**
-   - Enable "Sign In with Apple" capability for your App ID
-   - Create a Services ID for web authentication (used by Supabase)
-   - Configure the return URL: `https://<your-project>.supabase.co/auth/v1/callback`
-
-2. **Supabase Dashboard**
-   - Go to Authentication > Providers > Apple
-   - Enable Apple provider
-   - Add your Services ID and generate a secret key
-
-3. **app.json** (already configured)
-   - `"usesAppleSignIn": true` is set in the iOS config
-   - `"expo-apple-authentication"` plugin is included
 
 ### Building for Testing
 
@@ -294,32 +213,6 @@ eas build -p ios --profile development
 # Build for Android (Google only)
 eas build -p android --profile development
 ```
-
-### How It Works
-
-1. User taps Google/Apple sign-in button
-2. Native OAuth dialog appears
-3. User authenticates with provider
-4. App receives identity token (JWT)
-5. Token is sent to Supabase for validation
-6. Supabase creates/retrieves user session
-7. User profile is synced to `users` table
-
-## Todo (full SaaS template)
-
-- [x] Authentication (Google + Apple sign in)
-- [ ] Protected routes and auth guards
-- [ ] User profiles and account management
-- [ ] Subscription billing (Stripe)
-- [ ] Feature flags and plan gating
-- [ ] Supabase database schema + policies
-- [ ] File storage and uploads
-- [ ] In-app notifications and email
-- [ ] Analytics and error tracking
-- [ ] Admin dashboard
-- [ ] CI/CD and environment setup
-- [ ] Security review and audit checklist
-
 
 ## Troubleshooting
 1. Clear caches — npx expo start --clear
