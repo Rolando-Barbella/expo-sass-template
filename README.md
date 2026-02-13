@@ -181,14 +181,14 @@ npx expo prebuild
 1. eas build -p ios
 2. This should have created the credentianls in your [apple connect](https://developer.apple.com/account/resources/identifier)
 3. After creating the build succesfully, go to your project on [expo](https://expo.dev/), on the left bar click on Credential 
+💡 Helpful [video](https://www.youtube.com/watch?v=tqxTijhYhp8) about all this Apple setup
+
 
 ### 7. Run the App (with your emulator running)
 
 ```bash
 npx expo start
 ```
-
-
 
 ## More about expo
 
