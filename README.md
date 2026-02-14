@@ -141,7 +141,7 @@ Rename the .env.example file for .env.local or .env
    - Application type: **Web application**
    - Name: "My App Web" or the defualt one
    - On the **Authorised JavaScript origins**, add: `http://localhost:8081`
-   - Leave the Authorised redirect URIs empry for now (we will come back to in a next step)
+   - Leave the Authorised redirect URIs empty for now (we will come back to in a next step)
    - Copy the **Client ID** and added to the .env.local file, EXPO_PUBLIC_WEB_CLIENT_ID
 
 
@@ -149,11 +149,11 @@ Rename the .env.example file for .env.local or .env
 
 ### 4. Supabase Auth setup
 
-1. Go to your project
-2. On the left bar, go to **Authentication** > **Sign In/Providers"** 
+1. Go to your project again
+2. On the left bar, go to **Authentication** > under Configurations, select **Sign In/Providers"** 
 3. Enable Apple and Google
-4.1 On Apple, add the client id: `com.yourcompany.appname`
-4.2 On Google, add the client id: with the following values: 
+4. On Apple, add the client id: `com.yourcompany.appname`
+5. On Google, add the client id: with the following values: 
 `EXPO_PUBLIC_ANDROID_CLIENT_ID, + EXPO_PUBLIC_IOS_CLIENT_ID, + EXPO_PUBLIC_WEB_CLIENT_ID` (don't forget the commas)
 5. Copy the Callback URL (for OAuth) from Google or Apple (looks like `https://dlugycn.supabase.co/auth/v1/callback`)
 6. Go back to your Web Client credential in Google claude and paste the adress in the **Authorised redirect URIs** field
@@ -190,6 +190,7 @@ npx expo prebuild
 1. eas build -p ios
 2. This should have created the credentianls in your [apple connect](https://developer.apple.com/account/resources/identifier)
 3. After creating the build succesfully, go to your project on [expo](https://expo.dev/), on the left bar click on Credential 
+
 💡 Helpful [video](https://www.youtube.com/watch?v=tqxTijhYhp8) about all this Apple setup
 
 
