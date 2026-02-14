@@ -64,8 +64,8 @@ Open `app.json` and update the following fields:
 ```json
 {
   "expo": {
-    "name": "expo-sass",              // Your app display name
-    "slug": "Expo SaaS",              // URL-friendly identifier
+    "name": "Expo Sass",              // This is how it will show in your phone icon, 2 words recommend it
+    "slug": "expo-sass",              // Follow this format
     "scheme": "exposass",             // Deep linking scheme (lowercase, no spaces)
     "ios": {
       "bundleIdentifier": "com.rolandobarbella.exposass"  // Your unique iOS bundle ID
