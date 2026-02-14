@@ -96,9 +96,13 @@ Rename the .env.example file for .env.local or .env
 1. Go to [Supabase](https://supabase.com/) and create a free account
 2. Click "Start New project"
 3. Choose your organization and set a database password
-4. On the left bar, go to **Project Settings** > **Data API** > ***Project URL** and copy: URL (e.g., `https://jskokp.supabase.co`)
-5. On the left bar go to **Project Settings** > **API keys** > ***Legacy anon, service_role API keys tab** and copy: Anon/Public Key (starts with `eyJ...`)
-6. Paste this two values on your `.env.local`, EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY
+4. Go to your [dashboard](https://supabase.com/dashboard/), choose your project
+5. On the left bar, go to **Project Settings** 
+![Left Bar Supabase](assets/images/left-bar-supbase.png)
+6. Go to the second left bar, under **Configuration** go to > **Data API** > ***API URL** and copy: URL (e.g., `https://jskokp.supabase.co`)
+6. On the left bar again, go to **Project Settings** > **API keys** > ***Legacy anon, service_role API keys tab** and copy: anon public Key (starts with `eyJ...`)
+![Supabase API Key](assets/images/supbase-api-key.png)
+7. Paste these two values on your `.env.local` or `.env`, EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY
 
 ### 5. Create a Google Cloud Project (for Google Sign-In)
 
