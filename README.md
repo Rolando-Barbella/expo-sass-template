@@ -36,6 +36,9 @@ Before you start, make sure you have:
 
 ```bash
 git clone https://github.com/yourusername/expo-sass-template.git my-app
+```
+
+```bash
 cd my-app
 ```
 
