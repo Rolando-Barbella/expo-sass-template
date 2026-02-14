@@ -1,4 +1,4 @@
-# Expo SaaS Template 💵
+# Expo Saas Template 💵
 
 A React Native opinionated template built with [Expo](https://expo.dev), [Supabase](https://supabase.com/) authentication, [Stripe](https://stripe.com/) payments, [RevenueCat](https://www.revenuecat.com/) subscriptions, and native Google/Apple Sign-In.
 
@@ -110,23 +110,23 @@ Rename the .env.example file for .env.local or .env
    - Configure the consent screen if you haven't already, select the **External** checkbox, then add the rest of the app information 
    - Then  **Create Credentials** > **OAuth client ID**
 
-    **iOS Client:**
-   - Application type: **iOS**
-   - Name: "My App iOS" or leave the default one
-   - Bundle ID: `com.yourcompany.yourapp` (must match `app.json`)
-   - Copy the **Client ID**, pasted the id in the .env.local file, EXPO_PUBLIC_IOS_CLIENT_ID
+   **iOS Client:**
+      - Application type: **iOS**
+      - Name: "My App iOS" or leave the default one
+      - Bundle ID: `com.yourcompany.yourapp` (must match `app.json`)
+      - Copy the **Client ID**, pasted the id in the .env.local file, EXPO_PUBLIC_IOS_CLIENT_ID
 
-     **Android Client:**
-   - Application type: **Android**
-   - Name: "My App Android"
-   - Package name: `com.yourcompany.yourapp` (must match `app.json`)
-   - SHA-1 certificate fingerprint: Get this by running:
-     ```bash
-     # For development
-     keytool -keystore ~/.android/debug.keystore -list -v
-     # Password is usually 'android'
-     ```
-   - Copy the **Client ID**, Pasted the id in the .env.local file, EXPO_PUBLIC_ANDROID_CLIENT_ID
+   **Android Client:**
+      - Application type: **Android**
+      - Name: "My App Android"
+      - Package name: `com.yourcompany.yourapp` (must match `app.json`)
+      - SHA-1 certificate fingerprint: Get this by running:
+      ```bash
+      # For development
+      keytool -keystore ~/.android/debug.keystore -list -v
+      # Password is usually 'android'
+      ```
+      - Copy the **Client ID**, Pasted the id in the .env.local file, EXPO_PUBLIC_ANDROID_CLIENT_ID
 
    **Web Client (required for the auth flow):**
    - Application type: **Web application**
