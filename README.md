@@ -114,8 +114,10 @@ Rename the .env.example file for .env.local or .env
 
 3. Add credentials
    - Go to **APIs & Services** >  **Credentials** > **Create credentials**
-   - Configure the consent screen if you haven't already, select the **External** checkbox, then add the rest of the app information 
-   - Then  **Create Credentials** > **OAuth client ID**
+   - Google will ask you to configure the consent screen 
+   - In the Audience part, select the **External** checkbox, then add the rest of the app information 
+   ![Consent screen](assets/images/consent-screen.png)
+   - On the left menu, go again to **APIs & Services** >  **Create Credentials** > **OAuth client ID**
 
    **iOS Client:**
       - Application type: **iOS**
