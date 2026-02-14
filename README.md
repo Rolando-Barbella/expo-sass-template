@@ -14,6 +14,7 @@ A React Native opinionated template built with [Expo](https://expo.dev), [Supaba
 - ⏳ Stripe payments 
 - ⏳ Push Notifications with firebase and expo
 - ⏳ Emails with [resend](https://resend.com/emails)
+- ⏳ Husky + Eslint complete setyp
 
 ## Prerequisites
 
@@ -104,7 +105,10 @@ Rename the .env.example file for .env.local or .env
 ![Supabase API Key](assets/images/supbase-api-key.png)
 7. Paste these two values on your `.env.local` or `.env`, EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY
 
-### 5. Create a Google Cloud Project (for Google Sign-In)
+## LOG IN
+*IMPORTANT: If you are planning to lunch your app for iOS, you must have apple sign in, otherwise, it would be rejected, don't miss this step
+
+### Create a Google Cloud Project (for Google Sign-In)
 
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
 
@@ -158,8 +162,8 @@ Rename the .env.example file for .env.local or .env
 5. Copy the Callback URL (for OAuth) from Google or Apple (looks like `https://dlugycn.supabase.co/auth/v1/callback`)
 6. Go back to your Web Client credential in Google claude and paste the adress in the **Authorised redirect URIs** field
    
-### 5. Update `app.json`  with your iOS Web Client ID:
-Find the plugging section and replace with your iOS Web Client ID (reversed format):
+### 5. Update `app.json` with your iOS Web Client ID:
+Find the plugging section and replace with your iOS Client ID, reversed format (instead of 123jsjs.apps.googleusercontent.com, it woule be: com.googleusercontent.apps.123jsjs)
 
 ```json
    {
@@ -174,7 +178,14 @@ Find the plugging section and replace with your iOS Web Client ID (reversed form
    }
 ```
 
-### 6. Install Dependencies and build
+### Apple login and eas
+
+1. Run `eas build -p ios` (if you have never use eas with expo, check this [video](https://www.youtube.com/watch?v=uQCE9zl3dXU) first)
+2. This should have created the indentifiers in your [apple connect](https://developer.apple.com/account/resources/identifier/list)
+3. After creating the build succesfully, go to your project on [expo](https://expo.dev/), on the left bar click on Credential
+💡 Helpful [video](https://www.youtube.com/watch?v=tqxTijhYhp8) about all this Apple setup
+
+### Install Dependencies, build and run the app
 
 ```bash
 npm install
@@ -185,22 +196,11 @@ npx expo prebuild
 ```
 *This should create the ios and android folder
 
-### 7 Fully getting the apple login to work with eas
-
-1. eas build -p ios
-2. This should have created the credentianls in your [apple connect](https://developer.apple.com/account/resources/identifier)
-3. After creating the build succesfully, go to your project on [expo](https://expo.dev/), on the left bar click on Credential 
-
-💡 Helpful [video](https://www.youtube.com/watch?v=tqxTijhYhp8) about all this Apple setup
-
-
-### 7. Run the App (with your emulator running)
-
 ```bash
-npx expo start
+npx expo run:ios or npx expo run:android
 ```
 
-## More about expo
+## More about Expo
 
 To learn more about developing your project with Expo, look at the following resources:
 - [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
@@ -209,20 +209,9 @@ To learn more about developing your project with Expo, look at the following res
 
 https://skills.sh/trending
 
-### Apple Sign In
-
-
 ### Building for Testing
 
 Apple Sign In requires a **development build** (not Expo Go):
-
-```bash
-# Build for iOS
-eas build -p ios --profile development
-
-# Build for Android (Google only)
-eas build -p android --profile development
-```
 
 ## Troubleshooting
 1. Clear caches — npx expo start --clear
