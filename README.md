@@ -35,7 +35,7 @@ Before you start, make sure you have:
 ### 1. Clone the Template
 
 ```bash
-git clone https://github.com/yourusername/expo-sass-template.git my-app
+git clone https://github.com/Rolando-Barbella/expo-sass-template my-app
 ```
 
 ```bash
