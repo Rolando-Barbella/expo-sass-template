@@ -163,7 +163,7 @@ Rename the .env.example file for .env.local or .env
 6. Go back to your Web Client credential in Google claude and paste the adress in the **Authorised redirect URIs** field
    
 ### 5. Update `app.json` with your iOS Web Client ID:
-Find the plugging section and replace with your iOS Client ID, reversed format (instead of 123jsjs.apps.googleusercontent.com, it woule be: com.googleusercontent.apps.123jsjs)
+Find the plugging section and replace with your EXPO_PUBLIC_IOS_CLIENT_ID with reversed format (instead of 123jsjs.apps.googleusercontent.com, it woule be: com.googleusercontent.apps.123jsjs)
 
 ```json
    {
@@ -183,6 +183,7 @@ Find the plugging section and replace with your iOS Client ID, reversed format (
 1. Run `eas build -p ios` (if you have never use eas with expo, check this [video](https://www.youtube.com/watch?v=uQCE9zl3dXU) first)
 2. This should have created the indentifiers in your [apple connect](https://developer.apple.com/account/resources/identifier/list)
 3. After creating the build succesfully, go to your project on [expo](https://expo.dev/), on the left bar click on Credential
+
 💡 Helpful [video](https://www.youtube.com/watch?v=tqxTijhYhp8) about all this Apple setup
 
 ### Install Dependencies, build and run the app
