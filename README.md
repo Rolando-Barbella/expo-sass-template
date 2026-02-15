@@ -201,23 +201,22 @@ npx expo prebuild
 ```bash
 npx expo run:ios or npx expo run:android
 ```
-
-## More about Expo
-
-To learn more about developing your project with Expo, look at the following resources:
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-
 ## Skills
 There is some skills files already, feel free to use more
 
 https://github.com/expo/skills
 https://skills.sh/trending
 
-
 ## Troubleshooting
 1. Clear caches — npx expo start --clear
 2. Clean prebuild — npx expo prebuild --clean
 3. Review console warnings — Legacy modules log compatibility warnings
+
+## More about Expo
+
+To learn more about developing your project with Expo, look at the following resources:
+- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
+
 
 ## Expo community
 
