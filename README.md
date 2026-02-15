@@ -208,7 +208,9 @@ To learn more about developing your project with Expo, look at the following res
 - [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
 
 ## Skills
+There is some skills files already, feel free to use more
 
+https://github.com/expo/skills
 https://skills.sh/trending
 
 
