@@ -181,8 +181,9 @@ Find the plugging section and replace with your EXPO_PUBLIC_IOS_CLIENT_ID with r
 ### Apple login and eas
 
 1. Run `eas build -p ios` (if you have never use eas with expo, check this [video](https://www.youtube.com/watch?v=uQCE9zl3dXU) first)
-2. This should have created the indentifiers in your [apple connect](https://developer.apple.com/account/resources/identifier/list)
-3. After creating the build succesfully, go to your project on [expo](https://expo.dev/), on the left bar click on Credential
+2. This should have created the indentifiers in your [apple connect](https://developer.apple.com/account/resources/identifier/list) account, with the ability to sign in
+3. Go to your project on [expo](https://expo.dev/), on the left bar click on Credential and check that your app credentials have been saved
+
 
 💡 Helpful [video](https://www.youtube.com/watch?v=tqxTijhYhp8) about all this Apple setup
 
@@ -210,9 +211,6 @@ To learn more about developing your project with Expo, look at the following res
 
 https://skills.sh/trending
 
-### Building for Testing
-
-Apple Sign In requires a **development build** (not Expo Go):
 
 ## Troubleshooting
 1. Clear caches — npx expo start --clear
