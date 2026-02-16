@@ -12,7 +12,7 @@ A React Native opinionated template built with [Expo](https://expo.dev), [Supaba
 - ⏳ RevenueCat subscriptions (coming next)
 - ⏳ Apple payment
 - ⏳ Stripe payments 
-- ⏳ Push Notifications with firebase and expo
+- ⏳ Push Notifications with Firebase and Expo
 - ⏳ Emails with [resend](https://resend.com/emails)
 - ⏳ Husky + Eslint complete setyp
 
@@ -202,9 +202,10 @@ npx expo prebuild
 npx expo run:ios or npx expo run:android
 ```
 ## Skills
-There is some skills files already, feel free to use more
+There are some skills files already, feel free to use more
 
 https://github.com/expo/skills
+
 https://skills.sh/trending
 
 ## Troubleshooting
