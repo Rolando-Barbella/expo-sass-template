@@ -25,6 +25,21 @@ export default function RootLayout() {
             sheetCornerRadius: 20,
           }}
         />
+        <Stack.Screen
+          name="subscription-sheet"
+          options={{
+            presentation: 'formSheet',
+            animation: 'slide_from_bottom',
+            gestureEnabled: true,
+            headerShown: false,
+            contentStyle: styles.subscriptionSheetContent,
+            sheetGrabberVisible: true,
+            sheetAllowedDetents: [UI.subscriptionSheet.heightRatio],
+            sheetInitialDetentIndex: 0,
+            sheetExpandsWhenScrolledToEdge: true,
+            sheetCornerRadius: 20,
+          }}
+        />
       </Stack>
       <StatusBar style="auto" />
     </GestureHandlerRootView>
@@ -39,6 +54,10 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light.background,
   },
   loginSheetContent: {
+    backgroundColor: Colors.light.background,
+    flex: 1,
+  },
+  subscriptionSheetContent: {
     backgroundColor: Colors.light.background,
     flex: 1,
   },

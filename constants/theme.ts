@@ -48,6 +48,9 @@ export const UI = {
   loginSheet: {
     heightRatio: 0.40,
   },
+  subscriptionSheet: {
+    heightRatio: 0.62,
+  },
 };
 
 export const Fonts = Platform.select({
