@@ -1,7 +1,6 @@
 import { Redirect, Tabs, useSegments } from 'expo-router';
-import React from 'react';
-import { useEffect, useState} from 'react';
-import { StyleSheet, Platform, ActivityIndicator} from 'react-native';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, Platform, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { HapticTab } from '@/components/HapticTab';
 import { Colors } from '@/constants/theme';
@@ -9,7 +8,6 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import type { Session } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-
 
 export default function AppTabsLayout() {
   const colorScheme = useColorScheme();

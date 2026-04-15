@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet } from 'react-native';
+import { ActivityIndicator, ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import type { Session } from '@supabase/supabase-js';
 import { SymbolView } from 'expo-symbols';
@@ -28,10 +27,8 @@ function getDisplayName(session: Session | null) {
 }
 
 export default function HomeScreen() {
-  const router = useRouter();
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isSigningOut, setIsSigningOut] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -55,13 +52,6 @@ export default function HomeScreen() {
   }, []);
 
   const displayName = getDisplayName(session);
-
-  const onSignOut = async () => {
-    setIsSigningOut(true);
-    await supabase.auth.signOut();
-    setIsSigningOut(false);
-    router.replace('/');
-  };
 
   if (isLoading) {
     return (
