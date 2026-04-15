@@ -122,7 +122,13 @@ export default function HomeScreen() {
                 </ThemedText>
               </Pressable>
 
-              <View style={styles.card}>
+              <Pressable
+                onPress={() => router.push('/subscription-sheet' as never)}
+                style={({ pressed }) => [
+                  styles.card,
+                  pressed && styles.cardPressed,
+                ]}
+              >
                 <View style={styles.signInTitleRow}>
                   <ThemedText type="subtitle" style={styles.cardTitle}>
                     RevenueCat subscriptions
@@ -132,9 +138,9 @@ export default function HomeScreen() {
                   </View>  
                 </View>
                 <ThemedText style={styles.cardText}>
-                  Setup RevenueCat subscriptions and manage payments.
+                  Tap to open a sample subscription sheet and start the RevenueCat flow.
                 </ThemedText>  
-              </View>
+              </Pressable>
 
               <View style={styles.card}>
                 <View style={styles.signInTitleRow}>
