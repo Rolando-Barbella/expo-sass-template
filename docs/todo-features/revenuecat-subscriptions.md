@@ -1,114 +1,122 @@
 # RevenueCat subscriptions setup guide
 
-This branch includes a starter subscription UI:
+This app now includes a real RevenueCat integration instead of mock buttons:
+
+- `providers/RevenueCatProvider.tsx`
+- `lib/revenuecat.ts`
 - `components/SubscriptionBottomSheet.tsx`
-- `app/subscription-sheet.tsx`
-- route wiring in `app/_layout.tsx`
-- entry point from `app/index.tsx`
+- `app/_layout.tsx`
+- `app/(tabs)/profile.tsx`
 
-The current UI is intentionally a template placeholder. The `Subscribe` and `Restore purchases` actions are mock handlers where RevenueCat calls should be connected.
-
-## 1. Install dependencies
-
-Run:
+## 1. Install the current Expo-compatible packages
 
 ```bash
-npx expo install @revenuecat/purchases
+npx expo install react-native-purchases react-native-purchases-ui
 ```
 
-If native folders already exist, run a new prebuild after install:
+If your repo already contains native folders, regenerate them after install:
 
 ```bash
 npx expo prebuild
 ```
 
-## 2. RevenueCat dashboard setup
+Use a native development build for purchase testing:
 
-1. Create a RevenueCat project.
-2. Add apps for iOS and Android with matching bundle/package ids from `app.json`.
-3. Create an entitlement (example: `pro`).
-4. Create products in App Store Connect and Google Play Console.
-5. Import/link those store products in RevenueCat.
-6. Create an Offering (example: `default`) and attach packages (`$rc_monthly`, `$rc_annual`, etc.).
-7. Copy each platform public SDK key from RevenueCat.
+```bash
+npx expo run:ios
+```
+
+or:
+
+```bash
+npx expo run:android
+```
+
+## 2. Configure RevenueCat dashboard objects
+
+Create these objects in RevenueCat so the app can resolve the expected offering and products:
+
+1. Entitlement: `Sass Template Pro`
+2. Products:
+   - `lifetime`
+   - `yearly`
+   - `monthly`
+3. Offering: `default`
+4. Packages attached to `default`:
+   - `lifetime` or `$rc_lifetime`
+   - `yearly` or `$rc_annual`
+   - `monthly` or `$rc_monthly`
+
+The product identifiers above are inferred from the code in `lib/revenuecat.ts` and the subscription sheet UI.
 
 ## 3. Environment variables
 
-Add these keys to `.env.local` (or `.env`):
+`.env.local` should contain:
 
 ```env
-EXPO_PUBLIC_REVENUECAT_IOS_API_KEY=
-EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY=
-EXPO_PUBLIC_REVENUECAT_ENTITLEMENT_ID=pro
+EXPO_PUBLIC_REVENUECAT_APPLE_API_KEY=test_sQdXRpUekqXHcIKYEUdJhFKzuaI
+EXPO_PUBLIC_REVENUECAT_GOOGLE_API_KEY=
+EXPO_PUBLIC_REVENUECAT_ENTITLEMENT_ID=Sass Template Pro
+EXPO_PUBLIC_REVENUECAT_OFFERING_ID=default
 ```
 
-Use non-secret public SDK keys only. Do not place private RevenueCat API keys in the app.
+Use RevenueCat public SDK keys only. Do not ship private REST API keys in the client app.
 
-## 4. Initialize RevenueCat once on app startup
+## 4. What the app now does
 
-Create `lib/revenuecat.ts` and configure the SDK once:
+`RevenueCatProvider` configures the SDK once at startup, binds RevenueCat identity to the Supabase user when logged in, and exposes:
+
+- `Purchases.getOfferings()`
+- `Purchases.getCustomerInfo()`
+- `Purchases.purchasePackage()`
+- `Purchases.restorePurchases()`
+- `RevenueCatUI.presentPaywallIfNeeded()`
+- `RevenueCatUI.presentCustomerCenter()`
+
+It also subscribes to `addCustomerInfoUpdateListener` so entitlement state updates immediately after purchases and restores.
+
+## 5. Entitlement checking
+
+The premium gate is based on:
 
 ```ts
-import Purchases from '@revenuecat/purchases';
-import { Platform } from 'react-native';
-
-export async function configureRevenueCat(userId?: string) {
-  const apiKey =
-    Platform.OS === 'ios'
-      ? process.env.EXPO_PUBLIC_REVENUECAT_IOS_API_KEY
-      : process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY;
-
-  if (!apiKey) throw new Error('Missing RevenueCat API key');
-  await Purchases.configure({ apiKey, appUserID: userId });
-}
+customerInfo.entitlements.active['Sass Template Pro']
 ```
 
-Call it from root app startup (`app/_layout.tsx`) after session load. Use your Supabase user id as `appUserID` so purchases map to the same account.
+That entitlement powers:
 
-## 5. Wire the sheet to real purchases
+- the active/free state in `components/SubscriptionBottomSheet.tsx`
+- the subscription summary in `app/(tabs)/profile.tsx`
 
-Replace template placeholders in `components/SubscriptionBottomSheet.tsx`:
+## 6. Manual purchase flow
 
-- Fetch offerings: `Purchases.getOfferings()`
-- Choose package from current offering
-- Purchase package: `Purchases.purchasePackage(selectedPackage)`
-- Restore: `Purchases.restorePurchases()`
-- Validate entitlement: `customerInfo.entitlements.active[ENTITLEMENT_ID]`
+The manual flow in `SubscriptionBottomSheet.tsx` now:
 
-Suggested behavior:
-- Disable buttons during purchase/restore.
-- Show user-friendly cancellation vs error messages.
-- After successful purchase, close sheet and unlock premium UI.
+1. fetches the current offering
+2. matches `lifetime`, `yearly`, and `monthly` packages
+3. purchases the selected package with `purchasePackage`
+4. restores transactions with `restorePurchases`
+5. handles user cancellation separately from store or configuration errors
+6. refreshes customer info and offering state
 
-## 6. Gate premium features
+## 7. RevenueCat paywalls and Customer Center
 
-Add a central subscription state (context/store/query cache) and check active entitlement before rendering premium screens/actions.
+This repo now uses the modern React Native UI methods:
 
-Recommended:
-- On auth login: configure RevenueCat with Supabase user id.
-- On app foreground: refresh `customerInfo`.
-- On logout: call `Purchases.logOut()` and clear local subscription state.
+- `RevenueCatUI.presentPaywallIfNeeded(...)`
+- `RevenueCatUI.presentCustomerCenter(...)`
 
-## 7. Backend sync (recommended)
+Use the paywall button in the subscription sheet for RevenueCat-hosted purchase UI. Use Customer Center from the sheet or profile screen for restores, subscription management, refund flows, and support actions configured in RevenueCat.
 
-Use RevenueCat webhooks to keep Supabase in sync:
+## 8. Best practices for this app
 
-1. Create webhook endpoint (Supabase Edge Function or API route).
-2. Verify RevenueCat webhook authorization.
-3. Store subscription status in a `subscriptions` table (user id, entitlement id, expires_at, is_active).
-4. Use server-side status for API authorization where needed.
+- Configure RevenueCat once at app startup.
+- Use the Supabase user id as the RevenueCat `appUserID`.
+- Gate premium UI from the entitlement, not from local booleans alone.
+- Keep restore available in the purchase UI.
+- Test only in a native build, not Expo Go or the web build.
+- Add your Android public SDK key before expecting Android purchases to work.
 
-## 8. Testing checklist
+## 9. Recommended server-side follow-up
 
-- iOS: run with Sandbox tester in TestFlight/dev build.
-- Android: run with license test account in internal testing track.
-- Test purchase success, restore, cancellation, billing issue, and expiry.
-- Confirm account switching works (logout/login with different users).
-- Confirm entitlements remain correct after reinstall.
-
-## Important notes
-
-- Expo Go is not sufficient for this flow; use a dev build (`expo run:*` or EAS build).
-- Product identifiers must match exactly across store + RevenueCat.
-- Keep paywall copy transparent (trial length, billing cadence, renewal terms).
-- Apple requires "Restore Purchases" access in subscription flows.
+If you need backend enforcement or analytics sync, add RevenueCat webhooks to Supabase and persist subscription state server-side. The client implementation here is enough for app UI gating and purchases, but webhooks are the right next step for API authorization.
