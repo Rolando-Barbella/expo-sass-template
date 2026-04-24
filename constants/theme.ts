@@ -49,7 +49,7 @@ export const UI = {
     heightRatio: 0.40,
   },
   subscriptionSheet: {
-    heightRatio: 0.62,
+    heightRatio: 0.82,
   },
 };
 
