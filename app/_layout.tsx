@@ -4,43 +4,46 @@ import { StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import { Colors, UI } from '@/constants/theme';
+import { RevenueCatProvider } from '@/providers/RevenueCatProvider';
 
 export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="login-sheet"
-          options={{
-            presentation: 'formSheet',
-            animation: 'slide_from_bottom',
-            gestureEnabled: true,
-            headerShown: false,
-            contentStyle: styles.loginSheetContent,
-            sheetGrabberVisible: true,
-            sheetAllowedDetents: [UI.loginSheet.heightRatio],
-            sheetInitialDetentIndex: 0,
-            sheetExpandsWhenScrolledToEdge: true,
-            sheetCornerRadius: 20,
-          }}
-        />
-        <Stack.Screen
-          name="subscription-sheet"
-          options={{
-            presentation: 'formSheet',
-            animation: 'slide_from_bottom',
-            gestureEnabled: true,
-            headerShown: false,
-            contentStyle: styles.subscriptionSheetContent,
-            sheetGrabberVisible: true,
-            sheetAllowedDetents: [UI.subscriptionSheet.heightRatio],
-            sheetInitialDetentIndex: 0,
-            sheetExpandsWhenScrolledToEdge: true,
-            sheetCornerRadius: 20,
-          }}
-        />
-      </Stack>
+      <RevenueCatProvider>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="login-sheet"
+            options={{
+              presentation: 'formSheet',
+              animation: 'slide_from_bottom',
+              gestureEnabled: true,
+              headerShown: false,
+              contentStyle: styles.loginSheetContent,
+              sheetGrabberVisible: true,
+              sheetAllowedDetents: [UI.loginSheet.heightRatio],
+              sheetInitialDetentIndex: 0,
+              sheetExpandsWhenScrolledToEdge: true,
+              sheetCornerRadius: 20,
+            }}
+          />
+          <Stack.Screen
+            name="subscription-sheet"
+            options={{
+              presentation: 'formSheet',
+              animation: 'slide_from_bottom',
+              gestureEnabled: true,
+              headerShown: false,
+              contentStyle: styles.subscriptionSheetContent,
+              sheetGrabberVisible: true,
+              sheetAllowedDetents: [UI.subscriptionSheet.heightRatio],
+              sheetInitialDetentIndex: 0,
+              sheetExpandsWhenScrolledToEdge: true,
+              sheetCornerRadius: 20,
+            }}
+          />
+        </Stack>
+      </RevenueCatProvider>
       <StatusBar style="auto" />
     </GestureHandlerRootView>
   );

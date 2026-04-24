@@ -8,6 +8,7 @@ import { ThemedView } from '@/components/ThemedView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { Colors } from '@/constants/theme';
 import { supabase } from '@/lib/supabase';
+import { useRevenueCat } from '@/providers/RevenueCatProvider';
 
 function getDisplayName(session: Session | null) {
   const metadata = session?.user.user_metadata;
@@ -47,8 +48,10 @@ function getDateLabel(value: string | number | null | undefined) {
 
 export default function ProfileScreen() {
   const router = useRouter();
+  const { entitlement, hasProAccess, isConfigured, presentCustomerCenter } = useRevenueCat();
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isOpeningCustomerCenter, setIsOpeningCustomerCenter] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
 
   useEffect(() => {
@@ -81,6 +84,7 @@ export default function ProfileScreen() {
       : typeof session?.user.user_metadata?.picture === 'string'
         ? session.user.user_metadata.picture
         : '';
+  const entitlementExpirationLabel = getDateLabel(entitlement?.expirationDate ?? null);
 
   const onSignOut = async () => {
     setIsSigningOut(true);
@@ -98,6 +102,20 @@ export default function ProfileScreen() {
       { text: 'Cancel', style: 'cancel' },
       { text: 'Sign out', style: 'destructive', onPress: onSignOut },
     ]);
+  };
+
+  const onOpenCustomerCenter = async () => {
+    if (!isConfigured || isOpeningCustomerCenter) {
+      return;
+    }
+
+    setIsOpeningCustomerCenter(true);
+
+    try {
+      await presentCustomerCenter();
+    } finally {
+      setIsOpeningCustomerCenter(false);
+    }
   };
 
   if (isLoading) {
@@ -130,6 +148,41 @@ export default function ProfileScreen() {
               </ThemedText>
             </ThemedView>
           </ThemedView>
+        </ThemedView>
+
+        <ThemedView style={styles.card}>
+          <ThemedText type="subtitle" style={styles.infoLabel}>
+            Subscription
+          </ThemedText>
+          <ThemedText style={styles.infoValue}>
+            {hasProAccess ? 'Sass Template Pro active' : 'Free plan'}
+          </ThemedText>
+          <ThemedText style={styles.infoValue}>
+            {hasProAccess
+              ? entitlement?.expirationDate
+                ? `Access until ${entitlementExpirationLabel}`
+                : 'Lifetime access'
+              : 'Open the subscription sheet to purchase or restore access.'}
+          </ThemedText>
+          <Pressable
+            style={styles.buttonContainer}
+            onPress={() => router.push('/subscription-sheet')}
+          >
+            <ThemedText type="subtitle" style={styles.buttonText}>
+              Manage subscription
+            </ThemedText>
+          </Pressable>
+          {isConfigured ? (
+            <Pressable
+              style={styles.customerCenterButton}
+              onPress={onOpenCustomerCenter}
+              disabled={isOpeningCustomerCenter}
+            >
+              <ThemedText type="subtitle" style={styles.buttonText}>
+                {isOpeningCustomerCenter ? 'Opening Customer Center...' : 'Open Customer Center'}
+              </ThemedText>
+            </Pressable>
+          ) : null}
         </ThemedView>
 
         <ThemedView style={styles.card}>
@@ -213,6 +266,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   buttonContainer: {
+    marginTop: 14,
     paddingHorizontal: 20,
     paddingVertical: 15,
     width: '100%',
@@ -223,6 +277,16 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: Colors.light.text,
+  },
+  customerCenterButton: {
+    marginTop: 12,
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    width: '100%',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: Colors.light.border,
+    alignItems: 'center',
   },
   centered: {
     flex: 1,
