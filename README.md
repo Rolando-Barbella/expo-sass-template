@@ -19,14 +19,17 @@ A React Native opinionated template built with [Expo](https://expo.dev), [Supaba
 ## Prerequisites
 
 Before you start, make sure you have:
-
 - **Node.js** (v18 or higher) - [Download](https://nodejs.org/)
 - **npm** or **yarn** package manager
-- **Xcode** (for iOS development) - [Download](https://developer.apple.com/xcode/)
-- **Android Studio** (for Android development) - [Download](https://developer.android.com/studio)
+- **Xcode** for iOS development - [Download](https://developer.apple.com/xcode/)
 - **Apple developer account** For making your app live [Create](https://developer.apple.com/account) ($99 a year)
 - **Expo acccount** Create an account with [Expo](https://expo.dev/)
 - **EAS CLI** - Install with `npm install -g eas-cli`
+
+#### If you planning releasing in Android
+
+- **Android Studio** for Android development [Download](https://developer.android.com/studio)
+- **Google play** developer [account](https://play.google.com/console/signup) (25$ lifetime)
 
 ## Nice to have
 - **[Expo Orbit](https://expo.dev/orbit)** (highly recommended for running emulators)
@@ -106,6 +109,8 @@ Rename the .env.example file for .env.local or .env
 7. Paste these two values on your `.env.local` or `.env`, EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY
 
 ## LOG IN
+This covers Google and Apple sign in ( no usermane and pasword )
+
 *IMPORTANT: If you are planning to lunch your app for iOS, you must have apple sign in, otherwise, it would be rejected, don't miss this step
 
 ### Create a Google Cloud Project (for Google Sign-In)
@@ -187,7 +192,7 @@ Find the plugging section and replace with your EXPO_PUBLIC_IOS_CLIENT_ID with r
 
 💡 Helpful [video](https://www.youtube.com/watch?v=tqxTijhYhp8) about all this Apple setup
 
-### Install Dependencies, build and run the app
+## Install Dependencies, build and run the app
 
 ```bash
 npm install
@@ -201,6 +206,28 @@ npx expo prebuild
 ```bash
 npx expo run:ios or npx expo run:android
 ```
+
+## RevenueCat subscriptions
+Official site [here](https://www.revenuecat.com/)
+
+### Android
+1. Create a new app in the [Google Play Console](https://play.google.com/console/u/0/developers/), add the name, the package name ( located ate in your app.json file, specifically the android objet, exp: com.yourname.appname), select free app, and confirm both declarations.
+2. Create a build with expo if you haven’t: eas build
+3. Download the .aab file (we will come back to this later)
+
+### Make a new release
+1. After succesfully creating the app ( make sure it is selected ), on the left bar, go to the Test and release > Internal testing
+![Google Play Console](assets/images/internal-release.png)
+2. Press on the Create new release button
+3. Upload the .aab file dowloaded before 
+4. Press Next, then Create Publish
+
+*Your app should be now available for internal publisher
+
+### - Revenue Cat Setup
+1. Go to https://www.revenuecat.com/docs/getting-started/quickstart
+2. Set up your account if you have not yet
+
 ## Skills
 There are some skills files already, feel free to use more
 
