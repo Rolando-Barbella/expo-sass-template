@@ -207,7 +207,7 @@ npx expo prebuild
 npx expo run:ios or npx expo run:android
 ```
 
-## RevenueCat subscriptions
+## RevenueCat subscriptions with Android
 Official site [here](https://www.revenuecat.com/)
 
 ### Android
@@ -220,7 +220,18 @@ Official site [here](https://www.revenuecat.com/)
 ![Google Play Console](assets/images/internal-release.png)
 2. Press on the Create new release button
 3. Upload the .aab file dowloaded before 
-4. Press Next, then Create Publish
+4. Press Next, then Save and Publish
+
+### Create Subscription in the Google Play Console
+1. In that same page where the release was created (or selecting your at [Google Play Console](https://play.google.com/console/u/0/developers/)
+2. On the left bar, go to Monetize with Play > Products > Subscriptions 
+3. Create a subscription 
+4. Add the product id, exp: `new_app_subscription`
+5. Add a name an save
+6. Press on `Add subscription benefits (recommended)`, and add as many bennefits your app needs
+7. The `Tax, compliance and programmes` can be leave empty for now
+8. Save it
+
 
 *Your app should be now available for internal publisher
 
