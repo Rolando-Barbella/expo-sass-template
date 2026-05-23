@@ -98,7 +98,7 @@ Rename the .env.example file for .env.local or .env
 ### 4. Create a Supabase Project
 
 1. Go to [Supabase](https://supabase.com/) and create a free account
-2. Click "Start New project"
+2. Click `Start New project`
 3. Choose your organization and set a database password
 4. Go to your [dashboard](https://supabase.com/dashboard/), choose your project
 5. On the left bar, go to **Project Settings** 
@@ -222,22 +222,35 @@ Official site [here](https://www.revenuecat.com/)
 3. Upload the .aab file dowloaded before 
 4. Press Next, then Save and Publish
 
+*Your app should be now available for internal publisher
+
 ### Create Subscription in the Google Play Console
 1. In that same page where the release was created (or selecting your at [Google Play Console](https://play.google.com/console/u/0/developers/)
 2. On the left bar, go to Monetize with Play > Products > Subscriptions 
 3. Create a subscription 
 4. Add the product id, exp: `new_app_subscription`
 5. Add a name an save
-6. Press on `Add subscription benefits (recommended)`, and add as many bennefits your app needs
-7. The `Tax, compliance and programmes` can be leave empty for now
-8. Save it
 
+#### Subscription benefits
+1. Press on `Add subscription benefits (recommended)`, and add as many bennefits your app needs
+2. The `Tax, compliance and programmes` can be leave empty for now
+3. Save it
 
-*Your app should be now available for internal publisher
+#### Base plan
+1. Go back where the subscription lives
+2. Add a base plan, call it `default` or which ever name makes sense
+3. Check the `Auto-renewing option` option
+4. Select what makes sense for your app (billing period, grace period, etc)
+5. In the `Price and availability` section, add a price to your subscription by pressing the `Set prices` ( small blue text button )
+6. Add countries and amount you planning to charge 
+7. Press activate
 
-### - Revenue Cat Setup
-1. Go to https://www.revenuecat.com/docs/getting-started/quickstart
-2. Set up your account if you have not yet
+### Revenue Cat Setup
+1. Create a new [account](https://www.revenuecat.com/) if you have not already
+2. In your [projects](https://app.revenuecat.com/projects/) page, create a new project
+![Revenue cat new project](assets/images/revenue-cat-new-product.png)
+3. There will be some options and questions screens, you can avoid that for now and go to the dashboard
+3. Go to configurations [here](https://www.revenuecat.com/docs/getting-started/quickstart#2-product-configuration)
 
 ## Skills
 There are some skills files already, feel free to use more
