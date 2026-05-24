@@ -208,28 +208,27 @@ npx expo run:ios or npx expo run:android
 ```
 
 ## RevenueCat subscriptions with Android
-Official site [here](https://www.revenuecat.com/)
 
-### Android
-1. Create a new app in the [Google Play Console](https://play.google.com/console/u/0/developers/), add the name, the package name ( located ate in your app.json file, specifically the android objet, exp: com.yourname.appname), select free app, and confirm both declarations.
+Pay attention to each step, you are going to be navigating between the Google Paly Console and Google Console page a lot, they can be quiet confusing
+
+1. Create a new app in the [Google Play Console](https://play.google.com/console/u/0/developers/), add the app name, the package name ( located ate in your app.json file, specifically the android objet, exp: com.yourname.appname), select free app, and confirm both declarations.
 2. Create a build with expo if you haven’t: eas build
 3. Download the .aab file (we will come back to this later)
 
 ### Make a new release
-1. After succesfully creating the app ( make sure it is selected ), on the left bar, go to the Test and release > Internal testing
+1. After succesfully creating the app ( make sure it is selected ), on the left bar, go to t `Test and release` > `Internal testing`
 ![Google Play Console](assets/images/internal-release.png)
-2. Press on the Create new release button
+2. Press on the `Create new release` button
 3. Upload the .aab file dowloaded before 
 4. Press Next, then Save and Publish
 
 *Your app should be now available for internal publisher
 
 ### Create Subscription in the Google Play Console
-1. In that same page where the release was created (or selecting your at [Google Play Console](https://play.google.com/console/u/0/developers/)
-2. On the left bar, go to Monetize with Play > Products > Subscriptions 
+1. In that same page where the release was created (or navigating from your project at [Google Play Console](https://play.google.com/console/u/0/developers/)), on the left bar, go to `Monetize with Play` > `Products` > `Subscriptions` 
 3. Create a subscription 
 4. Add the product id, exp: `new_app_subscription`
-5. Add a name an save
+5. Add a name and save
 
 #### Subscription benefits
 1. Press on `Add subscription benefits (recommended)`, and add as many bennefits your app needs
@@ -245,11 +244,63 @@ Official site [here](https://www.revenuecat.com/)
 6. Add countries and amount you planning to charge 
 7. Press activate
 
+### Google Play Console and Google Cloud Credentials
+1. Go to your Google Cloud [account](https://console.cloud.google.com/)
+2. Create a new project on the top bar
+![Google Cloud Console](assets/images/google-console-new-project.png)
+3. Go to the [Google Play Android Developer API page](https://console.cloud.google.com/apis/library/androidpublisher.googleapis.com) and the [Google Play Developer Reporting API page](https://console.cloud.google.com/apis/library/playdeveloperreporting.googleapis.com) in Google Cloud Console.
+4. Press enable on both sites
+5. You should now see a `Create credentials` button in both pages
+
+#### Google Play Android Developer API page
+*You can also check this [video](https://www.youtube.com/watch?v=fOr2fu-0Vs8&t=2s) from 
+RevenueCat team
+
+1. Make sure you select `Google Play Android Developer API` and `Application data`, then click next 
+2. Add a name to the services account (exp: rn services account )
+3. Next, we need to add two permissions: one called `Pub/Sub Editor`, another one called `Monitoring viewer`, and press continue
+4. Last step, just press `Done`
+5. After the last step, you will see 3 taps (Metrics, Quaotas, Credentials), press on Credentials one, copy the email you see in the Service Account, save it for later
+6. Press on `Manage service accounts`
+7. In the Service accounts page, press on the 3 bullets Actions button (right end corner ), click on `Manage keys`
+8. Press `Add key` > `Create new key`, Select the JSON option, it should be now save in your machine
+
+#### Cloud Pub/Sub API permission
+1. Go to your Google Cloud [page](https://console.cloud.google.com/) 
+2. Press Enable
+
+#### Invite user in Google Play Console
+1 Got to your Play Console [list](https://play.google.com/console/u/0/developers)
+2. On the left bar, press on `Users and permissions` 
+3. Invite a new user
+4. Add the email you created in the previos step (Google Play Android Developer API page > step 5)
+5. In the `App permissions` tab, Add your app in the `Add app` dropdown button
+6. Press the `Account permissions` tab, select the following: 
+- View app information and download bulk reports (read only) 
+- View financial data, orders and cancellation survey responses
+- Manage orders and subscriptions
+7. Press `Invite user` and `Send`
+
+By now, you should be done with all the google steps 🫰
+
 ### Revenue Cat Setup
 1. Create a new [account](https://www.revenuecat.com/) if you have not already
-2. In your [projects](https://app.revenuecat.com/projects/) page, create a new project
-![Revenue cat new project](assets/images/revenue-cat-new-product.png)
-3. There will be some options and questions screens, you can avoid that for now and go to the dashboard
+2. In your [projects](https://app.revenuecat.com/projects/) page, create a new project ![Revenue cat new project](assets/images/revenue-cat-new-product.png)
+3. There will be some options and questions screens, you can avoid them for now and go to the dashboard
+
+#### Entitlements
+1. On the left side bar, go to `Product catalog` > `Entitlements`
+2. Add a new one by given it a name
+
+#### Apps & providers
+1. On the left bar, go to Apps & providers > Configurations
+2. Select `New app configuration` ( the one with the apple, android, amazon icons )
+3. Select Google Play Store
+4. Create your `New Play Store configuration` by adding a name, and the package name ( the loacted on your app.json file )
+4.1 Upload the `Service account credentials` created on the previos Google steps (Google Play Android Developer API page > step 8)
+
+
+
 3. Go to configurations [here](https://www.revenuecat.com/docs/getting-started/quickstart#2-product-configuration)
 
 ## Skills
