@@ -345,7 +345,7 @@ Here the official [guide](https://www.revenuecat.com/docs/getting-started/entitl
 3.8 Got to `Product catalog` > `Products` to make sure new apple product appears
 
 ### Add new product
-1. In the same `Product catalog` > `Products` page, click the `New Product`
+1. In the same `Product catalog` > `Products` page, click the `New Product` button
 2. On a separate tab, go to your Subscription app store page, select the subscription recently created
 3. Copy the `Product ID`, go back to the revenue cat product page, finish creating the new product with that id
 4. Attached the `Entitlement` to your product by pressing the attach button
@@ -353,6 +353,11 @@ Here the official [guide](https://www.revenuecat.com/docs/getting-started/entitl
 
 #### Offerings
 1. On the left bar from your revenuecat app page, press `Offerings`
+2. Select monthly fot the indentifier, add description and the Products
+
+### API keys
+1. On the left bar, go to `App & providers` > `API keys` 
+2. Copy the API key and paste them in your .env file (EXPO_PUBLIC_REVENUECAT_APPLE_API_KE & EXPO_PUBLIC_REVENUECAT_GOOGLE_API_KEY)
 
 ## Skills
 There are some skills files already, feel free to use more
