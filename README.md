@@ -303,9 +303,56 @@ If not, review the previos steps
 
 *It can take up to 36 hours for your Play Service Credentials to work properly with the Google Play Developer API
 
+#### Create a product in Revenue cat
 
+1. On your [product page](https://app.revenuecat.com/projects/), go to the left bar and press `Product catalog` > `Products`
+2. Press on `New product`, then also press the `Import` button. The subscription created in Google should appear, select `Import`
+3. In the new product row, attach the entitlement by pressing `Attach` and selecting your entitlement in the drop down
 
-3. Go to configurations [here](https://www.revenuecat.com/docs/getting-started/quickstart#2-product-configuration)
+## RevenueCat subscriptions with iOS
+Here the official [guide](https://www.revenuecat.com/docs/getting-started/entitlements/ios-products) for all this setup
+
+1. Creat a build if you have not: `eas build`
+2. Submit your app to the Apple connect: `eas submit -p ios`
+
+### Apple Connect
+1. Go to your [apple store account](https://appstoreconnect.apple.com/apps), select your app
+2. On the left bar at the end, there should be a `subscription` link
+3. At the `Subscription Groups` section, create a new one with a name the most sense ( I recommend using same names as the ones in Android)
+4. In the subscription section, create a new one
+4.1 The `reference name` will be the one that appeats in the app store connect
+4.2 The product should have the following format: `new_app_subscription`
+4.3 Set Up Availability by choosing the countries were it will be availble
+4.4 Add a subscription price 
+4.5 Add localization
+5. Go back to the `Subscriptions` page, add the localization
+6. Add the `Billing Grace Period` that makes sense for your app (16 days, 3 days, etc)
+
+*This should be it for apple conncet configurations
+
+### RevenueCat Configurations
+1. On your [projects page](https://app.revenuecat.com/projects/), choose your app
+2. On the left bar, press on `Apps & providers` > `Configurations`
+
+#### In-app purchase key configuration steps
+3. Press the `+ Add app config` button and select App Store
+3.2 Go to you Users and access [page](https://appstoreconnect.apple.com/access/users)
+3.3 Select `integrations` in the top bar, then `In-App-Purchase` in the left bar
+3.4 Generate an `in-app purchase key` by pressing the plus button, give it the appropiet name
+3.5 Downloaded and upload it to revenuecat
+3.6 Copy the `Issuer ID` from the In-App Purchase that you see in the same page
+3.7 Save changes
+3.8 Got to `Product catalog` > `Products` to make sure new apple product appears
+
+### Add new product
+1. In the same `Product catalog` > `Products` page, click the `New Product`
+2. On a separate tab, go to your Subscription app store page, select the subscription recently created
+3. Copy the `Product ID`, go back to the revenue cat product page, finish creating the new product with that id
+4. Attached the `Entitlement` to your product by pressing the attach button
+5. Refresh the screen and check it is being saved correctly, the status should say `Could not check`, don't worry about that yet
+
+#### Offerings
+1. On the left bar from your revenuecat app page, press `Offerings`
 
 ## Skills
 There are some skills files already, feel free to use more
