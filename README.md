@@ -321,10 +321,11 @@ Here the official [guide](https://www.revenuecat.com/docs/getting-started/entitl
 3. At the `Subscription Groups` section, create a new one with a name the most sense ( I recommend using same names as the ones in Android)
 4. In the subscription section, create a new one
 4.1 The `reference name` will be the one that appeats in the app store connect
-4.2 The product should have the following format: `new_app_subscription`
-4.3 Set Up Availability by choosing the countries were it will be availble
-4.4 Add a subscription price 
-4.5 Add localization
+4.2 The product should have the following example format (using underscore): `new_app_subscription`
+4.3 Add subscription dutation ( weekly, monthly, yearly, etc)
+4.4 Set Up Availability by choosing the countries were it will be availble
+4.5 Add a subscription price 
+4.6 Add localization
 5. Go back to the `Subscriptions` page, add the localization
 6. Add the `Billing Grace Period` that makes sense for your app (16 days, 3 days, etc)
 
@@ -353,7 +354,9 @@ Here the official [guide](https://www.revenuecat.com/docs/getting-started/entitl
 
 #### Offerings
 1. On the left bar from your revenuecat app page, press `Offerings`
-2. Select monthly fot the indentifier, add description and the Products
+2. Press the `New Offering` button
+2. Select monthly ( or which ever timeframe you like) for the indentifier, add description as well
+3. In the Product(s) section you should see your app in Apple, Android or both, each one has a drop down menu where you can select the subscription
 
 ### API keys
 1. On the left bar, go to `App & providers` > `API keys` 
