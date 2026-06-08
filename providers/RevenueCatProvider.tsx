@@ -1,456 +1,201 @@
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
-import { Linking } from 'react-native';
-import type { Session } from '@supabase/supabase-js';
+import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import Purchases, {
   type CustomerInfo,
-  type CustomerInfoUpdateListener,
-  type PurchasesEntitlementInfo,
   type PurchasesOffering,
   type PurchasesPackage,
 } from 'react-native-purchases';
 import RevenueCatUI, { PAYWALL_RESULT } from 'react-native-purchases-ui';
-import { supabase } from '@/lib/supabase';
 import {
   REVENUECAT_ENTITLEMENT_ID,
-  formatRevenueCatError,
+  canUseRevenueCat,
+  getCurrentOffering,
+  getRevenueCatDebugContext,
   getEntitlement,
   getRevenueCatApiKey,
   getRevenueCatSetupMessage,
+  hasProEntitlement,
   isPurchaseCancelled,
   isRevenueCatSupportedPlatform,
-  selectCurrentOffering,
+  summarizeEntitlements,
+  summarizeOfferings,
 } from '@/lib/revenuecat';
 
-type RevenueCatActionResult = {
-  ok: boolean;
-  cancelled?: boolean;
-  customerInfo?: CustomerInfo | null;
-  error?: string;
-};
-
 type RevenueCatContextValue = {
-  appUserId: string | null;
   configError: string | null;
   currentOffering: PurchasesOffering | null;
   customerInfo: CustomerInfo | null;
-  entitlement: PurchasesEntitlementInfo | null;
+  entitlement: ReturnType<typeof getEntitlement>;
   hasProAccess: boolean;
-  isAnonymous: boolean;
   isConfigured: boolean;
   isReady: boolean;
   isSupported: boolean;
-  lastError: string | null;
-  clearLastError: () => void;
   presentCustomerCenter: () => Promise<void>;
-  presentPaywall: () => Promise<PAYWALL_RESULT>;
   presentPaywallIfNeeded: () => Promise<PAYWALL_RESULT>;
-  purchasePackage: (aPackage: PurchasesPackage) => Promise<RevenueCatActionResult>;
-  refreshCustomerInfo: () => Promise<CustomerInfo | null>;
-  refreshOfferings: () => Promise<PurchasesOffering | null>;
-  restorePurchases: () => Promise<RevenueCatActionResult>;
+  purchasePackage: (aPackage: PurchasesPackage) => Promise<boolean>;
+  refresh: () => Promise<void>;
+  restorePurchases: () => Promise<boolean>;
 };
 
 const RevenueCatContext = createContext<RevenueCatContextValue | null>(null);
 
 export function RevenueCatProvider({ children }: { children: React.ReactNode }) {
-  const [session, setSession] = useState<Session | null>(null);
-  const [isSessionLoading, setIsSessionLoading] = useState(true);
   const [isReady, setIsReady] = useState(false);
+  const [isConfigured, setIsConfigured] = useState(false);
   const [configError, setConfigError] = useState<string | null>(null);
-  const [lastError, setLastError] = useState<string | null>(null);
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo | null>(null);
   const [currentOffering, setCurrentOffering] = useState<PurchasesOffering | null>(null);
-  const [appUserId, setAppUserId] = useState<string | null>(null);
-  const [isAnonymous, setIsAnonymous] = useState(true);
-  const bootstrapRef = useRef(false);
-  const isConfiguredRef = useRef(false);
-  const syncedUserIdRef = useRef<string | null>(null);
 
-  const applyCustomerInfoRef = useRef((nextCustomerInfo: CustomerInfo | null) => {
-    setCustomerInfo(nextCustomerInfo);
-  });
-  const syncSnapshotRef = useRef<() => Promise<CustomerInfo>>(async () => {
-    const [nextCustomerInfo, offerings, nextAppUserId, nextIsAnonymous] = await Promise.all([
+  const refresh = useCallback(async () => {
+    console.log('[RevenueCat] Refresh start', getRevenueCatDebugContext());
+
+    const [nextCustomerInfo, offerings] = await Promise.all([
       Purchases.getCustomerInfo(),
       Purchases.getOfferings(),
-      Purchases.getAppUserID(),
-      Purchases.isAnonymous(),
     ]);
 
-    applyCustomerInfoRef.current(nextCustomerInfo);
-    setCurrentOffering(selectCurrentOffering(offerings));
-    setAppUserId(nextAppUserId);
-    setIsAnonymous(nextIsAnonymous);
-
-    return nextCustomerInfo;
-  });
-
-  useEffect(() => {
-    let isMounted = true;
-
-    supabase.auth.getSession().then(({ data }) => {
-      if (!isMounted) {
-        return;
-      }
-
-      setSession(data.session ?? null);
-      setIsSessionLoading(false);
+    console.log('[RevenueCat] Refresh customer info', {
+      appUserID: nextCustomerInfo.originalAppUserId,
+      entitlements: summarizeEntitlements(nextCustomerInfo),
     });
+    console.log('[RevenueCat] Refresh offerings', summarizeOfferings(offerings));
 
-    const { data: authSubscription } = supabase.auth.onAuthStateChange((_event, nextSession) => {
-      setSession(nextSession);
-      setIsSessionLoading(false);
-    });
-
-    return () => {
-      isMounted = false;
-      authSubscription.subscription.unsubscribe();
-    };
+    setCustomerInfo(nextCustomerInfo);
+    setCurrentOffering(getCurrentOffering(offerings));
   }, []);
 
   useEffect(() => {
-    if (isSessionLoading || bootstrapRef.current) {
-      return;
-    }
-
-    bootstrapRef.current = true;
-
-    const apiKey = getRevenueCatApiKey();
-    const isSupported = isRevenueCatSupportedPlatform();
-
-    if (!isSupported || !apiKey) {
+    if (!canUseRevenueCat()) {
+      console.warn('[RevenueCat] Configuration blocked', {
+        ...getRevenueCatDebugContext(),
+        setupMessage: getRevenueCatSetupMessage(),
+      });
       setConfigError(getRevenueCatSetupMessage());
       setIsReady(true);
       return;
     }
 
-    let isCancelled = false;
-    let customerInfoListener: CustomerInfoUpdateListener | null = null;
+    let isMounted = true;
 
-    (async () => {
-      try {
-        Purchases.configure({
-          apiKey,
-          appUserID: session?.user.id,
-          diagnosticsEnabled: __DEV__,
-          entitlementVerificationMode: Purchases.ENTITLEMENT_VERIFICATION_MODE.INFORMATIONAL,
-        });
+    console.log('[RevenueCat] Configuring Purchases', getRevenueCatDebugContext());
+    Purchases.configure({ apiKey: getRevenueCatApiKey()! });
+    setIsConfigured(true);
 
-        isConfiguredRef.current = true;
-        syncedUserIdRef.current = session?.user.id ?? null;
-
-        await Purchases.setLogLevel(
-          __DEV__ ? Purchases.LOG_LEVEL.DEBUG : Purchases.LOG_LEVEL.INFO
-        );
-
-        customerInfoListener = (nextCustomerInfo) => {
-          if (isCancelled) {
-            return;
-          }
-
-          applyCustomerInfoRef.current(nextCustomerInfo);
-          setLastError(null);
-        };
-
-        Purchases.addCustomerInfoUpdateListener(customerInfoListener);
-        await syncSnapshotRef.current();
-
-        if (!isCancelled) {
-          setConfigError(null);
-        }
-      } catch (error) {
-        if (!isCancelled) {
-          setConfigError(
-            formatRevenueCatError(error, 'RevenueCat failed to initialize for this app build.')
-          );
-        }
-      } finally {
-        if (!isCancelled) {
+    refresh()
+      .catch((error) => {
+        console.warn('[RevenueCat] Initial refresh failed', error);
+      })
+      .finally(() => {
+        if (isMounted) {
           setIsReady(true);
         }
-      }
-    })();
-
-    return () => {
-      isCancelled = true;
-
-      if (customerInfoListener) {
-        Purchases.removeCustomerInfoUpdateListener(customerInfoListener);
-      }
-    };
-  }, [isSessionLoading, session?.user.id]);
-
-  useEffect(() => {
-    if (!isReady || !isConfiguredRef.current) {
-      return;
-    }
-
-    const nextUserId = session?.user.id ?? null;
-
-    if (syncedUserIdRef.current === nextUserId) {
-      return;
-    }
-
-    let isCancelled = false;
-
-    (async () => {
-      try {
-        setLastError(null);
-
-        let nextCustomerInfo: CustomerInfo;
-
-        if (nextUserId) {
-          const result = await Purchases.logIn(nextUserId);
-          nextCustomerInfo = result.customerInfo;
-        } else {
-          const currentlyAnonymous = await Purchases.isAnonymous();
-          nextCustomerInfo = currentlyAnonymous
-            ? await Purchases.getCustomerInfo()
-            : await Purchases.logOut();
-        }
-
-        if (isCancelled) {
-          return;
-        }
-
-        syncedUserIdRef.current = nextUserId;
-        applyCustomerInfoRef.current(nextCustomerInfo);
-
-        const [offerings, nextAppUserId, nextIsAnonymous] = await Promise.all([
-          Purchases.getOfferings(),
-          Purchases.getAppUserID(),
-          Purchases.isAnonymous(),
-        ]);
-
-        if (isCancelled) {
-          return;
-        }
-
-        setCurrentOffering(selectCurrentOffering(offerings));
-        setAppUserId(nextAppUserId);
-        setIsAnonymous(nextIsAnonymous);
-      } catch (error) {
-        if (!isCancelled) {
-          setLastError(
-            formatRevenueCatError(error, 'RevenueCat could not sync the current signed-in user.')
-          );
-        }
-      }
-    })();
-
-    return () => {
-      isCancelled = true;
-    };
-  }, [isReady, session?.user.id]);
-
-  const refreshCustomerInfo = async () => {
-    if (!isConfiguredRef.current) {
-      return null;
-    }
-
-    try {
-      setLastError(null);
-      const nextCustomerInfo = await Purchases.getCustomerInfo();
-      applyCustomerInfoRef.current(nextCustomerInfo);
-      return nextCustomerInfo;
-    } catch (error) {
-      setLastError(formatRevenueCatError(error, 'Unable to refresh customer info.'));
-      return null;
-    }
-  };
-
-  const refreshOfferings = async () => {
-    if (!isConfiguredRef.current) {
-      return null;
-    }
-
-    try {
-      setLastError(null);
-      const offerings = await Purchases.getOfferings();
-      const selectedOffering = selectCurrentOffering(offerings);
-      setCurrentOffering(selectedOffering);
-      return selectedOffering;
-    } catch (error) {
-      setLastError(formatRevenueCatError(error, 'Unable to refresh RevenueCat offerings.'));
-      return null;
-    }
-  };
-
-  const purchasePackage = async (aPackage: PurchasesPackage): Promise<RevenueCatActionResult> => {
-    if (!isConfiguredRef.current) {
-      const error = configError ?? 'RevenueCat is not ready yet.';
-      setLastError(error);
-      return { ok: false, error };
-    }
-
-    try {
-      setLastError(null);
-      const result = await Purchases.purchasePackage(aPackage);
-      applyCustomerInfoRef.current(result.customerInfo);
-      setAppUserId(await Purchases.getAppUserID());
-      setIsAnonymous(await Purchases.isAnonymous());
-
-      return {
-        ok: true,
-        customerInfo: result.customerInfo,
-      };
-    } catch (error) {
-      const message = formatRevenueCatError(error, 'The purchase could not be completed.');
-
-      if (!isPurchaseCancelled(error)) {
-        setLastError(message);
-      }
-
-      return {
-        ok: false,
-        cancelled: isPurchaseCancelled(error),
-        error: message,
-      };
-    }
-  };
-
-  const restorePurchases = async (): Promise<RevenueCatActionResult> => {
-    if (!isConfiguredRef.current) {
-      const error = configError ?? 'RevenueCat is not ready yet.';
-      setLastError(error);
-      return { ok: false, error };
-    }
-
-    try {
-      setLastError(null);
-      const nextCustomerInfo = await Purchases.restorePurchases();
-      applyCustomerInfoRef.current(nextCustomerInfo);
-      return {
-        ok: true,
-        customerInfo: nextCustomerInfo,
-      };
-    } catch (error) {
-      const message = formatRevenueCatError(error, 'Restore purchases failed.');
-      setLastError(message);
-      return {
-        ok: false,
-        error: message,
-      };
-    }
-  };
-
-  const presentPaywall = async () => {
-    if (!isConfiguredRef.current) {
-      throw new Error(configError ?? 'RevenueCat is not ready yet.');
-    }
-
-    try {
-      setLastError(null);
-      const result = await RevenueCatUI.presentPaywall({
-        displayCloseButton: true,
-        offering: currentOffering ?? undefined,
       });
 
-      if (
-        result === PAYWALL_RESULT.PURCHASED ||
-        result === PAYWALL_RESULT.RESTORED
-      ) {
-        await syncSnapshotRef.current();
+    const listener = (nextCustomerInfo: CustomerInfo) => {
+      console.log('[RevenueCat] Customer info updated', {
+        appUserID: nextCustomerInfo.originalAppUserId,
+        entitlements: summarizeEntitlements(nextCustomerInfo),
+      });
+
+      if (isMounted) {
+        setCustomerInfo(nextCustomerInfo);
+      }
+    };
+
+    Purchases.addCustomerInfoUpdateListener(listener);
+
+    return () => {
+      isMounted = false;
+      Purchases.removeCustomerInfoUpdateListener(listener);
+    };
+  }, [refresh]);
+
+  const purchasePackage = async (aPackage: PurchasesPackage) => {
+    try {
+      console.log('[RevenueCat] Purchase start', {
+        packageIdentifier: aPackage.identifier,
+        packageType: aPackage.packageType,
+        productId: aPackage.product.identifier,
+        entitlementId: REVENUECAT_ENTITLEMENT_ID,
+      });
+      const { customerInfo: nextCustomerInfo } = await Purchases.purchasePackage(aPackage);
+      console.log('[RevenueCat] Purchase result', {
+        appUserID: nextCustomerInfo.originalAppUserId,
+        entitlements: summarizeEntitlements(nextCustomerInfo),
+      });
+      setCustomerInfo(nextCustomerInfo);
+      return hasProEntitlement(nextCustomerInfo);
+    } catch (error) {
+      if (!isPurchaseCancelled(error)) {
+        console.warn('RevenueCat purchase failed', error);
       }
 
-      return result;
+      return false;
+    }
+  };
+
+  const restorePurchases = async () => {
+    try {
+      console.log('[RevenueCat] Restore start', {
+        entitlementId: REVENUECAT_ENTITLEMENT_ID,
+      });
+      const nextCustomerInfo = await Purchases.restorePurchases();
+      console.log('[RevenueCat] Restore result', {
+        appUserID: nextCustomerInfo.originalAppUserId,
+        entitlements: summarizeEntitlements(nextCustomerInfo),
+      });
+      setCustomerInfo(nextCustomerInfo);
+      return hasProEntitlement(nextCustomerInfo);
     } catch (error) {
-      const message = formatRevenueCatError(error, 'The RevenueCat paywall could not be presented.');
-      setLastError(message);
-      throw new Error(message);
+      console.warn('RevenueCat restore failed', error);
+      return false;
     }
   };
 
   const presentPaywallIfNeeded = async () => {
-    if (!isConfiguredRef.current) {
-      throw new Error(configError ?? 'RevenueCat is not ready yet.');
+    console.log('[RevenueCat] Present paywall if needed', {
+      entitlementId: REVENUECAT_ENTITLEMENT_ID,
+    });
+    const result = await RevenueCatUI.presentPaywallIfNeeded({
+      displayCloseButton: true,
+      requiredEntitlementIdentifier: REVENUECAT_ENTITLEMENT_ID,
+    });
+
+    console.log('[RevenueCat] Paywall result', {
+      result,
+      entitlementId: REVENUECAT_ENTITLEMENT_ID,
+    });
+
+    if (result === PAYWALL_RESULT.PURCHASED || result === PAYWALL_RESULT.RESTORED) {
+      await refresh();
     }
 
-    try {
-      setLastError(null);
-      const result = await RevenueCatUI.presentPaywallIfNeeded({
-        displayCloseButton: true,
-        offering: currentOffering ?? undefined,
-        requiredEntitlementIdentifier: REVENUECAT_ENTITLEMENT_ID,
-      });
-
-      if (
-        result === PAYWALL_RESULT.PURCHASED ||
-        result === PAYWALL_RESULT.RESTORED
-      ) {
-        await syncSnapshotRef.current();
-      }
-
-      return result;
-    } catch (error) {
-      const message = formatRevenueCatError(
-        error,
-        'The entitlement-gated RevenueCat paywall could not be presented.'
-      );
-      setLastError(message);
-      throw new Error(message);
-    }
+    return result;
   };
 
   const presentCustomerCenter = async () => {
-    if (!isConfiguredRef.current) {
-      throw new Error(configError ?? 'RevenueCat is not ready yet.');
-    }
-
-    try {
-      setLastError(null);
-      await RevenueCatUI.presentCustomerCenter({
-        callbacks: {
-          onManagementOptionSelected: ({ option, url }) => {
-            if (option === 'custom_url' && url) {
-              Linking.openURL(url).catch(() => undefined);
-            }
-          },
-          onRestoreCompleted: ({ customerInfo: nextCustomerInfo }) => {
-            applyCustomerInfoRef.current(nextCustomerInfo);
-            setLastError(null);
-          },
-          onRestoreFailed: ({ error }) => {
-            setLastError(formatRevenueCatError(error, 'Customer Center restore failed.'));
-          },
-        },
-      });
-
-      await syncSnapshotRef.current();
-    } catch (error) {
-      const message = formatRevenueCatError(
-        error,
-        'The RevenueCat Customer Center could not be presented.'
-      );
-      setLastError(message);
-      throw new Error(message);
-    }
+    console.log('[RevenueCat] Present customer center');
+    await RevenueCatUI.presentCustomerCenter();
+    await refresh();
   };
 
   const entitlement = getEntitlement(customerInfo);
-  const hasProAccess = Boolean(entitlement?.isActive);
+  const hasProAccess = hasProEntitlement(customerInfo);
 
   return (
     <RevenueCatContext.Provider
       value={{
-        appUserId,
-        clearLastError: () => setLastError(null),
         configError,
         currentOffering,
         customerInfo,
         entitlement,
         hasProAccess,
-        isAnonymous,
-        isConfigured: isConfiguredRef.current,
+        isConfigured,
         isReady,
         isSupported: isRevenueCatSupportedPlatform(),
-        lastError,
         presentCustomerCenter,
-        presentPaywall,
         presentPaywallIfNeeded,
         purchasePackage,
-        refreshCustomerInfo,
-        refreshOfferings,
+        refresh,
         restorePurchases,
       }}>
       {children}

@@ -1,10 +1,6 @@
 import { ThemedText } from '@/components/ThemedText';
 import { Colors, UI } from '@/constants/theme';
-import {
-  REVENUECAT_ENTITLEMENT_ID,
-  type RevenueCatPlanId,
-  getPackageForPlan,
-} from '@/lib/revenuecat';
+import { type RevenueCatPlanId, getPackageForPlan } from '@/lib/revenuecat';
 import { useRevenueCat } from '@/providers/RevenueCatProvider';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -52,22 +48,17 @@ export function SubscriptionBottomSheet() {
   const router = useRouter();
   const { height: windowHeight } = useWindowDimensions();
   const {
-    appUserId,
-    clearLastError,
     configError,
     currentOffering,
     entitlement,
     hasProAccess,
-    isAnonymous,
     isConfigured,
     isReady,
     isSupported,
-    lastError,
     presentCustomerCenter,
     presentPaywallIfNeeded,
     purchasePackage,
-    refreshCustomerInfo,
-    refreshOfferings,
+    refresh,
     restorePurchases,
   } = useRevenueCat();
   const [selectedPlan, setSelectedPlan] = useState<RevenueCatPlanId>('yearly');
@@ -81,6 +72,8 @@ export function SubscriptionBottomSheet() {
   };
   const selectedPackage = packagesByPlan[selectedPlan];
   const isBusy = busyAction !== null;
+  const availablePlans = PLAN_ORDER.filter((planId) => packagesByPlan[planId] != null);
+  const availablePlansKey = availablePlans.join(',');
 
   useEffect(() => {
     if (getPackageForPlan(currentOffering, selectedPlan)) {
@@ -96,89 +89,106 @@ export function SubscriptionBottomSheet() {
     }
   }, [currentOffering, selectedPlan]);
 
+  useEffect(() => {
+    console.log('[SubscriptionBottomSheet] RevenueCat state', {
+      currentOfferingId: currentOffering?.identifier ?? null,
+      entitlementId: entitlement?.identifier ?? null,
+      entitlementIsActive: entitlement?.isActive ?? false,
+      hasProAccess,
+      isConfigured,
+      isReady,
+      isSupported,
+      selectedPlan,
+      availablePlans,
+      statusMessage,
+      configError,
+    });
+  }, [
+    availablePlansKey,
+    configError,
+    currentOffering,
+    entitlement,
+    hasProAccess,
+    isConfigured,
+    isReady,
+    isSupported,
+    selectedPlan,
+    statusMessage,
+  ]);
+
   const onSubscribe = async () => {
     if (!selectedPackage) {
-      setStatusMessage('The selected product is not attached to the current RevenueCat offering.');
+      setStatusMessage('The selected product is not available yet.');
       return;
     }
 
     setBusyAction('purchase');
     setStatusMessage(null);
-    clearLastError();
 
-    const result = await purchasePackage(selectedPackage);
+    const unlocked = await purchasePackage(selectedPackage);
 
     setBusyAction(null);
 
-    if (result.ok) {
+    if (unlocked) {
       setStatusMessage('Sass Template Pro unlocked successfully.');
       router.back();
       return;
     }
 
-    setStatusMessage(result.error ?? 'The purchase could not be completed.');
+    setStatusMessage('The purchase could not be completed.');
   };
 
   const onRestorePurchases = async () => {
     setBusyAction('restore');
     setStatusMessage(null);
-    clearLastError();
 
-    const result = await restorePurchases();
+    const restored = await restorePurchases();
 
     setBusyAction(null);
-
-    if (result.ok) {
-      setStatusMessage(
-        result.customerInfo?.entitlements.active[REVENUECAT_ENTITLEMENT_ID]
-          ? 'Purchases restored. Sass Template Pro is active.'
-          : 'Restore completed. No active Sass Template Pro entitlement was found.'
-      );
-      return;
-    }
-
-    setStatusMessage(result.error ?? 'Restore purchases failed.');
+    setStatusMessage(
+      restored
+        ? 'Purchases restored. Sass Template Pro is active.'
+        : 'Restore completed. No active Sass Template Pro entitlement was found.'
+    );
   };
 
   const onRefreshStatus = async () => {
     setBusyAction('refresh');
     setStatusMessage(null);
-    clearLastError();
 
-    await Promise.all([refreshCustomerInfo(), refreshOfferings()]);
+    await refresh();
 
     setBusyAction(null);
-    setStatusMessage('RevenueCat customer info and offerings refreshed.');
+    setStatusMessage('Subscription status refreshed.');
   };
 
   const onPresentPaywall = async () => {
     setBusyAction('paywall');
     setStatusMessage(null);
-    clearLastError();
 
     try {
       const result = await presentPaywallIfNeeded();
 
       switch (result) {
         case PAYWALL_RESULT.PURCHASED:
-          setStatusMessage('The RevenueCat paywall completed a purchase successfully.');
+          setStatusMessage('Purchase completed successfully.');
           router.back();
           break;
         case PAYWALL_RESULT.RESTORED:
-          setStatusMessage('The RevenueCat paywall restored a previous purchase.');
+          setStatusMessage('Previous purchase restored.');
           break;
         case PAYWALL_RESULT.NOT_PRESENTED:
-          setStatusMessage('The paywall was not shown because Sass Template Pro is already active.');
+          setStatusMessage('Sass Template Pro is already active.');
           break;
         case PAYWALL_RESULT.CANCELLED:
-          setStatusMessage('The paywall was dismissed before purchase.');
+          setStatusMessage('Paywall dismissed.');
           break;
         default:
-          setStatusMessage('The RevenueCat paywall closed without unlocking the entitlement.');
+          setStatusMessage('Paywall closed without unlocking.');
           break;
       }
-    } catch (error) {
-      setStatusMessage(error instanceof Error ? error.message : 'Unable to present the paywall.');
+    } catch {
+      setStatusMessage('Unable to present the paywall.');
     } finally {
       setBusyAction(null);
     }
@@ -187,21 +197,18 @@ export function SubscriptionBottomSheet() {
   const onOpenCustomerCenter = async () => {
     setBusyAction('customer-center');
     setStatusMessage(null);
-    clearLastError();
 
     try {
       await presentCustomerCenter();
       setStatusMessage('Customer Center closed.');
-    } catch (error) {
-      setStatusMessage(
-        error instanceof Error ? error.message : 'Unable to open Customer Center.'
-      );
+    } catch {
+      setStatusMessage('Unable to open Customer Center.');
     } finally {
       setBusyAction(null);
     }
   };
 
-  const feedbackMessage = lastError ?? statusMessage ?? configError;
+  const feedbackMessage = statusMessage ?? configError;
   const entitlementSummary = entitlement?.expirationDate
     ? `Access until ${new Date(entitlement.expirationDate).toLocaleDateString()}`
     : entitlement?.isActive
@@ -216,8 +223,7 @@ export function SubscriptionBottomSheet() {
             {hasProAccess ? 'Sass Template Pro Active' : 'Unlock Sass Template Pro'}
           </ThemedText>
           <ThemedText style={styles.subtitle}>
-            RevenueCat now powers manual package purchases, entitlement checks, restore flows,
-            paywalls, and Customer Center in this Expo app.
+            Choose a plan to unlock Sass Template Pro on this device.
           </ThemedText>
 
           <View style={styles.summaryCard}>
@@ -226,10 +232,7 @@ export function SubscriptionBottomSheet() {
             </ThemedText>
             <ThemedText style={styles.summaryText}>{entitlementSummary}</ThemedText>
             <ThemedText style={styles.summaryText}>
-              Offering: {currentOffering?.identifier ?? 'No offering returned yet'}
-            </ThemedText>
-            <ThemedText style={styles.summaryText}>
-              App user: {appUserId ?? (isAnonymous ? 'Anonymous RevenueCat user' : 'Loading...')}
+              Offering: {currentOffering?.identifier ?? 'Loading...'}
             </ThemedText>
             {!isSupported ? (
               <ThemedText style={styles.warningText}>
@@ -268,7 +271,7 @@ export function SubscriptionBottomSheet() {
                     <ThemedText style={styles.planCaption}>
                       {aPackage
                         ? `Product ID: ${aPackage.product.identifier}`
-                        : 'Attach this product to the current RevenueCat offering.'}
+                        : 'Not available in the current offering.'}
                     </ThemedText>
                   </View>
                   <ThemedText type="defaultSemiBold">

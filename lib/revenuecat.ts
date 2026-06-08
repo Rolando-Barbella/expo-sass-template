@@ -1,35 +1,30 @@
 import Purchases, {
   PACKAGE_TYPE,
   type CustomerInfo,
-  type PurchasesError,
   type PurchasesOffering,
   type PurchasesOfferings,
-  type PurchasesPackage,
 } from 'react-native-purchases';
-import { Platform } from 'react-native';
+import { NativeModules, Platform } from 'react-native';
 
-export const REVENUECAT_ENTITLEMENT_ID =
-  process.env.EXPO_PUBLIC_REVENUECAT_ENTITLEMENT_ID?.trim() || 'Sass Template Pro';
+export const REVENUECAT_ENTITLEMENT_ID = 'New App Pro';
 
-export const REVENUECAT_DEFAULT_OFFERING_ID =
-  process.env.EXPO_PUBLIC_REVENUECAT_OFFERING_ID?.trim() || 'default';
+// export const REVENUECAT_ENTITLEMENT_ID =
+//   process.env.EXPO_PUBLIC_REVENUECAT_ENTITLEMENT_ID?.trim() || 'Sass Template Pro';
+// export const REVENUECAT_OFFERING_ID = process.env.EXPO_PUBLIC_REVENUECAT_OFFERING_ID?.trim() || null;
+export const REVENUECAT_OFFERING_ID = 'New App Offering';
 
-export const REVENUECAT_PRODUCTS = {
-  lifetime: 'lifetime',
-  yearly: 'yearly',
-  monthly: 'monthly',
-} as const;
-
-export type RevenueCatPlanId = keyof typeof REVENUECAT_PRODUCTS;
-
-const PACKAGE_ALIASES: Record<RevenueCatPlanId, string[]> = {
-  lifetime: ['lifetime', '$rc_lifetime'],
-  yearly: ['yearly', 'annual', '$rc_annual'],
-  monthly: ['monthly', '$rc_monthly'],
-};
+export type RevenueCatPlanId = 'lifetime' | 'yearly' | 'monthly';
 
 export function isRevenueCatSupportedPlatform() {
   return Platform.OS === 'ios' || Platform.OS === 'android';
+}
+
+export function isRevenueCatNativeModuleAvailable() {
+  return NativeModules.RNPurchases != null;
+}
+
+export function canUseRevenueCat() {
+  return isRevenueCatSupportedPlatform() && isRevenueCatNativeModuleAvailable() && Boolean(getRevenueCatApiKey());
 }
 
 export function getRevenueCatApiKey() {
@@ -38,13 +33,16 @@ export function getRevenueCatApiKey() {
       ? process.env.EXPO_PUBLIC_REVENUECAT_APPLE_API_KEY
       : process.env.EXPO_PUBLIC_REVENUECAT_GOOGLE_API_KEY;
 
-  const trimmedKey = key?.trim();
-  return trimmedKey ? trimmedKey : null;
+  return key?.trim() || null;
 }
 
 export function getRevenueCatSetupMessage() {
   if (!isRevenueCatSupportedPlatform()) {
-    return 'RevenueCat subscriptions require an iOS or Android build. Web and Expo Go cannot complete live purchases.';
+    return 'RevenueCat subscriptions require an iOS or Android build.';
+  }
+
+  if (!isRevenueCatNativeModuleAvailable()) {
+    return 'RevenueCat native module not found. Rebuild your development client after installing react-native-purchases.';
   }
 
   return Platform.OS === 'ios'
@@ -52,42 +50,32 @@ export function getRevenueCatSetupMessage() {
     : 'Missing EXPO_PUBLIC_REVENUECAT_GOOGLE_API_KEY.';
 }
 
-export function selectCurrentOffering(offerings: PurchasesOfferings | null | undefined) {
-  if (!offerings) {
+export function hasProEntitlement(customerInfo: CustomerInfo | null | undefined) {
+  if (!customerInfo) {
+    return false;
+  }
+
+  return typeof customerInfo.entitlements.active[REVENUECAT_ENTITLEMENT_ID] !== 'undefined';
+}
+
+export function getEntitlement(customerInfo: CustomerInfo | null | undefined) {
+  if (!customerInfo) {
     return null;
   }
 
-  if (offerings.all[REVENUECAT_DEFAULT_OFFERING_ID]) {
-    return offerings.all[REVENUECAT_DEFAULT_OFFERING_ID] ?? null;
-  }
-
-  if (offerings.current) {
-    return offerings.current;
-  }
-
-  const firstOffering = Object.values(offerings.all)[0];
-  return firstOffering ?? null;
+  return customerInfo.entitlements.active[REVENUECAT_ENTITLEMENT_ID] ?? null;
 }
 
-function matchesPlanId(aPackage: PurchasesPackage, planId: RevenueCatPlanId) {
-  const aliases = PACKAGE_ALIASES[planId];
+export function getCurrentOffering(offerings: PurchasesOfferings | null | undefined) {
+  const selectedOffering = REVENUECAT_OFFERING_ID
+    ? offerings?.all?.[REVENUECAT_OFFERING_ID] ?? null
+    : offerings?.current ?? null;
 
-  if (
-    aliases.includes(aPackage.identifier) ||
-    aliases.includes(aPackage.product.identifier)
-  ) {
-    return true;
+  if (!selectedOffering?.availablePackages.length) {
+    return null;
   }
 
-  if (planId === 'lifetime') {
-    return aPackage.packageType === PACKAGE_TYPE.LIFETIME;
-  }
-
-  if (planId === 'yearly') {
-    return aPackage.packageType === PACKAGE_TYPE.ANNUAL;
-  }
-
-  return aPackage.packageType === PACKAGE_TYPE.MONTHLY;
+  return selectedOffering;
 }
 
 export function getPackageForPlan(
@@ -98,67 +86,91 @@ export function getPackageForPlan(
     return null;
   }
 
-  return offering.availablePackages.find((aPackage) => matchesPlanId(aPackage, planId)) ?? null;
-}
-
-export function getEntitlement(
-  customerInfo: CustomerInfo | null | undefined,
-  entitlementId = REVENUECAT_ENTITLEMENT_ID
-) {
-  if (!customerInfo) {
-    return null;
-  }
-
   return (
-    customerInfo.entitlements.active[entitlementId] ??
-    customerInfo.entitlements.all[entitlementId] ??
-    null
+    offering.availablePackages.find((aPackage) => {
+      if (planId === 'lifetime') {
+        return aPackage.packageType === PACKAGE_TYPE.LIFETIME;
+      }
+
+      if (planId === 'yearly') {
+        return aPackage.packageType === PACKAGE_TYPE.ANNUAL;
+      }
+
+      return aPackage.packageType === PACKAGE_TYPE.MONTHLY;
+    }) ?? null
   );
 }
 
 export function isPurchaseCancelled(error: unknown) {
-  if (!isPurchasesError(error)) {
+  if (!error || typeof error !== 'object' || !('code' in error)) {
     return false;
   }
 
   return error.code === Purchases.PURCHASES_ERROR_CODE.PURCHASE_CANCELLED_ERROR;
 }
 
-export function formatRevenueCatError(
-  error: unknown,
-  fallbackMessage = 'Something went wrong while talking to RevenueCat.'
-) {
-  if (!isPurchasesError(error)) {
-    if (error instanceof Error && error.message) {
-      return error.message;
-    }
-
-    return fallbackMessage;
+export function maskRevenueCatApiKey(key: string | null | undefined) {
+  if (!key) {
+    return null;
   }
 
-  switch (error.code) {
-    case Purchases.PURCHASES_ERROR_CODE.PURCHASE_CANCELLED_ERROR:
-      return 'Purchase cancelled.';
-    case Purchases.PURCHASES_ERROR_CODE.PAYMENT_PENDING_ERROR:
-      return 'Purchase is pending approval. Check the store account again in a moment.';
-    case Purchases.PURCHASES_ERROR_CODE.NETWORK_ERROR:
-    case Purchases.PURCHASES_ERROR_CODE.OFFLINE_CONNECTION_ERROR:
-      return 'A network error interrupted the RevenueCat request. Try again with a stable connection.';
-    case Purchases.PURCHASES_ERROR_CODE.OPERATION_ALREADY_IN_PROGRESS_ERROR:
-      return 'Another purchase request is already in progress.';
-    case Purchases.PURCHASES_ERROR_CODE.CONFIGURATION_ERROR:
-    case Purchases.PURCHASES_ERROR_CODE.INVALID_CREDENTIALS_ERROR:
-      return 'RevenueCat is not configured correctly. Verify your public SDK key and dashboard setup.';
-    default:
-      return error.message || fallbackMessage;
+  if (key.length <= 8) {
+    return `${key.slice(0, 2)}***`;
   }
+
+  return `${key.slice(0, 4)}...${key.slice(-4)}`;
 }
 
-function isPurchasesError(error: unknown): error is PurchasesError {
-  return Boolean(
-    error &&
-      typeof error === 'object' &&
-      'code' in error &&
-      'message' in error
-  );
+export function summarizeEntitlements(customerInfo: CustomerInfo | null | undefined) {
+  if (!customerInfo) {
+    return {
+      active: [],
+      all: [],
+      requested: REVENUECAT_ENTITLEMENT_ID,
+      requestedFoundInActive: false,
+    };
+  }
+
+  const active = Object.keys(customerInfo.entitlements.active);
+  const all = Object.keys(customerInfo.entitlements.all);
+
+  return {
+    active,
+    all,
+    requested: REVENUECAT_ENTITLEMENT_ID,
+    requestedFoundInActive: active.includes(REVENUECAT_ENTITLEMENT_ID),
+  };
+}
+
+export function summarizeOfferings(offerings: PurchasesOfferings | null | undefined) {
+  const current = offerings?.current;
+  const selectedOffering = REVENUECAT_OFFERING_ID ? offerings?.all?.[REVENUECAT_OFFERING_ID] ?? null : current;
+
+  return {
+    configuredOfferingId: REVENUECAT_OFFERING_ID,
+    allOfferingIds: offerings?.all ? Object.keys(offerings.all) : [],
+    currentOfferingId: current?.identifier ?? null,
+    selectedOfferingId: selectedOffering?.identifier ?? null,
+    selectedPackageIds:
+      selectedOffering?.availablePackages.map((aPackage) => ({
+        identifier: aPackage.identifier,
+        packageType: aPackage.packageType,
+        productId: aPackage.product.identifier,
+      })) ?? [],
+  };
+}
+
+export function getRevenueCatDebugContext() {
+  const apiKey = getRevenueCatApiKey();
+
+  return {
+    platform: Platform.OS,
+    isSupportedPlatform: isRevenueCatSupportedPlatform(),
+    nativeModuleAvailable: isRevenueCatNativeModuleAvailable(),
+    canUseRevenueCat: canUseRevenueCat(),
+    entitlementId: REVENUECAT_ENTITLEMENT_ID,
+    offeringId: REVENUECAT_OFFERING_ID,
+    apiKeyPresent: Boolean(apiKey),
+    apiKeyPreview: maskRevenueCatApiKey(apiKey),
+  };
 }
