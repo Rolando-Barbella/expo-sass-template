@@ -23,13 +23,13 @@ Before you start, make sure you have:
 - **Node.js** (v18 or higher) - [Download](https://nodejs.org/)
 - **npm** or **yarn** package manager
 - **Xcode** for iOS development - [Download](https://developer.apple.com/xcode/)
-- **Apple developer account** For making your app live [Create](https://developer.apple.com/account) ($99 a year)
-- **Expo acccount** Create an account with [Expo](https://expo.dev/)
+- **Apple developer account** for making your app live - Create one [here](https://developer.apple.com/account) ($99 a year)
+- **Expo acccount** - create an account [here](https://expo.dev/)
 - **EAS CLI** - Install with `npm install -g eas-cli`
 
 #### If you planning releasing in Android
 
-- **Android Studio** for Android development [Download](https://developer.android.com/studio)
+- **Android Studio** for Android development - [Download](https://developer.android.com/studio)
 - **Google play** developer [account](https://play.google.com/console/signup) (25$ lifetime)
 
 ## Nice to have
@@ -104,10 +104,10 @@ Rename the .env.example file for .env.local or .env
 4. Go to your [dashboard](https://supabase.com/dashboard/), choose your project
 5. On the left bar, go to **Project Settings** 
 ![Left Bar Supabase](assets/images/left-bar-supbase.png)
-6. Go to the second left bar, under **Configuration** go to > **Data API** > ***API URL** and copy: URL (e.g., `https://jskokp.supabase.co`)
-6. On the left bar again, go to **Project Settings** > **API keys** > ***Legacy anon, service_role API keys tab** and copy: anon public Key (starts with `eyJ...`)
+6. Go to the second left bar, under **Configuration** go to > **Data API** > ***API URL** and copy the url (exp: `https://jskokp.supabase.co`)
+7. On the left bar again, go to **Project Settings** > **API keys** > ***Legacy anon, service_role API keys tab** and copy: anon public Key (starts with `eyJ...`)
 ![Supabase API Key](assets/images/supbase-api-key.png)
-7. Paste these two values on your `.env.local` or `.env`, EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY
+8. Paste these two values on your `.env.local` or `.env`, EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY
 
 ## LOG IN
 This covers Google and Apple sign in ( no usermane and pasword )
@@ -166,10 +166,10 @@ This covers Google and Apple sign in ( no usermane and pasword )
 5. On Google, add the client id: with the following values: 
 `EXPO_PUBLIC_ANDROID_CLIENT_ID, + EXPO_PUBLIC_IOS_CLIENT_ID, + EXPO_PUBLIC_WEB_CLIENT_ID` (don't forget the commas)
 5. Copy the Callback URL (for OAuth) from Google or Apple (looks like `https://dlugycn.supabase.co/auth/v1/callback`)
-6. Go back to your Web Client credential in Google claude and paste the adress in the **Authorised redirect URIs** field
+6. Go back to your Web Client credential in Google Cloud and paste the adress in the **Authorised redirect URIs** field
    
-### 5. Update `app.json` with your iOS Web Client ID:
-Find the plugging section and replace with your EXPO_PUBLIC_IOS_CLIENT_ID with reversed format (instead of 123jsjs.apps.googleusercontent.com, it woule be: com.googleusercontent.apps.123jsjs)
+### 5. Update `app.json` with your iOS client iD:
+Find the plugging section and replace with where it says EXPO_PUBLIC_IOS_CLIENT_ID with you ios client id hardcoded (should look like: 2288838245586-9s6s924uvmokasfghe7kcsbu....)
 
 ```json
    {
@@ -186,7 +186,7 @@ Find the plugging section and replace with your EXPO_PUBLIC_IOS_CLIENT_ID with r
 
 ### Apple login and eas
 
-1. Run `eas build -p ios` (if you have never use eas with expo, check this [video](https://www.youtube.com/watch?v=uQCE9zl3dXU) first)
+1. Run `eas build -p ios` (if you have never use eas with expo, check this [video](https://www.youtube.com/watch?v=uQCE9zl3dXU) first
 2. This should have created the indentifiers in your [apple connect](https://developer.apple.com/account/resources/identifier/list) account, with the ability to sign in
 3. Go to your project on [expo](https://expo.dev/), on the left bar click on Credential and check that your app credentials have been saved
 
