@@ -2,19 +2,20 @@
 
 A React Native opinionated template built with [Expo](https://expo.dev), [Supabase](https://supabase.com/) authentication, [Stripe](https://stripe.com/) payments, [RevenueCat](https://www.revenuecat.com/) subscriptions, and native Google/Apple Sign-In.
 
+* So far most of the features have been tested in iOS only
+
 ## Features
 
 - ✅ Google Sign-In (iOS & Android)
 - ✅ Apple Sign-In (iOS)
 - ✅ Supabase authentication & backend
 - ✅ Bottom sheet login UI
+- ✅ RevenueCat subscriptions (tested in iOS only so far)
 ### Todo
-- ⏳ RevenueCat subscriptions (coming next)
 - ⏳ Apple payment
 - ⏳ Stripe payments 
 - ⏳ Push Notifications with Firebase and Expo
 - ⏳ Emails with [resend](https://resend.com/emails)
-- ⏳ Husky + Eslint complete setyp
 
 ## Prerequisites
 
@@ -315,21 +316,19 @@ Here the official [guide](https://www.revenuecat.com/docs/getting-started/entitl
 1. Creat a build if you have not: `eas build`
 2. Submit your app to the Apple connect: `eas submit -p ios`
 
-### Apple Connect
-1. Go to your [apple store account](https://appstoreconnect.apple.com/apps), select your app
-2. On the left bar at the end, there should be a `subscription` link
+### Apple Connect Subscriptions
+1. Go to your [apple store account](https://appstoreconnect.apple.com/apps), select your app created in the previous step
+2. On the left bar at the end, there should be a `Subscription` link
 3. At the `Subscription Groups` section, create a new one with a name the most sense ( I recommend using same names as the ones in Android)
 4. In the subscription section, create a new one
 4.1 The `reference name` will be the one that appeats in the app store connect
 4.2 The product should have the following example format (using underscore): `new_app_subscription`
 4.3 Add subscription dutation ( weekly, monthly, yearly, etc)
-4.4 Set Up Availability by choosing the countries were it will be availble
+4.4 Set Up Availability by choosing the countries where it will be availble
 4.5 Add a subscription price 
 4.6 Add localization
 5. Go back to the `Subscriptions` page, add the localization
 6. Add the `Billing Grace Period` that makes sense for your app (16 days, 3 days, etc)
-
-*This should be it for apple conncet configurations
 
 ### RevenueCat Configurations
 1. On your [projects page](https://app.revenuecat.com/projects/), choose your app
@@ -339,7 +338,7 @@ Here the official [guide](https://www.revenuecat.com/docs/getting-started/entitl
 3. Press the `+ Add app config` button and select App Store
 3.2 Go to you Users and access [page](https://appstoreconnect.apple.com/access/users)
 3.3 Select `integrations` in the top bar, then `In-App-Purchase` in the left bar
-3.4 Generate an `in-app purchase key` by pressing the plus button, give it the appropiet name
+3.4 Generate an `in-app purchase key` by pressing the plus button, give it the appropiet name (exp: RC-Pro-Accounts)
 3.5 Downloaded and upload it to revenuecat
 3.6 Copy the `Issuer ID` from the In-App Purchase that you see in the same page
 3.7 Save changes
@@ -361,6 +360,7 @@ Here the official [guide](https://www.revenuecat.com/docs/getting-started/entitl
 ### API keys
 1. On the left bar, go to `App & providers` > `API keys` 
 2. Copy the API key and paste them in your .env file (EXPO_PUBLIC_REVENUECAT_APPLE_API_KE & EXPO_PUBLIC_REVENUECAT_GOOGLE_API_KEY)
+3. Also add EXPO_PUBLIC_REVENUECAT_ENTITLEMENT_ID and EXPO_PUBLIC_REVENUECAT_OFFERING_ID which can be found in revenue cat
 
 ## Skills
 There are some skills files already, feel free to use more
