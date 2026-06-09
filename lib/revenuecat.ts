@@ -6,12 +6,8 @@ import Purchases, {
 } from 'react-native-purchases';
 import { NativeModules, Platform } from 'react-native';
 
-export const REVENUECAT_ENTITLEMENT_ID = 'New App Pro';
-
-// export const REVENUECAT_ENTITLEMENT_ID =
-//   process.env.EXPO_PUBLIC_REVENUECAT_ENTITLEMENT_ID?.trim() || 'Sass Template Pro';
-// export const REVENUECAT_OFFERING_ID = process.env.EXPO_PUBLIC_REVENUECAT_OFFERING_ID?.trim() || null;
-export const REVENUECAT_OFFERING_ID = 'New App Offering';
+export const REVENUECAT_ENTITLEMENT_ID = process.env.EXPO_PUBLIC_REVENUECAT_ENTITLEMENT_ID?.trim() || 'Sass Template Pro';
+export const REVENUECAT_OFFERING_ID = process.env.EXPO_PUBLIC_REVENUECAT_OFFERING_ID?.trim() || null;
 
 export type RevenueCatPlanId = 'lifetime' | 'yearly' | 'monthly';
 
@@ -107,6 +103,34 @@ export function isPurchaseCancelled(error: unknown) {
   }
 
   return error.code === Purchases.PURCHASES_ERROR_CODE.PURCHASE_CANCELLED_ERROR;
+}
+
+export function getRevenueCatErrorDetails(error: unknown) {
+  if (!error || typeof error !== 'object') {
+    return {
+      code: null,
+      message: 'Unknown purchase error',
+      readableErrorCode: null,
+      userCancelled: false,
+      underlyingErrorMessage: null,
+    };
+  }
+
+  const typedError = error as {
+    code?: string | number;
+    message?: string;
+    readableErrorCode?: string;
+    userCancelled?: boolean;
+    underlyingErrorMessage?: string;
+  };
+
+  return {
+    code: typedError.code ?? null,
+    message: typedError.message ?? 'Unknown purchase error',
+    readableErrorCode: typedError.readableErrorCode ?? null,
+    userCancelled: typedError.userCancelled ?? false,
+    underlyingErrorMessage: typedError.underlyingErrorMessage ?? null,
+  };
 }
 
 export function maskRevenueCatApiKey(key: string | null | undefined) {
