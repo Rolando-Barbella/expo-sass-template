@@ -42,6 +42,12 @@
         }
       ],
       [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.EXPO_PUBLIC_IOS_CLIENT_ID"
+        }
+      ],
+      [
         "expo-splash-screen",
         {
           "image": "./assets/images/splash-icon.png",
@@ -67,7 +73,9 @@
       "color": "#E6F4FE"
     },
     "extra": {
-      "router": {}
+      "eas": {
+        "projectId": ""
+      }
     }
   }
 }
