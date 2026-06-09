@@ -4,7 +4,6 @@ import { type RevenueCatPlanId, getPackageForPlan } from '@/lib/revenuecat';
 import { useRevenueCat } from '@/providers/RevenueCatProvider';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { PAYWALL_RESULT } from 'react-native-purchases-ui';
 import {
   ActivityIndicator,
   Platform,
@@ -15,6 +14,7 @@ import {
   useWindowDimensions,
 } from 'react-native';
 
+const ACCENT_COLOR = '#3340e1';
 const PLAN_ORDER: RevenueCatPlanId[] = ['yearly', 'monthly', 'lifetime'];
 
 const PLAN_COPY: Record<
@@ -36,13 +36,7 @@ const PLAN_COPY: Record<
   },
 };
 
-type BusyAction =
-  | 'customer-center'
-  | 'paywall'
-  | 'purchase'
-  | 'refresh'
-  | 'restore'
-  | null;
+type BusyAction = 'purchase' | null;
 
 export function SubscriptionBottomSheet() {
   const router = useRouter();
@@ -53,13 +47,8 @@ export function SubscriptionBottomSheet() {
     entitlement,
     hasProAccess,
     isConfigured,
-    isReady,
     isSupported,
-    presentCustomerCenter,
-    presentPaywallIfNeeded,
     purchasePackage,
-    refresh,
-    restorePurchases,
   } = useRevenueCat();
   const [selectedPlan, setSelectedPlan] = useState<RevenueCatPlanId>('yearly');
   const [busyAction, setBusyAction] = useState<BusyAction>(null);
@@ -89,33 +78,6 @@ export function SubscriptionBottomSheet() {
     }
   }, [currentOffering, selectedPlan]);
 
-  useEffect(() => {
-    console.log('[SubscriptionBottomSheet] RevenueCat state', {
-      currentOfferingId: currentOffering?.identifier ?? null,
-      entitlementId: entitlement?.identifier ?? null,
-      entitlementIsActive: entitlement?.isActive ?? false,
-      hasProAccess,
-      isConfigured,
-      isReady,
-      isSupported,
-      selectedPlan,
-      availablePlans,
-      statusMessage,
-      configError,
-    });
-  }, [
-    availablePlansKey,
-    configError,
-    currentOffering,
-    entitlement,
-    hasProAccess,
-    isConfigured,
-    isReady,
-    isSupported,
-    selectedPlan,
-    statusMessage,
-  ]);
-
   const onSubscribe = async () => {
     if (!selectedPackage) {
       setStatusMessage('The selected product is not available yet.');
@@ -125,87 +87,17 @@ export function SubscriptionBottomSheet() {
     setBusyAction('purchase');
     setStatusMessage(null);
 
-    const unlocked = await purchasePackage(selectedPackage);
+    const result = await purchasePackage(selectedPackage);
 
     setBusyAction(null);
 
-    if (unlocked) {
+    if (result.unlocked) {
       setStatusMessage('Sass Template Pro unlocked successfully.');
       router.back();
       return;
     }
 
-    setStatusMessage('The purchase could not be completed.');
-  };
-
-  const onRestorePurchases = async () => {
-    setBusyAction('restore');
-    setStatusMessage(null);
-
-    const restored = await restorePurchases();
-
-    setBusyAction(null);
-    setStatusMessage(
-      restored
-        ? 'Purchases restored. Sass Template Pro is active.'
-        : 'Restore completed. No active Sass Template Pro entitlement was found.'
-    );
-  };
-
-  const onRefreshStatus = async () => {
-    setBusyAction('refresh');
-    setStatusMessage(null);
-
-    await refresh();
-
-    setBusyAction(null);
-    setStatusMessage('Subscription status refreshed.');
-  };
-
-  const onPresentPaywall = async () => {
-    setBusyAction('paywall');
-    setStatusMessage(null);
-
-    try {
-      const result = await presentPaywallIfNeeded();
-
-      switch (result) {
-        case PAYWALL_RESULT.PURCHASED:
-          setStatusMessage('Purchase completed successfully.');
-          router.back();
-          break;
-        case PAYWALL_RESULT.RESTORED:
-          setStatusMessage('Previous purchase restored.');
-          break;
-        case PAYWALL_RESULT.NOT_PRESENTED:
-          setStatusMessage('Sass Template Pro is already active.');
-          break;
-        case PAYWALL_RESULT.CANCELLED:
-          setStatusMessage('Paywall dismissed.');
-          break;
-        default:
-          setStatusMessage('Paywall closed without unlocking.');
-          break;
-      }
-    } catch {
-      setStatusMessage('Unable to present the paywall.');
-    } finally {
-      setBusyAction(null);
-    }
-  };
-
-  const onOpenCustomerCenter = async () => {
-    setBusyAction('customer-center');
-    setStatusMessage(null);
-
-    try {
-      await presentCustomerCenter();
-      setStatusMessage('Customer Center closed.');
-    } catch {
-      setStatusMessage('Unable to open Customer Center.');
-    } finally {
-      setBusyAction(null);
-    }
+    setStatusMessage(result.errorMessage || 'The purchase could not be completed.');
   };
 
   const feedbackMessage = statusMessage ?? configError;
@@ -220,16 +112,11 @@ export function SubscriptionBottomSheet() {
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.card}>
           <ThemedText type="title" style={styles.title}>
-            {hasProAccess ? 'Sass Template Pro Active' : 'Unlock Sass Template Pro'}
-          </ThemedText>
-          <ThemedText style={styles.subtitle}>
-            Choose a plan to unlock Sass Template Pro on this device.
+            {hasProAccess ? 'Sass Template Pro Active' : 'Sass Template Pro'}
           </ThemedText>
 
           <View style={styles.summaryCard}>
-            <ThemedText type="defaultSemiBold">
-              {hasProAccess ? 'Entitlement active' : 'Free plan'}
-            </ThemedText>
+            <ThemedText type="defaultSemiBold">{hasProAccess ? 'Entitlement active' : 'Plan status'}</ThemedText>
             <ThemedText style={styles.summaryText}>{entitlementSummary}</ThemedText>
             <ThemedText style={styles.summaryText}>
               Offering: {currentOffering?.identifier ?? 'Loading...'}
@@ -300,75 +187,7 @@ export function SubscriptionBottomSheet() {
             )}
           </Pressable>
 
-          <Pressable
-            onPress={onPresentPaywall}
-            disabled={isBusy || !isConfigured}
-            style={({ pressed }) => [
-              styles.secondaryButton,
-              pressed && styles.secondaryButtonPressed,
-              (isBusy || !isConfigured) && styles.buttonDisabled,
-            ]}
-          >
-            {busyAction === 'paywall' ? (
-              <ActivityIndicator color={Colors.light.text} />
-            ) : (
-              <ThemedText style={styles.secondaryButtonText}>Present RevenueCat paywall</ThemedText>
-            )}
-          </Pressable>
-
-          <Pressable
-            onPress={onRestorePurchases}
-            disabled={isBusy || !isConfigured}
-            style={({ pressed }) => [
-              styles.secondaryButton,
-              pressed && styles.secondaryButtonPressed,
-              (isBusy || !isConfigured) && styles.buttonDisabled,
-            ]}
-          >
-            {busyAction === 'restore' ? (
-              <ActivityIndicator color={Colors.light.text} />
-            ) : (
-              <ThemedText style={styles.secondaryButtonText}>Restore purchases</ThemedText>
-            )}
-          </Pressable>
-
-          <Pressable
-            onPress={onOpenCustomerCenter}
-            disabled={isBusy || !isConfigured}
-            style={({ pressed }) => [
-              styles.secondaryButton,
-              pressed && styles.secondaryButtonPressed,
-              (isBusy || !isConfigured) && styles.buttonDisabled,
-            ]}
-          >
-            {busyAction === 'customer-center' ? (
-              <ActivityIndicator color={Colors.light.text} />
-            ) : (
-              <ThemedText style={styles.secondaryButtonText}>Open Customer Center</ThemedText>
-            )}
-          </Pressable>
-
-          <Pressable
-            onPress={onRefreshStatus}
-            disabled={isBusy || !isReady || !isConfigured}
-            style={({ pressed }) => [
-              styles.secondaryButton,
-              pressed && styles.secondaryButtonPressed,
-              (isBusy || !isReady || !isConfigured) && styles.buttonDisabled,
-            ]}
-          >
-            {busyAction === 'refresh' ? (
-              <ActivityIndicator color={Colors.light.text} />
-            ) : (
-              <ThemedText style={styles.secondaryButtonText}>Refresh customer info</ThemedText>
-            )}
-          </Pressable>
-
           {feedbackMessage ? <ThemedText style={styles.statusMessage}>{feedbackMessage}</ThemedText> : null}
-
-          <Pressable onPress={() => router.back()} style={styles.notNowButton}>
-            <ThemedText style={styles.notNowText}>Not now</ThemedText>
-          </Pressable>
         </View>
       </ScrollView>
     </View>
@@ -394,6 +213,8 @@ const styles = StyleSheet.create({
   },
   title: {
     textAlign: 'center',
+    marginTop: 10,
+    marginBottom: 10,
   },
   subtitle: {
     textAlign: 'center',
@@ -407,7 +228,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 12,
     gap: 4,
-    backgroundColor: 'rgba(84, 242, 84, 0.08)',
+    backgroundColor: '#ffffff',
   },
   summaryText: {
     opacity: 0.8,
@@ -433,8 +254,8 @@ const styles = StyleSheet.create({
     opacity: 0.55,
   },
   planCardSelected: {
-    borderColor: Colors.light.tint,
-    backgroundColor: 'rgba(84, 242, 84, 0.1)',
+    borderColor: ACCENT_COLOR,
+    backgroundColor: '#ffffff',
   },
   planCopy: {
     flex: 1,
@@ -454,7 +275,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   badge: {
-    color: Colors.light.tint,
+    color: ACCENT_COLOR,
     fontSize: 12,
   },
   primaryButton: {
@@ -463,7 +284,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     minHeight: 48,
     borderRadius: 14,
-    backgroundColor: Colors.light.tint,
+    backgroundColor: ACCENT_COLOR,
     paddingHorizontal: 16,
   },
   primaryButtonPressed: {
@@ -472,20 +293,7 @@ const styles = StyleSheet.create({
   primaryButtonText: {
     color: Colors.dark.text,
     textTransform: 'capitalize',
-  },
-  secondaryButton: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: 44,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: Colors.light.border,
-  },
-  secondaryButtonPressed: {
-    opacity: 0.85,
-  },
-  secondaryButtonText: {
-    color: Colors.light.text,
+    fontWeight: 'bold',
   },
   buttonDisabled: {
     opacity: 0.55,
@@ -495,13 +303,5 @@ const styles = StyleSheet.create({
     color: Colors.light.gray,
     textAlign: 'center',
     lineHeight: 20,
-  },
-  notNowButton: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 6,
-  },
-  notNowText: {
-    opacity: 0.6,
   },
 });

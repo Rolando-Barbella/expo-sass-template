@@ -10,6 +10,7 @@ import {
   canUseRevenueCat,
   getCurrentOffering,
   getRevenueCatDebugContext,
+  getRevenueCatErrorDetails,
   getEntitlement,
   getRevenueCatApiKey,
   getRevenueCatSetupMessage,
@@ -19,6 +20,11 @@ import {
   summarizeEntitlements,
   summarizeOfferings,
 } from '@/lib/revenuecat';
+
+type PurchaseResult = {
+  errorMessage: string | null;
+  unlocked: boolean;
+};
 
 type RevenueCatContextValue = {
   configError: string | null;
@@ -31,7 +37,7 @@ type RevenueCatContextValue = {
   isSupported: boolean;
   presentCustomerCenter: () => Promise<void>;
   presentPaywallIfNeeded: () => Promise<PAYWALL_RESULT>;
-  purchasePackage: (aPackage: PurchasesPackage) => Promise<boolean>;
+  purchasePackage: (aPackage: PurchasesPackage) => Promise<PurchaseResult>;
   refresh: () => Promise<void>;
   restorePurchases: () => Promise<boolean>;
 };
@@ -46,37 +52,22 @@ export function RevenueCatProvider({ children }: { children: React.ReactNode }) 
   const [currentOffering, setCurrentOffering] = useState<PurchasesOffering | null>(null);
 
   const refresh = useCallback(async () => {
-    console.log('[RevenueCat] Refresh start', getRevenueCatDebugContext());
-
     const [nextCustomerInfo, offerings] = await Promise.all([
       Purchases.getCustomerInfo(),
       Purchases.getOfferings(),
     ]);
-
-    console.log('[RevenueCat] Refresh customer info', {
-      appUserID: nextCustomerInfo.originalAppUserId,
-      entitlements: summarizeEntitlements(nextCustomerInfo),
-    });
-    console.log('[RevenueCat] Refresh offerings', summarizeOfferings(offerings));
-
     setCustomerInfo(nextCustomerInfo);
     setCurrentOffering(getCurrentOffering(offerings));
   }, []);
 
   useEffect(() => {
     if (!canUseRevenueCat()) {
-      console.warn('[RevenueCat] Configuration blocked', {
-        ...getRevenueCatDebugContext(),
-        setupMessage: getRevenueCatSetupMessage(),
-      });
       setConfigError(getRevenueCatSetupMessage());
       setIsReady(true);
       return;
     }
 
     let isMounted = true;
-
-    console.log('[RevenueCat] Configuring Purchases', getRevenueCatDebugContext());
     Purchases.configure({ apiKey: getRevenueCatApiKey()! });
     setIsConfigured(true);
 
@@ -91,10 +82,6 @@ export function RevenueCatProvider({ children }: { children: React.ReactNode }) 
       });
 
     const listener = (nextCustomerInfo: CustomerInfo) => {
-      console.log('[RevenueCat] Customer info updated', {
-        appUserID: nextCustomerInfo.originalAppUserId,
-        entitlements: summarizeEntitlements(nextCustomerInfo),
-      });
 
       if (isMounted) {
         setCustomerInfo(nextCustomerInfo);
@@ -111,38 +98,41 @@ export function RevenueCatProvider({ children }: { children: React.ReactNode }) 
 
   const purchasePackage = async (aPackage: PurchasesPackage) => {
     try {
-      console.log('[RevenueCat] Purchase start', {
-        packageIdentifier: aPackage.identifier,
-        packageType: aPackage.packageType,
-        productId: aPackage.product.identifier,
-        entitlementId: REVENUECAT_ENTITLEMENT_ID,
-      });
       const { customerInfo: nextCustomerInfo } = await Purchases.purchasePackage(aPackage);
-      console.log('[RevenueCat] Purchase result', {
-        appUserID: nextCustomerInfo.originalAppUserId,
-        entitlements: summarizeEntitlements(nextCustomerInfo),
-      });
+     
       setCustomerInfo(nextCustomerInfo);
-      return hasProEntitlement(nextCustomerInfo);
-    } catch (error) {
-      if (!isPurchaseCancelled(error)) {
-        console.warn('RevenueCat purchase failed', error);
+
+      if (!hasProEntitlement(nextCustomerInfo)) {
+        return {
+          errorMessage: `Purchase completed, but RevenueCat did not grant the entitlement "${REVENUECAT_ENTITLEMENT_ID}".`,
+          unlocked: false,
+        };
       }
 
-      return false;
+      return {
+        errorMessage: null,
+        unlocked: true,
+      };
+    } catch (error) {
+      const errorDetails = getRevenueCatErrorDetails(error);
+
+      if (!isPurchaseCancelled(error)) {
+        console.warn('RevenueCat purchase failed', errorDetails);
+      }
+
+      return {
+        errorMessage: isPurchaseCancelled(error)
+          ? 'Purchase cancelled.'
+          : errorDetails.underlyingErrorMessage || errorDetails.message,
+        unlocked: false,
+      };
     }
   };
 
   const restorePurchases = async () => {
     try {
-      console.log('[RevenueCat] Restore start', {
-        entitlementId: REVENUECAT_ENTITLEMENT_ID,
-      });
       const nextCustomerInfo = await Purchases.restorePurchases();
-      console.log('[RevenueCat] Restore result', {
-        appUserID: nextCustomerInfo.originalAppUserId,
-        entitlements: summarizeEntitlements(nextCustomerInfo),
-      });
+
       setCustomerInfo(nextCustomerInfo);
       return hasProEntitlement(nextCustomerInfo);
     } catch (error) {
@@ -152,17 +142,9 @@ export function RevenueCatProvider({ children }: { children: React.ReactNode }) 
   };
 
   const presentPaywallIfNeeded = async () => {
-    console.log('[RevenueCat] Present paywall if needed', {
-      entitlementId: REVENUECAT_ENTITLEMENT_ID,
-    });
     const result = await RevenueCatUI.presentPaywallIfNeeded({
       displayCloseButton: true,
       requiredEntitlementIdentifier: REVENUECAT_ENTITLEMENT_ID,
-    });
-
-    console.log('[RevenueCat] Paywall result', {
-      result,
-      entitlementId: REVENUECAT_ENTITLEMENT_ID,
     });
 
     if (result === PAYWALL_RESULT.PURCHASED || result === PAYWALL_RESULT.RESTORED) {
@@ -173,7 +155,6 @@ export function RevenueCatProvider({ children }: { children: React.ReactNode }) 
   };
 
   const presentCustomerCenter = async () => {
-    console.log('[RevenueCat] Present customer center');
     await RevenueCatUI.presentCustomerCenter();
     await refresh();
   };
