@@ -247,15 +247,14 @@ Pay attention to each step, you are going to be navigating between the Google Pa
 
 ### Google Play Console and Google Cloud Credentials
 1. Go to your Google Cloud [account](https://console.cloud.google.com/)
-2. Create a new project on the top bar
-![Google Cloud Console](assets/images/google-console-new-project.png)
+2. Make sure your project is selected on the top bar
 3. Go to the [Google Play Android Developer API page](https://console.cloud.google.com/apis/library/androidpublisher.googleapis.com) and the [Google Play Developer Reporting API page](https://console.cloud.google.com/apis/library/playdeveloperreporting.googleapis.com) in Google Cloud Console.
 4. Press enable on both sites
 5. You should now see a `Create credentials` button in both pages
 
 #### Google Play Android Developer API page
 *You can also check this [video](https://www.youtube.com/watch?v=fOr2fu-0Vs8&t=2s) from 
-RevenueCat team
+the RevenueCat team
 
 1. Make sure you select `Google Play Android Developer API` and `Application data`, then click next 
 2. Add a name to the services account (exp: rn services account )
