@@ -337,12 +337,12 @@ Here the official [guide](https://www.revenuecat.com/docs/getting-started/entitl
 3. At the `Subscription Groups` section, create a new one with a name the most sense ( I recommend using same names as the ones in Android)
 4. In the subscription section, create a new one
 
-   1. The `reference name` will be the one that appears in App Store Connect
-   2. The product should have the following example format (using underscore): `new_app_subscription`
-   3. Add subscription duration (weekly, monthly, yearly, etc.)
-   4. Set up availability by choosing the countries where it will be available
-   5. Add a subscription price
-   6. Add localization
+   - `4.1` The `reference name` will be the one that appears in App Store Connect
+   - `4.2` The product should have the following example format (using underscore): `new_app_subscription`
+   - `4.3` Add subscription duration (weekly, monthly, yearly, etc.)
+   - `4.4` Set up availability by choosing the countries where it will be available
+   - `4.5` Add a subscription price
+   - `4.6` Add localization
 
 5. Go back to the `Subscriptions` page, add the localization
 6. Add the `Billing Grace Period` that makes sense for your app (16 days, 3 days, etc)
@@ -354,13 +354,13 @@ Here the official [guide](https://www.revenuecat.com/docs/getting-started/entitl
 #### In-app purchase key configuration steps
 3. Press the `+ Add app config` button and select App Store
 
-   1. Go to your [Users and Access page](https://appstoreconnect.apple.com/access/users)
-   2. Select `Integrations` in the top bar, then `In-App Purchase` in the left bar
-   3. Generate an `in-app purchase key` by pressing the plus button, and give it an appropriate name (for example: `RC-Pro-Accounts`)
-   4. Download the key and upload it to RevenueCat
-   5. Copy the `Issuer ID` from the In-App Purchase page
-   6. Save changes
-   7. Go to `Product catalog` > `Products` to make sure the new Apple product appears
+   - `3.1` Go to your [Users and Access page](https://appstoreconnect.apple.com/access/users)
+   - `3.2` Select `Integrations` in the top bar, then `In-App Purchase` in the left bar
+   - `3.3` Generate an `in-app purchase key` by pressing the plus button, and give it an appropriate name (for example: `RC-Pro-Accounts`)
+   - `3.4` Download the key and upload it to RevenueCat
+   - `3.5` Copy the `Issuer ID` from the In-App Purchase page
+   - `3.6` Save changes
+   - `3.7` Go to `Product catalog` > `Products` to make sure the new Apple product appears
 
 ### Add new product
 1. In the same `Product catalog` > `Products` page, click the `New Product` button
