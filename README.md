@@ -306,8 +306,7 @@ By now, you should be done with all the google steps 🫰
 2. Select `New app configuration` ( the one with the apple, android, amazon icons )
 3. Select Google Play Store
 4. Create your `New Play Store configuration` by adding a name, and the package name ( the loacted on your app.json file )
-
-4.1 Upload the `Service account credentials` created on the previos Google steps (Google Play Android Developer API page > step 8)
+4.1. Upload the `Service account credentials` created on the previos Google steps (Google Play Android Developer API page > step 8)
 
 By now, yout revenuecat credentials page should look like this: ![revenuecat credentials page](assets/images/revenuecat-credentials.png)
 If not, review the previos steps
