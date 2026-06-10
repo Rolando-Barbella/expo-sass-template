@@ -108,6 +108,11 @@ npx expo prebuild --platform android
 // for both platform
 npx expo prebuild 
 ```
+
+```bash
+npx expo run:ios or npx expo run:android
+```
+
 *This should create the ios and android folder
 
 ### 5. Create a Supabase Project
@@ -159,7 +164,7 @@ This covers Google and Apple sign in ( no usermane and pasword )
       keytool -keystore ~/.android/debug.keystore -list -v
       # Password is usually 'android'
       ```
-      - Copy the **Client ID**, Pasted the id in the .env.local file, EXPO_PUBLIC_ANDROID_CLIENT_ID
+      - Copy the **Client ID**, pasted the id in the .env.local file, EXPO_PUBLIC_ANDROID_CLIENT_ID
 
    **Web Client (required for the auth flow):**
    - Application type: **Web application**
@@ -174,7 +179,7 @@ This covers Google and Apple sign in ( no usermane and pasword )
 ### 4. Supabase Auth setup
 
 1. Go to your project again
-2. On the left bar, go to **Authentication** > under Configurations, select **Sign In/Providers"** 
+2. On the left bar, go to **Authentication** > under Configurations, select **Sign In / Providers** 
 3. Enable Apple and Google
 4. On Apple, add the client id: `com.yourcompany.appname`
 5. On Google, add the client id: with the following values: 
@@ -200,7 +205,7 @@ Find the plugging section and replace with where it says EXPO_PUBLIC_IOS_CLIENT_
 
 ### Apple login and eas
 
-1. Run `eas build -p ios` (if you have never use eas with expo, check this [video](https://www.youtube.com/watch?v=uQCE9zl3dXU) first
+1. Run `eas build -p ios` (if you have never use eas with expo, check this [video](https://www.youtube.com/watch?v=uQCE9zl3dXU) first)
 2. This should have created the indentifiers in your [apple connect](https://developer.apple.com/account/resources/identifier/list) account, with the ability to sign in
 3. Go to your project on [expo](https://expo.dev/), on the left bar click on Credential and check that your app credentials have been saved
 
@@ -215,16 +220,16 @@ npx expo run:ios or npx expo run:android
 
 Pay attention to each step, you are going to be navigating between the Google Paly Console and Google Console page a lot, they can be quiet confusing
 
-1. Create a new app in the [Google Play Console](https://play.google.com/console/u/0/developers/), add the app name, the package name ( located ate in your app.json file, specifically the android objet, exp: com.yourname.appname), select free app, and confirm both declarations.
+1. Create a new app in the [Google Play Console](https://play.google.com/console/u/0/developers/) if you haven't already, add the app name, the package name ( located ate in your app.json file, specifically the android objet, exp: com.yourname.appname), select free app, and confirm both declarations.
 2. Create a build with expo if you haven’t: eas build
-3. Download the .aab file (we will come back to this later)
+3. Download the `.aab` file (we will come back to this later)
 
 ### Make a new release
 1. After succesfully creating the app ( make sure it is selected ), on the left bar, go to t `Test and release` > `Internal testing`
 ![Google Play Console](assets/images/internal-release.png)
 2. Press on the `Create new release` button
-3. Upload the .aab file dowloaded before 
-4. Press Next, then Save and Publish
+3. Upload the `.aab` file dowloaded before 
+4. Press `Next`, then `Save and Publish`
 
 *Your app should be now available for internal publisher
 
