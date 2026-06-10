@@ -136,42 +136,48 @@ This covers Google and Apple sign in ( no usermane and pasword )
 ### Create a Google Cloud Project (for Google Sign-In)
 
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-
 2. Create a new project or select an existing one
 
 ![Google Cloud Project](assets/images/google-claude-project.png)
 
 3. Add credentials
-   - Go to **APIs & Services** >  **Credentials** > **Create credentials**
-   - Google will ask you to configure the consent screen 
-   - In the Audience part, select the **External** checkbox, then add the rest of the app information 
+   - Go to **APIs & Services** > **Credentials** > **Create credentials**
+   - Google will ask you to configure the consent screen
+   - In the Audience part, select the **External** checkbox, then add the rest of the app information
+
    ![Consent screen](assets/images/consent-screen.png)
-   - On the left menu, go again to **APIs & Services** >  **Create Credentials** > **OAuth client ID**
+
+   - On the left menu, go again to **APIs & Services** > **Create Credentials** > **OAuth client ID**
 
    **iOS Client:**
-      - Application type: **iOS**
-      - Name: "My App iOS" or leave the default one
-      - Bundle ID: `com.yourcompany.yourapp` (must match `app.json`)
-      - Copy the **Client ID**, pasted the id in the .env.local file, EXPO_PUBLIC_IOS_CLIENT_ID
+
+   - Application type: **iOS**
+   - Name: "My App iOS" or leave the default one
+   - Bundle ID: `com.yourcompany.yourapp` (must match `app.json`)
+   - Copy the **Client ID**, pasted the id in the `.env.local` file, `EXPO_PUBLIC_IOS_CLIENT_ID`
 
    **Android Client:**
-      - Application type: **Android**
-      - Name: "My App Android"
-      - Package name: `com.yourcompany.yourapp` (must match `app.json`)
-      - SHA-1 certificate fingerprint: Get this by running:
-      ```bash
-      # For development
-      keytool -keystore ~/.android/debug.keystore -list -v
-      # Password is usually 'android'
-      ```
-      - Copy the **Client ID**, pasted the id in the .env.local file, EXPO_PUBLIC_ANDROID_CLIENT_ID
+
+   - Application type: **Android**
+   - Name: "My App Android"
+   - Package name: `com.yourcompany.yourapp` (must match `app.json`)
+   - SHA-1 certificate fingerprint: Get this by running:
+
+   ```bash
+   # For development
+   keytool -keystore ~/.android/debug.keystore -list -v
+   # Password is usually 'android'
+   ```
+
+   - Copy the **Client ID**, pasted the id in the `.env.local` file, `EXPO_PUBLIC_ANDROID_CLIENT_ID`
 
    **Web Client (required for the auth flow):**
+
    - Application type: **Web application**
-   - Name: "My App Web" or the defualt one
+   - Name: "My App Web" or the default one
    - On the **Authorised JavaScript origins**, add: `http://localhost:8081`
    - Leave the Authorised redirect URIs empty for now (we will come back to in a next step)
-   - Copy the **Client ID** and added to the .env.local file, EXPO_PUBLIC_WEB_CLIENT_ID
+   - Copy the **Client ID** and add it to the `.env.local` file, `EXPO_PUBLIC_WEB_CLIENT_ID`
 
 
 💡 Helpful [video](http://youtube.com/watch?v=BDeKTPQzvR4) about all this Google setup
