@@ -96,7 +96,21 @@ Open `app.json` and update the following fields:
 
 Rename the .env.example file for .env.local or .env
 
-### 4. Create a Supabase Project
+### 4. Install Dependencies, build and run the app
+
+```bash
+npm install
+```
+
+```bash
+npx expo prebuild --platform ios
+npx expo prebuild --platform android
+// for both platform
+npx expo prebuild 
+```
+*This should create the ios and android folder
+
+### 5. Create a Supabase Project
 
 1. Go to [Supabase](https://supabase.com/) and create a free account
 2. Click `Start New project`
@@ -192,17 +206,6 @@ Find the plugging section and replace with where it says EXPO_PUBLIC_IOS_CLIENT_
 
 
 💡 Helpful [video](https://www.youtube.com/watch?v=tqxTijhYhp8) about all this Apple setup
-
-## Install Dependencies, build and run the app
-
-```bash
-npm install
-```
-
-```bash
-npx expo prebuild
-```
-*This should create the ios and android folder
 
 ```bash
 npx expo run:ios or npx expo run:android
