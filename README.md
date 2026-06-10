@@ -270,7 +270,7 @@ the RevenueCat team
 2. Press `Enable`
 
 #### Invite user in Google Play Console
-1 Got to your Play Console [list](https://play.google.com/console/u/0/developers)
+1. Got to your Play Console [list](https://play.google.com/console/u/0/developers)
 2. On the left bar, press on `Users and permissions` 
 3. Invite a new user
 4. Add the email you created in the previos step (Google Play Android Developer API page > step 5)
