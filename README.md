@@ -212,6 +212,7 @@ Find the plugging section and replace with where it says EXPO_PUBLIC_IOS_CLIENT_
 
 💡 Helpful [video](https://www.youtube.com/watch?v=tqxTijhYhp8) about all this Apple setup
 
+Run the app to test your changes
 ```bash
 npx expo run:ios or npx expo run:android
 ```
@@ -306,8 +307,9 @@ By now, you should be done with all the google steps 🫰
 3. Select Google Play Store
 4. Create your `New Play Store configuration` by adding a name, and the package name ( the loacted on your app.json file )
 4.1 Upload the `Service account credentials` created on the previos Google steps (Google Play Android Developer API page > step 8)
+
 By now, yout revenuecat credentials page should look like this: ![revenuecat credentials page](assets/images/revenuecat-credentials.png)
-If not, review the previos steps
+If not, review the previos steps.
 
 *It can take up to 36 hours for your Play Service Credentials to work properly with the Google Play Developer API
 
