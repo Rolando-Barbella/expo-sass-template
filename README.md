@@ -223,7 +223,7 @@ Run the app to test your changes
 npx expo run:ios or npx expo run:android
 ```
 
-## RevenueCat subscriptions with Android
+## Subscriptions for Android (Google Paly Console and Google Console)
 
 Pay attention to each step, you are going to be navigating between the Google Paly Console and Google Console page a lot, they can be quiet confusing
 
@@ -300,18 +300,18 @@ By now, you should be done with all the google steps 🫰
 
 ### Revenue Cat Setup
 1. Create a new [account](https://www.revenuecat.com/) if you have not already
-2. In your [projects](https://app.revenuecat.com/projects/) page, create a new project ![Revenue cat new project](assets/images/revenue-cat-new-product.png)
-3. There will be some options and questions screens, you can avoid them for now and go to the dashboard
+2. In your [projects](https://app.revenuecat.com/projects/) page, create a new project ![Revenue cat new project](assets/images/revenue-cat-new-product.png) (top drop down menu)
+3. There will be some options and questions screens, you can just press continue for now and go to the dashboard
 
 #### Entitlements
 1. On the left side bar, go to `Product catalog` > `Entitlements`
-2. Add a new one by given it a name
+2. Add a new one by given it a name (exp: `Your product pro account`, could be for both: Identifier and Display name )
 
 #### Apps & providers
-1. On the left bar, go to Apps & providers > Configurations
+1. On the left bar, go to Apps
 2. Select `New app configuration` ( the one with the apple, android, amazon icons )
-3. Select Google Play Store
-4. Create your `New Play Store configuration` by adding a name, and the package name ( the loacted on your app.json file )
+3. Select your choice ( App Store, Google Play Store, etc )
+4. Create your `New Play Store configuration` by adding a name, and the package name ( the one loacted in your app.json file )
 
    - `4.1` Upload the `Service account credentials` created on the previous Google steps (Google Play Android Developer API page > step 8)
 
