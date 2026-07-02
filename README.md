@@ -326,7 +326,7 @@ If not, review the previos steps
 2. Press on `New product`, then also press the `Import` button. The subscription created in Google should appear, select `Import`
 3. In the new product row, attach the entitlement by pressing `Attach` and selecting your entitlement in the drop down
 
-## RevenueCat subscriptions with iOS
+## Subscriptions with iOS
 Here the official [guide](https://www.revenuecat.com/docs/getting-started/entitlements/ios-products) for all this setup
 
 1. Creat a build if you have not: `eas build`
@@ -334,8 +334,8 @@ Here the official [guide](https://www.revenuecat.com/docs/getting-started/entitl
 
 ### Apple Connect Subscriptions
 1. Go to your [apple store account](https://appstoreconnect.apple.com/apps), select your app created in the previous step
-2. On the left bar at the end, there should be a `Subscription` link
-3. At the `Subscription Groups` section, create a new one with a name the most sense ( I recommend using same names as the ones in Android)
+2. On the left bar at the end, under `MONETIZATION`, there should be a `Subscriptions` link
+3. At the `Subscription Groups` section, create a new one with a name the most sense. If you are also developing in Android, I recommend using the same name for both
 4. In the subscription section, create a new one
 
    - `4.1` The `reference name` will be the one that appears in App Store Connect
@@ -343,9 +343,9 @@ Here the official [guide](https://www.revenuecat.com/docs/getting-started/entitl
    - `4.3` Add subscription duration (weekly, monthly, yearly, etc.)
    - `4.4` Set up availability by choosing the countries where it will be available
    - `4.5` Add a subscription price
-   - `4.6` Add localization
+   - `4.6` Add the subscription localization (name of the subscription and description)
 
-5. Go back to the `Subscriptions` page, add the localization
+5. Go back to the `Subscriptions` group page, add the app store localization
 6. Add the `Billing Grace Period` that makes sense for your app (16 days, 3 days, etc)
 
 ### RevenueCat Configurations
