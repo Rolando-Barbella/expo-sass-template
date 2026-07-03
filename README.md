@@ -335,25 +335,25 @@ Here the official [guide](https://www.revenuecat.com/docs/getting-started/entitl
 ### Apple Connect Subscriptions
 1. Go to your [apple store account](https://appstoreconnect.apple.com/apps), select your app created in the previous step
 2. On the left bar at the end, under `MONETIZATION`, there should be a `Subscriptions` link
-3. At the `Subscription Groups` section, create a new one with a name the most sense. If you are also developing in Android, I recommend using the same name for both
+3. At the `Subscription Groups` section, create a new one with a name that make most sense. If you are also developing in Android, I recommend using the same name for both
 4. In the subscription section, create a new one
 
    - `4.1` The `reference name` will be the one that appears in App Store Connect
-   - `4.2` The product should have the following example format (using underscore): `new_app_subscription`
+   - `4.2` The product should have the following example format (using underscore): `new_app_subscription_monthly`
    - `4.3` Add subscription duration (weekly, monthly, yearly, etc.)
    - `4.4` Set up availability by choosing the countries where it will be available
    - `4.5` Add a subscription price
    - `4.6` Add the subscription localization (name of the subscription and description)
 
 5. Go back to the `Subscriptions` group page, add the app store localization
-6. Add the `Billing Grace Period` that makes sense for your app (16 days, 3 days, etc)
+6. Go back to the main `Subscriptions` page, add the `Billing Grace Period` that makes sense for your app (16 days, 3 days, etc)
 
-### RevenueCat Configurations
+### RevenueCat Configurations 
 1. On your [projects page](https://app.revenuecat.com/projects/), choose your app
-2. On the left bar, press on `Apps & providers` > `Configurations`
+2. On the left bar, press on `Apps` > create a `New App Store app`
+3. Press the `+ Add app config` button and select App Store
 
 #### In-app purchase key configuration steps
-3. Press the `+ Add app config` button and select App Store
 
    - `3.1` Go to your [Users and Access page](https://appstoreconnect.apple.com/access/users)
    - `3.2` Select `Integrations` in the top bar, then `In-App Purchase` in the left bar
