@@ -223,7 +223,17 @@ Run the app to test your changes
 npx expo run:ios or npx expo run:android
 ```
 
-## Subscriptions for Android (Google Paly Console and Google Console)
+## Revenue Cat Setup
+1. Create a new [account](https://www.revenuecat.com/) if you have not already
+2. In your [projects](https://app.revenuecat.com/projects/) page, create a new project (top drop down menu)
+![Revenue cat new project](assets/images/revenue-cat-new-product.png) 
+3. There will be some options and questions screens, you can just press continue for now and go to the dashboard
+
+### Entitlements
+1. On the left side bar, go to `Product catalog` > `Entitlements`
+2. Add a new one by given it a name (exp: `Your product pro account`, could be for both: Identifier and Display name )
+
+### Subscriptions for Android (Google Paly Console and Google Console)
 
 Pay attention to each step, you are going to be navigating between the Google Paly Console and Google Console page a lot, they can be quiet confusing
 
@@ -231,7 +241,7 @@ Pay attention to each step, you are going to be navigating between the Google Pa
 2. Create a build with expo if you haven’t: eas build
 3. Download the `.aab` file (we will come back to this later)
 
-### Make a new release
+#### Make a new release
 1. After succesfully creating the app ( make sure it is selected ), on the left bar, go to t `Test and release` > `Internal testing`
 ![Google Play Console](assets/images/internal-release.png)
 2. Press on the `Create new release` button
@@ -240,7 +250,7 @@ Pay attention to each step, you are going to be navigating between the Google Pa
 
 *Your app should be now available for internal publisher
 
-### Create Subscription in the Google Play Console
+#### Create Subscription in the Google Play Console
 1. In that same page where the release was created (or navigating from your project at [Google Play Console](https://play.google.com/console/u/0/developers/)), on the left bar, go to `Monetize with Play` > `Products` > `Subscriptions` 
 3. Create a subscription 
 4. Add the product id, exp: `new_app_subscription`
@@ -260,7 +270,7 @@ Pay attention to each step, you are going to be navigating between the Google Pa
 6. Add countries and amount you planning to charge 
 7. Press activate
 
-### Google Play Console and Google Cloud Credentials
+#### Google Play Console and Google Cloud Credentials
 1. Go to your Google Cloud [account](https://console.cloud.google.com/)
 2. Make sure your project is selected on the top bar
 3. Go to the [Google Play Android Developer API page](https://console.cloud.google.com/apis/library/androidpublisher.googleapis.com) and the [Google Play Developer Reporting API page](https://console.cloud.google.com/apis/library/playdeveloperreporting.googleapis.com) in Google Cloud Console.
@@ -298,16 +308,7 @@ the RevenueCat team
 
 By now, you should be done with all the google steps 🫰
 
-### Revenue Cat Setup
-1. Create a new [account](https://www.revenuecat.com/) if you have not already
-2. In your [projects](https://app.revenuecat.com/projects/) page, create a new project ![Revenue cat new project](assets/images/revenue-cat-new-product.png) (top drop down menu)
-3. There will be some options and questions screens, you can just press continue for now and go to the dashboard
-
-#### Entitlements
-1. On the left side bar, go to `Product catalog` > `Entitlements`
-2. Add a new one by given it a name (exp: `Your product pro account`, could be for both: Identifier and Display name )
-
-#### Apps & providers
+### Apps & providers
 1. On the left bar, go to Apps
 2. Select `New app configuration` ( the one with the apple, android, amazon icons )
 3. Select your choice ( App Store, Google Play Store, etc )
