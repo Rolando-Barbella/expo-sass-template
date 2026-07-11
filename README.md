@@ -136,7 +136,7 @@ This covers Google and Apple sign in ( no usermane and pasword )
 ### Create a Google Cloud Project (for Google Sign-In)
 
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a new project or select an existing one
+2. Create a new project by pressing the top button next to the `Google Cloud Console` logo, or select an existing one
 
 ![Google Cloud Project](assets/images/google-claude-project.png)
 
@@ -273,22 +273,24 @@ Pay attention to each step, you are going to be navigating between the Google Pa
 #### Google Play Console and Google Cloud Credentials
 1. Go to your Google Cloud [account](https://console.cloud.google.com/)
 2. Make sure your project is selected on the top bar
-3. Go to the [Google Play Android Developer API page](https://console.cloud.google.com/apis/library/androidpublisher.googleapis.com) and the [Google Play Developer Reporting API page](https://console.cloud.google.com/apis/library/playdeveloperreporting.googleapis.com)
-4. Press `enable` on both sites
+3. Go to the [Google Play Android Developer API page](https://console.cloud.google.com/apis/library/androidpublisher.googleapis.com) and the [Google Play Developer Reporting API page](https://console.cloud.google.com/apis/library/playdeveloperreporting.googleapis.com) in Google Cloud Console.
+4. Press `Enable` on both sites
 5. You should now see a `Create credentials` button in both pages
+* If you don't see this last button, it is probably beacuse you already have an existing app with credentials created
 
 #### Google Play Android Developer API page
 *You can also check this [video](https://www.youtube.com/watch?v=fOr2fu-0Vs8&t=2s) from 
 the RevenueCat team
 
-1. Make sure you select `Google Play Android Developer API` and `Application data`, then click next 
-2. Add a name to the services account (exp: rn services account )
-3. Next, we need to add two permissions: one called `Pub/Sub Editor`, another one called `Monitoring viewer`, and press continue
-4. Last step, just press `Done`
-5. After the last step, you will see 3 taps (Metrics, Quaotas, Credentials), press on Credentials one, copy the email you see in the Service Account, save it for later
-6. Press on `Manage service accounts`
-7. In the Service accounts page, press on the 3 bullets Actions button (right end corner ), click on `Manage keys`
-8. Press `Add key` > `Create new key`, Select the JSON option, it should be now save in your machine
+1. Press on the `Create credentials` button mention before
+2. Make sure you select `Google Play Android Developer API` and `Application data`, then click next 
+3. Add a name to the services account (exp: rn services account )
+4. Next, we need to add two permissions: one called `Pub/Sub Editor`, another one called `Monitoring viewer`, and press continue
+5. Last step, just press `Done`
+6. After the last step, you will see 3 taps (Metrics, Quaotas, Credentials), press on Credentials one, copy the email you see in the Service Account, save it for later
+7. Press on `Manage service accounts`
+8. In the Service accounts page, press on the 3 bullets Actions button (right end corner ), click on `Manage keys`
+9. Press `Add key` > `Create new key`, Select the JSON option, it should be now save in your machine
 
 #### Cloud Pub/Sub API permission
 1. Go to your Google Cloud [page](https://console.cloud.google.com/) 
