@@ -257,24 +257,24 @@ Pay attention to each step, you are going to be navigating between the Google Pa
 5. Add a name and save
 
 #### Subscription benefits
-1. Press on `Add subscription benefits (recommended)`, and add as many bennefits your app needs
+1. Press on `Add subscription benefits (recommended)`, and add as many bennefits your app has
 2. The `Tax, compliance and programmes` can be leave empty for now
 3. Save it
 
 #### Base plan
 1. Go back where the subscription lives
-2. Add a base plan, call it `default` or which ever name makes sense
+2. Add a base plan, call the Base plan ID `default` or which ever name makes sense
 3. Check the `Auto-renewing option` option
 4. Select what makes sense for your app (billing period, grace period, etc)
 5. In the `Price and availability` section, add a price to your subscription by pressing the `Set prices` ( small blue text button )
 6. Add countries and amount you planning to charge 
-7. Press activate
+7. Press save and activate
 
 #### Google Play Console and Google Cloud Credentials
 1. Go to your Google Cloud [account](https://console.cloud.google.com/)
 2. Make sure your project is selected on the top bar
-3. Go to the [Google Play Android Developer API page](https://console.cloud.google.com/apis/library/androidpublisher.googleapis.com) and the [Google Play Developer Reporting API page](https://console.cloud.google.com/apis/library/playdeveloperreporting.googleapis.com) in Google Cloud Console.
-4. Press enable on both sites
+3. Go to the [Google Play Android Developer API page](https://console.cloud.google.com/apis/library/androidpublisher.googleapis.com) and the [Google Play Developer Reporting API page](https://console.cloud.google.com/apis/library/playdeveloperreporting.googleapis.com)
+4. Press `enable` on both sites
 5. You should now see a `Create credentials` button in both pages
 
 #### Google Play Android Developer API page
@@ -308,10 +308,10 @@ the RevenueCat team
 
 By now, you should be done with all the google steps 🫰
 
-### Apps & providers
-1. On the left bar, go to Apps
-2. Select `New app configuration` ( the one with the apple, android, amazon icons )
-3. Select your choice ( App Store, Google Play Store, etc )
+### Apps & providers with revenuecat
+1. Select you [project](https://app.revenuecat.com/projects/22e53eaa/overview) if you haven't, on the left bar, go to Apps  
+2. Press the `+Add app` buttons
+3. Select `Google Play Store`
 4. Create your `New Play Store configuration` by adding a name, and the package name ( the one loacted in your app.json file )
 
    - `4.1` Upload the `Service account credentials` created on the previous Google steps (Google Play Android Developer API page > step 8)
