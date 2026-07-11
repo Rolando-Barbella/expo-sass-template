@@ -293,7 +293,7 @@ the RevenueCat team
 9. Press `Add key` > `Create new key`, Select the JSON option, it should be now save in your machine ( save it for now )
 
 #### Cloud Pub/Sub API permission
-1. Go to your Google Cloud [page](https://console.cloud.google.com/) 
+1. Go to your Cloud Pub/Sub API [page](https://console.cloud.google.com/apis/library/pubsub.googleapis.com?) 
 2. Press `Enable`
 
 #### Invite user in Google Play Console
@@ -301,8 +301,8 @@ the RevenueCat team
 2. On the left bar, press on `Users and permissions` 
 3. Invite a new user
 4. Add the email you created in the previos step (Google Play Android Developer API page > step 6)
-5. In the `App permissions` tab, add your app in the `Add app` dropdown button
-6. Press the `Account permissions` tab, select the following: 
+5. Bellow in the `App permissions` tab, add your app in the `Add app` dropdown button
+6. Press the `Account permissions` tab, check the following: 
 - View app information and download bulk reports (read only) 
 - View financial data, orders and cancellation survey responses
 - Manage orders and subscriptions
