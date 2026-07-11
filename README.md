@@ -287,10 +287,10 @@ the RevenueCat team
 3. Add a name to the services account (exp: rn services account )
 4. Next, we need to add two permissions: one called `Pub/Sub Editor`, another one called `Monitoring viewer`, and press continue
 5. Last step, just press `Done`
-6. After the last step, you will see 3 taps (Metrics, Quaotas, Credentials), press on Credentials one, copy the email you see in the Service Account, save it for later
+6. After the last step, you will see 3 taps (Metrics, Quaotas, Credentials), press on the Credentials one, copy the email you see in the Service Account and save it for later
 7. Press on `Manage service accounts`
 8. In the Service accounts page, press on the 3 bullets Actions button (right end corner ), click on `Manage keys`
-9. Press `Add key` > `Create new key`, Select the JSON option, it should be now save in your machine
+9. Press `Add key` > `Create new key`, Select the JSON option, it should be now save in your machine ( save it for now )
 
 #### Cloud Pub/Sub API permission
 1. Go to your Google Cloud [page](https://console.cloud.google.com/) 
@@ -300,8 +300,8 @@ the RevenueCat team
 1. Got to your Play Console [list](https://play.google.com/console/u/0/developers)
 2. On the left bar, press on `Users and permissions` 
 3. Invite a new user
-4. Add the email you created in the previos step (Google Play Android Developer API page > step 5)
-5. In the `App permissions` tab, Add your app in the `Add app` dropdown button
+4. Add the email you created in the previos step (Google Play Android Developer API page > step 6)
+5. In the `App permissions` tab, add your app in the `Add app` dropdown button
 6. Press the `Account permissions` tab, select the following: 
 - View app information and download bulk reports (read only) 
 - View financial data, orders and cancellation survey responses
