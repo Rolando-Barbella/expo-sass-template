@@ -356,27 +356,34 @@ Here the official [guide](https://www.revenuecat.com/docs/getting-started/entitl
 1. Go to your [Users and Access page](https://appstoreconnect.apple.com/access/users) in the app store
 2. Select the `Integrations` tab in the top bar, then `In-App Purchase` in the left bar
 3. Generate an `in-app purchase key` by pressing the plus button, and give it an appropriate name (for example: `RC-Pro-Accounts`)
-4. Download the key in your machine ( we will come back to it, later)
-5. Copy and save the `Issuer ID` from the In-App Purchase page you are now ( we will come back to it, later)
+4. Download the key in your machine ( save it for the next steps )
+5. Copy and save the `Issuer ID` from the In-App Purchase page you are now ( save it for the next steps )
 
 ### RevenueCat Configurations 
 1. On your [projects page](https://app.revenuecat.com/projects/), choose your app
 2. On the left bar, press on `Apps` > create a `New App Store app`
 3. Press the `+ Add app` button and select `App Store`
-
+4. Add the App Bundle ID ( the one in your app.json file )
+5. Upload the key file downloaded in the previos step
+6. Add the Issuer ID copied in the previos step
+7. Save changes 
 
 ### Add new product
 1. In the same `Product catalog` > `Products` page, click the `New Product` button
-2. On a separate tab, go to your Subscription app store page, select the subscription recently created
-3. Copy the `Product ID`, go back to the revenue cat product page, finish creating the new product with that id
-4. Attached the `Entitlement` to your product by pressing the attach button
-5. Refresh the screen and check it is being saved correctly, the status should say `Could not check`, don't worry about that yet
+2. Choose your App Store product
+2. On a separate tab, go to your Subscription app store [page](https://appstoreconnect.apple.com/apps), select the subscription recently created
+3. Copy the `Product ID`, go back to the revenue cat product page, add the id to the Identifier field
+4. Add a human readable name to the `Display name` field
+5. After the product has been created, attached the `Entitlement` to your product by pressing the attach button
+![Attached Entitlements](assets/images/attached-entitlements.png)
+6. Refresh the screen and check it is being saved correctly, if the status should say `Could not check`, don't worry about that yet
 
 #### Offerings
-1. On the left bar from your revenuecat app page, press `Offerings`
-2. Press the `New Offering` button
-2. Select monthly ( or which ever timeframe you like) for the indentifier, add description as well
-3. In the Product(s) section you should see your app in Apple, Android or both, each one has a drop down menu where you can select the subscription
+1. On the left bar, go to `Product catalog` > `Offerings`
+2. Press the `+ New Offering` button
+2. Add the Identifier and Display name 
+3. Bellow, press on `+ New Package`, select the Identifier (Monthly, Annual, etc)
+4. Add the Product in the drop down and save
 
 ### API keys
 1. On the left bar, go to `App & providers` > `API keys` 
