@@ -387,8 +387,9 @@ Here the official [guide](https://www.revenuecat.com/docs/getting-started/entitl
 
 ### API keys
 1. On the left bar, go to `App & providers` > `API keys` 
-2. Copy the API key and paste them in your .env file (EXPO_PUBLIC_REVENUECAT_APPLE_API_KE & EXPO_PUBLIC_REVENUECAT_GOOGLE_API_KEY)
-3. Also add EXPO_PUBLIC_REVENUECAT_ENTITLEMENT_ID and EXPO_PUBLIC_REVENUECAT_OFFERING_ID which can be found in revenue cat
+2. Copy the SDK API keys and paste them in your .env file (EXPO_PUBLIC_REVENUECAT_APPLE_API_KEY & EXPO_PUBLIC_REVENUECAT_GOOGLE_API_KEY)
+3. Go to `Product catalog` > `Entitlements`, copy the Identifier recently created and added to `EXPO_PUBLIC_REVENUECAT_ENTITLEMENT_ID` in your .env file
+4. Go to `Product catalog` > `Offerings`, copy the Identifier recently created and added to  EXPO_PUBLIC_REVENUECAT_OFFERING_ID in your .env file
 
 ## Skills
 There are some skills files already, feel free to use more

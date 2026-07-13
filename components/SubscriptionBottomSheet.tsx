@@ -4,7 +4,7 @@ import { type RevenueCatPlanId, getPackageForPlan } from '@/lib/revenuecat';
 import { useRevenueCat } from '@/providers/RevenueCatProvider';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import {
+import {  
   ActivityIndicator,
   Platform,
   Pressable,

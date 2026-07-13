@@ -9,7 +9,6 @@ import {
   REVENUECAT_ENTITLEMENT_ID,
   canUseRevenueCat,
   getCurrentOffering,
-  getRevenueCatDebugContext,
   getRevenueCatErrorDetails,
   getEntitlement,
   getRevenueCatApiKey,
@@ -17,8 +16,6 @@ import {
   hasProEntitlement,
   isPurchaseCancelled,
   isRevenueCatSupportedPlatform,
-  summarizeEntitlements,
-  summarizeOfferings,
 } from '@/lib/revenuecat';
 
 type PurchaseResult = {
