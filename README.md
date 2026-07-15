@@ -347,7 +347,7 @@ Here the official [guide](https://www.revenuecat.com/docs/getting-started/entitl
    - `5.3` Add subscription duration (weekly, monthly, yearly, etc.)
    - `5.4` Set up availability by choosing the countries where it will be available
    - `5.5` Add a subscription price
-   - `5.6` Add the subscription localization (name of the subscription and description)
+   - `5.6` Add the subscription localization, name of the subscription and description, this two will appear in the app for your users
 
 6. Go back to the main `Subscriptions` page, add the `Billing Grace Period` that makes sense for your app (16 days, 3 days, etc)
 
