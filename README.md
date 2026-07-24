@@ -339,6 +339,7 @@ Here the official [guide](https://www.revenuecat.com/docs/getting-started/entitl
 ### Apple Connect Subscriptions
 1. Go to your [apple store account](https://appstoreconnect.apple.com/apps), select your app created in the previous step
 2. On the left bar at the end, under `MONETIZATION`, there should be a `Subscriptions` link
+![Attach product](assets/images/monetization.png)
 3. At the `Subscription Groups` section, create a new one with a name that make most sense. If you are also developing in Android, I recommend using the same name for both
 4. Add the app store localization (subscription group display name as it will appear to users for this localization,  [Learn More](https://developer.apple.com/help/app-store-connect/manage-subscriptions/offer-auto-renewable-subscriptions))
 5. In the subscription section, create a new one
