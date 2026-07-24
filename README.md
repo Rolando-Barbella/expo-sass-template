@@ -233,7 +233,7 @@ npx expo run:ios or npx expo run:android
 1. On the left side bar, go to `Product catalog` > `Entitlements`
 2. Add a new one by given it a name (exp: `Your product pro account`, could be for both: Identifier and Display name )
 
-### Subscriptions for Android (Google Paly Console and Google Console)
+### Subscriptions for Android (Google Paly Console and Google Console) 🤖
 
 Pay attention to each step, you are going to be navigating between the Google Paly Console and Google Console page a lot, they can be quiet confusing
 
@@ -282,7 +282,7 @@ Pay attention to each step, you are going to be navigating between the Google Pa
 *You can also check this [video](https://www.youtube.com/watch?v=fOr2fu-0Vs8&t=2s) from 
 the RevenueCat team
 
-1. Press on the `Create credentials` button mention before
+1. Press on the `Create credentials` button mention before, or if you a button called `Manage`, press it and select `Credentials` in the left bar
 2. Make sure you select `Google Play Android Developer API` and `Application data`, then click next 
 3. Add a name to the services account (exp: rn services account )
 4. Next, we need to add two permissions: one called `Pub/Sub Editor`, another one called `Monitoring viewer`, and press continue
@@ -310,13 +310,13 @@ the RevenueCat team
 
 By now, you should be done with all the google steps 🫰
 
-### Apps & providers with revenuecat
-1. Select you [project](https://app.revenuecat.com/projects/22e53eaa/overview) if you haven't, on the left bar, go to Apps  
+### Apps & providers with Revenuecat
+1. Select you [project](https://app.revenuecat.com/projects/22e53eaa/overview) if you haven't, on the left bar, go to `Apps`
 2. Press the `+Add app` buttons
 3. Select `Google Play Store`
 4. Create your `New Play Store configuration` by adding a name, and the package name ( the one loacted in your app.json file )
 
-   - `4.1` Upload the `Service account credentials` created on the previous Google steps (Google Play Android Developer API page > step 8)
+   - `4.1` Upload the `Service account credentials` created on the previous Google steps (Google Play Android Developer API page > step 9)
 
 By now, yout revenuecat credentials page should look like this: ![revenuecat credentials page](assets/images/revenuecat-credentials.png)
 If not, review the previos steps
@@ -325,11 +325,12 @@ If not, review the previos steps
 
 #### Create a product in Revenue cat
 
-1. On your [product page](https://app.revenuecat.com/projects/), go to the left bar and press `Product catalog` > `Products`
-2. Press on `New product`, then also press the `Import` button. The subscription created in Google should appear, select `Import`
+1. On your [product page](https://app.revenuecat.com/projects/), after selecting your app, go to the left bar and press `Product catalog` > `Products`
+2. Press on `New product`, then also press the `Import` button. The subscription created in Google should appear ( if not check Google previos steps ), select `Import` to add it to your products.
 3. In the new product row, attach the entitlement by pressing `Attach` and selecting your entitlement in the drop down
+![Attach product](assets/images/attched-product.png)
 
-## Subscriptions with iOS
+## Subscriptions with iOS 
 Here the official [guide](https://www.revenuecat.com/docs/getting-started/entitlements/ios-products) for all this setup
 
 1. Creat a build if you have not: `eas build`
