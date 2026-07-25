@@ -5,9 +5,15 @@ Opinionated React Native template built with [Expo](https://expo.dev), [Supabase
 Most features have been tested on iOS first.
 
 ## Menu
+- [What you get](#what-you-get)
+- [Prerequisites](#prerequisites)
 - [Quick start](#quick-start)
 - [Authentication setup](#authentication-setup)
+  - [Google Sign-In](#google-sign-in)
+  - [Apple Sign-In and EAS](#apple-sign-in-and-eas)
 - [RevenueCat setup](#revenuecat-setup)
+  - [Android subscription setup](#android-subscription-setup)
+  - [iOS subscription setup](#ios-subscription-setup)
 - [Troubleshooting](#troubleshooting)
 - [Extra resources](#extra-resources)
 
@@ -142,10 +148,12 @@ EXPO_PUBLIC_SUPABASE_ANON_KEY=...
 ![Left Bar Supabase](assets/images/left-bar-supbase.png)
 ![Supabase API Key](assets/images/supbase-api-key.png)
 
+<a id="authentication-setup"></a>
 ## Authentication Setup
 
-This template supports Google Sign-In and Apple Sign-In. For iOS App Store release, Apple Sign-In is required if you provide third-party sign-in.
+This template supports Google Sign-In and Apple Sign-In. For iOS App Store release, Apple Sign-In is required if you provide third-party sign-in, otherwise your app will be rejected.
 
+<a id="google-sign-in"></a>
 ### Google Sign-In 🔐
 
 #### 1. Create a Google Cloud project
@@ -219,6 +227,7 @@ Replace `EXPO_PUBLIC_IOS_CLIENT_ID` in the plugin config with the real iOS clien
 }
 ```
 
+<a id="apple-sign-in-and-eas"></a>
 ### Apple Sign-In and EAS 
 
 1. Run an iOS build:
@@ -242,6 +251,7 @@ npx expo run:ios
 npx expo run:android
 ```
 
+<a id="revenuecat-setup"></a>
 ## RevenueCat Setup 😺
 
 1. Create an account at [RevenueCat](https://www.revenuecat.com/).
@@ -256,6 +266,7 @@ npx expo run:android
 2. Create a new entitlement.
 3. Use a clear identifier and display name, for example `pro_account`.
 
+<a id="android-subscription-setup"></a>
 ### Android Subscription Setup 🤖
 
 This flow moves between Google Play Console, Google Cloud Console, and RevenueCat.
@@ -364,6 +375,7 @@ It can take up to 36 hours for Google Play credentials to fully propagate.
 
 ![Attach product](assets/images/attched-product.png)
 
+<a id="ios-subscription-setup"></a>
 ### iOS Subscription Setup 
 
 Official guide: [RevenueCat iOS entitlements guide](https://www.revenuecat.com/docs/getting-started/entitlements/ios-products)
