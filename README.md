@@ -1,417 +1,476 @@
-# Expo Saas Template 💵
+# Expo SaaS Template
 
-A React Native opinionated template built with [Expo](https://expo.dev), [Supabase](https://supabase.com/) authentication, [Stripe](https://stripe.com/) payments, [RevenueCat](https://www.revenuecat.com/) subscriptions, and native Google/Apple Sign-In.
+Opinionated React Native template built with [Expo](https://expo.dev), [Supabase](https://supabase.com/), [Stripe](https://stripe.com/), [RevenueCat](https://www.revenuecat.com/), and native Google/Apple Sign-In.
 
-* So far most of the features have been tested in iOS only
+Most features have been tested on iOS first.
 
-## Features
+## Menu
 
-- ✅ Google Sign-In (iOS & Android)
-- ✅ Apple Sign-In (iOS)
-- ✅ Supabase authentication & backend
-- ✅ Bottom sheet login UI
-- ✅ RevenueCat subscriptions (tested in iOS only so far)
-### Todo
-- ⏳ Apple payment
-- ⏳ Stripe payments 
-- ⏳ Push Notifications with Firebase and Expo
-- ⏳ Emails with [resend](https://resend.com/emails)
+- [What you get](#what-you-get)
+- [Prerequisites](#prerequisites)
+- [Quick start](#quick-start)
+- [Authentication setup](#authentication-setup)
+- [RevenueCat setup](#revenuecat-setup)
+- [Troubleshooting](#troubleshooting)
+- [Extra resources](#extra-resources)
+
+## What You Get
+
+### Included
+
+- Google Sign-In for iOS and Android
+- Apple Sign-In for iOS
+- Supabase authentication and backend integration
+- Bottom sheet login UI
+- RevenueCat subscriptions
+
+### Planned
+
+- Apple payments
+- Stripe payments
+- Push notifications with Firebase and Expo
+- Emails with [Resend](https://resend.com/emails)
 
 ## Prerequisites
 
-Before you start, make sure you have:
-- **Node.js** (v18 or higher) - [Download](https://nodejs.org/)
-- **npm** or **yarn** package manager
-- **Xcode** for iOS development - [Download](https://developer.apple.com/xcode/)
-- **Apple developer account** for making your app live - Create one [here](https://developer.apple.com/account) ($99 a year)
-- **Expo acccount** - create an account [here](https://expo.dev/)
-- **EAS CLI** - Install with `npm install -g eas-cli`
+Before starting, make sure you have:
 
-#### If you planning releasing in Android
+- [Node.js](https://nodejs.org/) `18+`
+- `npm` or `yarn`
+- [Xcode](https://developer.apple.com/xcode/) for iOS development
+- An [Apple Developer account](https://developer.apple.com/account) for App Store release
+- An [Expo account](https://expo.dev/)
+- `eas-cli` installed: `npm install -g eas-cli`
 
-- **Android Studio** for Android development - [Download](https://developer.android.com/studio)
-- **Google play** developer [account](https://play.google.com/console/signup) (25$ lifetime)
+If you plan to release on Android, also install:
 
-## Nice to have
-- **[Expo Orbit](https://expo.dev/orbit)** (highly recommended for running emulators)
+- [Android Studio](https://developer.android.com/studio)
+- A [Google Play developer account](https://play.google.com/console/signup)
+
+Nice to have:
+
+- [Expo Orbit](https://expo.dev/orbit) for running emulators
 
 ## Quick Start
 
-### 1. Clone the Template
+### 1. Clone the template
 
 ```bash
 git clone https://github.com/Rolando-Barbella/expo-sass-template my-app
-```
-
-```bash
 cd my-app
 ```
 
-### 2. Configure Your Project
+### 2. Customize project identity
 
-You need to customize several files to make this template your own.
-
-#### A. Update `package.json`
-
-Open `package.json` and change:
+Update `package.json`:
 
 ```json
 {
-  "name": "expo-sass",  // Change to your project name
+  "name": "expo-sass",
   "version": "1.0.0"
 }
 ```
 
-#### B. Update `app.json`
-
-Open `app.json` and update the following fields:
+Update `app.json`:
 
 ```json
 {
   "expo": {
-    "name": "Expo Sass",              // This is how it will show in your phone icon, 2 words recommend it
-    "slug": "expo-sass",              // Follow this format
-    "scheme": "exposass",             // Deep linking scheme (lowercase, no spaces)
+    "name": "Expo Sass",
+    "slug": "expo-sass",
+    "scheme": "exposass",
     "ios": {
-      "bundleIdentifier": "com.rolandobarbella.exposass"  // Your unique iOS bundle ID
+      "bundleIdentifier": "com.rolandobarbella.exposass"
     },
     "android": {
-      "package": "com.rolandobarbella.exposass"  // Your unique Android package name
+      "package": "com.rolandobarbella.exposass"
     },
     "extra": {
       "eas": {
-        "projectId": ""  // Leave empty for now, will be filled when you run 'eas build'
+        "projectId": ""
       }
     }
   }
 }
 ```
 
-**Important naming conventions:**
-- Bundle Identifier (iOS): Reverse domain notation (e.g., `com.yourcompany.appname`)
-- Package Name (Android): Same format as bundle identifier
-- Scheme: Lowercase, no spaces (e.g., `myapp`, `mycompanyapp`)
+Naming rules:
 
-### 3. ENV
+- iOS bundle identifier: reverse-domain format, for example `com.yourcompany.appname`
+- Android package name: usually the same format as the iOS bundle identifier
+- App scheme: lowercase, no spaces, for example `myapp`
 
-Rename the .env.example file for .env.local or .env
+### 3. Create your environment file
 
-### 4. Install Dependencies, build and run the app
+Rename `.env.example` to `.env.local` or `.env`.
+
+### 4. Install dependencies and run the native app
 
 ```bash
 npm install
 ```
 
+Create native projects:
+
 ```bash
-npx expo prebuild --platform ios
-npx expo prebuild --platform android
-// for both platform
-npx expo prebuild 
+npx expo prebuild
+```
+
+Run a platform build:
+
+```bash
+npx expo run:ios
 ```
 
 ```bash
-npx expo run:ios or npx expo run:android
+npx expo run:android
 ```
 
-*This should create the ios and android folder
+This creates the `ios/` and `android/` folders.
 
-### 5. Create a Supabase Project
+### 5. Create a Supabase project
 
-1. Go to [Supabase](https://supabase.com/) and create a free account
-2. Click `Start New project`
-3. Choose your organization and set a database password
-4. Go to your [dashboard](https://supabase.com/dashboard/), choose your project
-5. On the left bar, go to **Project Settings** 
+1. Create a project in [Supabase](https://supabase.com/).
+2. Open your project dashboard.
+3. Go to `Project Settings`.
+4. Under `Configuration`, open `Data API` and copy the API URL.
+5. Under `API keys`, copy the public anon key.
+6. Add both values to your env file:
+
+```bash
+EXPO_PUBLIC_SUPABASE_URL=...
+EXPO_PUBLIC_SUPABASE_ANON_KEY=...
+```
+
 ![Left Bar Supabase](assets/images/left-bar-supbase.png)
-6. Go to the second left bar, under **Configuration** go to > **Data API** > ***API URL** and copy the url (exp: `https://jskokp.supabase.co`)
-7. On the left bar again, go to **Project Settings** > **API keys** > ***Legacy anon, service_role API keys tab** and copy: anon public Key (starts with `eyJ...`)
 ![Supabase API Key](assets/images/supbase-api-key.png)
-8. Paste these two values on your `.env.local` or `.env`, EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY
 
-## LOG IN
-This covers Google and Apple sign in ( no usermane and pasword )
+## Authentication Setup
 
-*IMPORTANT: If you are planning to lunch your app for iOS, you must have apple sign in, otherwise, it would be rejected, don't miss this step
+This template supports Google Sign-In and Apple Sign-In. For iOS App Store release, Apple Sign-In is required if you provide third-party sign-in.
 
-### Create a Google Cloud Project (for Google Sign-In)
+### Google Sign-In
 
-1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a new project by pressing the top button next to the `Google Cloud Console` logo, or select an existing one
+#### 1. Create a Google Cloud project
+
+1. Open [Google Cloud Console](https://console.cloud.google.com/).
+2. Create a new project or select an existing one.
+3. Go to `APIs & Services` > `Credentials`.
+4. If prompted, configure the consent screen first.
+5. In the audience section, choose `External` and complete the basic app information.
 
 ![Google Cloud Project](assets/images/google-claude-project.png)
+![Consent screen](assets/images/consent-screen.png)
 
-3. Add credentials
-   - Go to **APIs & Services** > **Credentials** > **Create credentials**
-   - Google will ask you to configure the consent screen
-   - In the Audience part, select the **External** checkbox, then add the rest of the app information
+#### 2. Create OAuth clients
 
-   ![Consent screen](assets/images/consent-screen.png)
+Create these three OAuth client types:
 
-   - On the left menu, go again to **APIs & Services** > **Create Credentials** > **OAuth client ID**
+`iOS`
 
-   **iOS Client:**
+- Application type: `iOS`
+- Bundle ID: must match `app.json`
+- Save the generated client ID as `EXPO_PUBLIC_IOS_CLIENT_ID`
 
-   - Application type: **iOS**
-   - Name: "My App iOS" or leave the default one
-   - Bundle ID: `com.yourcompany.yourapp` (must match `app.json`)
-   - Copy the **Client ID**, pasted the id in the `.env.local` file, `EXPO_PUBLIC_IOS_CLIENT_ID`
+`Android`
 
-   **Android Client:**
+- Application type: `Android`
+- Package name: must match `app.json`
+- Add the SHA-1 fingerprint from:
 
-   - Application type: **Android**
-   - Name: "My App Android"
-   - Package name: `com.yourcompany.yourapp` (must match `app.json`)
-   - SHA-1 certificate fingerprint: Get this by running:
+```bash
+keytool -keystore ~/.android/debug.keystore -list -v
+```
 
-   ```bash
-   # For development
-   keytool -keystore ~/.android/debug.keystore -list -v
-   # Password is usually 'android'
-   ```
+The default debug keystore password is usually `android`.
 
-   - Copy the **Client ID**, pasted the id in the `.env.local` file, `EXPO_PUBLIC_ANDROID_CLIENT_ID`
+- Save the generated client ID as `EXPO_PUBLIC_ANDROID_CLIENT_ID`
 
-   **Web Client (required for the auth flow):**
+`Web`
 
-   - Application type: **Web application**
-   - Name: "My App Web" or the default one
-   - On the **Authorised JavaScript origins**, add: `http://localhost:8081`
-   - Leave the Authorised redirect URIs empty for now (we will come back to in a next step)
-   - Copy the **Client ID** and add it to the `.env.local` file, `EXPO_PUBLIC_WEB_CLIENT_ID`
+- Application type: `Web application`
+- Add `http://localhost:8081` to `Authorized JavaScript origins`
+- Leave redirect URIs empty for now
+- Save the generated client ID as `EXPO_PUBLIC_WEB_CLIENT_ID`
 
+Helpful video: [Google setup walkthrough](http://youtube.com/watch?v=BDeKTPQzvR4)
 
-💡 Helpful [video](http://youtube.com/watch?v=BDeKTPQzvR4) about all this Google setup
+### Supabase Auth Provider Setup
 
-### 4. Supabase Auth setup
+1. In Supabase, open `Authentication` > `Sign In / Providers`.
+2. Enable Apple and Google.
+3. For Apple, add your app client ID such as `com.yourcompany.appname`.
+4. For Google, add:
+   `EXPO_PUBLIC_ANDROID_CLIENT_ID`, `EXPO_PUBLIC_IOS_CLIENT_ID`, `EXPO_PUBLIC_WEB_CLIENT_ID`
+5. Copy the callback URL shown by Supabase.
+6. Return to your Google web client and add that URL to `Authorized redirect URIs`.
 
-1. Go to your project again
-2. On the left bar, go to **Authentication** > under Configurations, select **Sign In / Providers** 
-3. Enable Apple and Google
-4. On Apple, add the client id: `com.yourcompany.appname`
-5. On Google, add the client id: with the following values: 
-`EXPO_PUBLIC_ANDROID_CLIENT_ID, + EXPO_PUBLIC_IOS_CLIENT_ID, + EXPO_PUBLIC_WEB_CLIENT_ID` (don't forget the commas)
-5. Copy the Callback URL (for OAuth) from Google or Apple (looks like `https://dlugycn.supabase.co/auth/v1/callback`)
-6. Go back to your Web Client credential in Google Cloud and paste the adress in the **Authorised redirect URIs** field
-   
-### 5. Update `app.json` with your iOS client iD:
-Find the plugging section and replace with where it says EXPO_PUBLIC_IOS_CLIENT_ID with you ios client id hardcoded (should look like: 2288838245586-9s6s924uvmokasfghe7kcsbu....)
+### Update `app.json` for Google Sign-In
+
+Replace `EXPO_PUBLIC_IOS_CLIENT_ID` in the plugin config with the real iOS client ID value:
 
 ```json
-   {
-     "plugins": [
-       [
-         "@react-native-google-signin/google-signin",
-         {
-           "iosUrlScheme": "com.googleusercontent.apps.EXPO_PUBLIC_IOS_CLIENT_ID"
-         }
-       ]
-     ]
-   }
+{
+  "plugins": [
+    [
+      "@react-native-google-signin/google-signin",
+      {
+        "iosUrlScheme": "com.googleusercontent.apps.YOUR_IOS_CLIENT_ID"
+      }
+    ]
+  ]
+}
 ```
 
-### Apple login and eas
+### Apple Sign-In and EAS
 
-1. Run `eas build -p ios` (if you have never use eas with expo, check this [video](https://www.youtube.com/watch?v=uQCE9zl3dXU) first)
-2. This should have created the indentifiers in your [apple connect](https://developer.apple.com/account/resources/identifier/list) account, with the ability to sign in
-3. Go to your project on [expo](https://expo.dev/), on the left bar click on Credential and check that your app credentials have been saved
+1. Run an iOS build:
 
-
-💡 Helpful [video](https://www.youtube.com/watch?v=tqxTijhYhp8) about all this Apple setup
-
-Run the app to test your changes
 ```bash
-npx expo run:ios or npx expo run:android
+eas build -p ios
 ```
 
-## Revenue Cat Setup
-1. Create a new [account](https://www.revenuecat.com/) if you have not already
-2. In your [projects](https://app.revenuecat.com/projects/) page, create a new project (top drop down menu)
-![Revenue cat new project](assets/images/revenue-cat-new-product.png) 
-3. There will be some options and questions screens, you can just press continue for now and go to the dashboard
+2. Check that identifiers were created in your [Apple Developer account](https://developer.apple.com/account/resources/identifier/list).
+3. In your Expo project, open `Credentials` and confirm the app credentials were saved.
 
-### Entitlements
-1. On the left side bar, go to `Product catalog` > `Entitlements`
-2. Add a new one by given it a name (exp: `Your product pro account`, could be for both: Identifier and Display name )
+Helpful video: [Apple Sign-In setup walkthrough](https://www.youtube.com/watch?v=tqxTijhYhp8)
 
-### Subscriptions for Android (Google Paly Console and Google Console) 🤖
+Test the app again after finishing auth setup:
 
-Pay attention to each step, you are going to be navigating between the Google Paly Console and Google Console page a lot, they can be quiet confusing
+```bash
+npx expo run:ios
+```
 
-1. Create a new app in the [Google Play Console](https://play.google.com/console/u/0/developers/) if you haven't already, add the app name, the package name ( located ate in your app.json file, specifically the android objet, exp: com.yourname.appname), select free app, and confirm both declarations.
-2. Create a build with expo if you haven’t: eas build
-3. Download the `.aab` file (we will come back to this later)
+```bash
+npx expo run:android
+```
 
-#### Make a new release
-1. After succesfully creating the app ( make sure it is selected ), on the left bar, go to t `Test and release` > `Internal testing`
+## RevenueCat Setup
+
+1. Create an account at [RevenueCat](https://www.revenuecat.com/).
+2. Create a new project from the [projects page](https://app.revenuecat.com/projects/).
+3. Continue through the initial setup screens.
+
+![Revenue cat new project](assets/images/revenue-cat-new-product.png)
+
+### Entitlement
+
+1. Open `Product catalog` > `Entitlements`.
+2. Create a new entitlement.
+3. Use a clear identifier and display name, for example `pro_account`.
+
+### Android Subscription Setup
+
+This flow moves between Google Play Console, Google Cloud Console, and RevenueCat.
+
+#### 1. Create the app in Google Play Console
+
+1. Create an app in [Google Play Console](https://play.google.com/console/u/0/developers/).
+2. Use the package name from `app.json`.
+3. Build your app if you have not already:
+
+```bash
+eas build
+```
+
+4. Download the generated `.aab` file.
+
+#### 2. Create an internal release
+
+1. In Google Play Console, open `Test and release` > `Internal testing`.
+2. Click `Create new release`.
+3. Upload the `.aab`.
+4. Publish the release.
+
 ![Google Play Console](assets/images/internal-release.png)
-2. Press on the `Create new release` button
-3. Upload the `.aab` file dowloaded before 
-4. Press `Next`, then `Save and Publish`
 
-*Your app should be now available for internal publisher
+#### 3. Create the subscription
 
-#### Create Subscription in the Google Play Console
-1. In that same page where the release was created (or navigating from your project at [Google Play Console](https://play.google.com/console/u/0/developers/)), on the left bar, go to `Monetize with Play` > `Products` > `Subscriptions` 
-3. Create a subscription 
-4. Add the product id, exp: `new_app_subscription`
-5. Add a name and save
+1. Open `Monetize with Play` > `Products` > `Subscriptions`.
+2. Create a subscription.
+3. Add a product ID such as `new_app_subscription`.
+4. Add a display name and save.
 
-#### Subscription benefits
-1. Press on `Add subscription benefits (recommended)`, and add as many bennefits your app has
-2. The `Tax, compliance and programmes` can be leave empty for now
-3. Save it
+#### 4. Add subscription benefits
 
-#### Base plan
-1. Go back where the subscription lives
-2. Add a base plan, call the Base plan ID `default` or which ever name makes sense
-3. Check the `Auto-renewing option` option
-4. Select what makes sense for your app (billing period, grace period, etc)
-5. In the `Price and availability` section, add a price to your subscription by pressing the `Set prices` ( small blue text button )
-6. Add countries and amount you planning to charge 
-7. Press save and activate
+1. Click `Add subscription benefits`.
+2. Add the benefits your app provides.
+3. Leave tax/compliance fields for later if needed.
+4. Save.
 
-#### Google Play Console and Google Cloud Credentials
-1. Go to your Google Cloud [account](https://console.cloud.google.com/)
-2. Make sure your project is selected on the top bar
-3. Go to the [Google Play Android Developer API page](https://console.cloud.google.com/apis/library/androidpublisher.googleapis.com) and the [Google Play Developer Reporting API page](https://console.cloud.google.com/apis/library/playdeveloperreporting.googleapis.com) in Google Cloud Console.
-4. Press `Enable` on both sites
-5. You should now see a `Create credentials` button in both pages
-* If you don't see this last button, it is probably beacuse you already have an existing app with credentials created
+#### 5. Add a base plan
 
-#### Google Play Android Developer API page
-*You can also check this [video](https://www.youtube.com/watch?v=fOr2fu-0Vs8&t=2s) from 
-the RevenueCat team
+1. Open the subscription again.
+2. Add a base plan, for example `default`.
+3. Enable auto-renewing.
+4. Set billing period, grace period, countries, and pricing.
+5. Save and activate.
 
-1. Press on the `Create credentials` button mention before, or if you a button called `Manage`, press it and select `Credentials` in the left bar
-2. Make sure you select `Google Play Android Developer API` and `Application data`, then click next 
-3. Add a name to the services account (exp: rn services account )
-4. Next, we need to add two permissions: one called `Pub/Sub Editor`, another one called `Monitoring viewer`, and press continue
-5. Last step, just press `Done`
-6. After the last step, you will see 3 taps (Metrics, Quaotas, Credentials), press on the Credentials one, copy the email you see in the Service Account and save it for later
-7. Press on `Manage service accounts`
-8. In the Service accounts page, press on the 3 bullets Actions button (right end corner ), click on `Manage keys`
-9. Press `Add key` > `Create new key`, Select the JSON option, it should be now save in your machine ( save it for now )
+#### 6. Create Google Cloud credentials
 
-#### Cloud Pub/Sub API permission
-1. Go to your Cloud Pub/Sub API [page](https://console.cloud.google.com/apis/library/pubsub.googleapis.com?) 
-2. Press `Enable`
+1. Open your [Google Cloud Console](https://console.cloud.google.com/).
+2. Enable:
+   - [Google Play Android Developer API](https://console.cloud.google.com/apis/library/androidpublisher.googleapis.com)
+   - [Google Play Developer Reporting API](https://console.cloud.google.com/apis/library/playdeveloperreporting.googleapis.com)
+3. Create credentials if prompted.
 
-#### Invite user in Google Play Console
-1. Got to your Play Console [list](https://play.google.com/console/u/0/developers)
-2. On the left bar, press on `Users and permissions` 
-3. Invite a new user
-4. Add the email you created in the previos step (Google Play Android Developer API page > step 6)
-5. Bellow in the `App permissions` tab, add your app in the `Add app` dropdown button
-6. Press the `Account permissions` tab, check the following: 
-- View app information and download bulk reports (read only) 
-- View financial data, orders and cancellation survey responses
-- Manage orders and subscriptions
-7. Press `Invite user` and `Send`
+If the button is missing, you may already have credentials in that project.
 
-By now, you should be done with all the google steps 🫰
+Helpful video: [RevenueCat Android credentials walkthrough](https://www.youtube.com/watch?v=fOr2fu-0Vs8&t=2s)
 
-### Apps & providers with Revenuecat
-1. Select you [project](https://app.revenuecat.com/projects/22e53eaa/overview) if you haven't, on the left bar, go to `Apps`
-2. Press the `+Add app` buttons
-3. Select `Google Play Store`
-4. Create your `New Play Store configuration` by adding a name, and the package name ( the one loacted in your app.json file )
+#### 7. Create a service account
 
-   - `4.1` Upload the `Service account credentials` created on the previous Google steps (Google Play Android Developer API page > step 9)
+1. In the API credentials flow, choose `Application data`.
+2. Create a service account.
+3. Add these permissions:
+   - `Pub/Sub Editor`
+   - `Monitoring Viewer`
+4. Finish the setup.
+5. Copy the service account email from the `Credentials` tab.
+6. Open `Manage service accounts`.
+7. Create a new JSON key and download it.
 
-By now, yout revenuecat credentials page should look like this: ![revenuecat credentials page](assets/images/revenuecat-credentials.png)
-If not, review the previos steps
+#### 8. Enable Pub/Sub
 
-*It can take up to 36 hours for your Play Service Credentials to work properly with the Google Play Developer API
+Enable the [Cloud Pub/Sub API](https://console.cloud.google.com/apis/library/pubsub.googleapis.com?).
 
-#### Create a product in Revenue cat
+#### 9. Invite the service account in Google Play Console
 
-1. On your [product page](https://app.revenuecat.com/projects/), after selecting your app, go to the left bar and press `Product catalog` > `Products`
-2. Press on `New product`, then also press the `Import` button. The subscription created in Google should appear ( if not check Google previos steps ), select `Import` to add it to your products.
-3. In the new product row, attach the entitlement by pressing `Attach` and selecting your entitlement in the drop down
+1. Open `Users and permissions`.
+2. Invite the service account email.
+3. Grant app access to your app.
+4. Enable these account permissions:
+   - View app information and download bulk reports
+   - View financial data, orders, and cancellation survey responses
+   - Manage orders and subscriptions
+
+At this point, the Android-side Google setup should be complete.
+
+#### 10. Connect Google Play to RevenueCat
+
+1. In RevenueCat, open `Apps`.
+2. Click `+ Add app`.
+3. Select `Google Play Store`.
+4. Create a Play Store configuration with your Android package name.
+5. Upload the JSON service account credentials.
+
+It can take up to 36 hours for Google Play credentials to fully propagate.
+
+![revenuecat credentials page](assets/images/revenuecat-credentials.png)
+
+#### 11. Import the Google Play subscription into RevenueCat
+
+1. In RevenueCat, open `Product catalog` > `Products`.
+2. Click `New product`, then `Import`.
+3. Select the subscription you created in Google Play.
+4. Attach the entitlement.
+
 ![Attach product](assets/images/attched-product.png)
 
-## Subscriptions with iOS 
-Here the official [guide](https://www.revenuecat.com/docs/getting-started/entitlements/ios-products) for all this setup
+### iOS Subscription Setup
 
-1. Creat a build if you have not: `eas build`
-2. Submit your app to the Apple connect: `eas submit -p ios`
+Official guide: [RevenueCat iOS entitlements guide](https://www.revenuecat.com/docs/getting-started/entitlements/ios-products)
 
-### Apple Connect Subscriptions
-1. Go to your [apple store account](https://appstoreconnect.apple.com/apps), select your app created in the previous step
-2. On the left bar at the end, under `MONETIZATION`, there should be a `Subscriptions` link
+1. Build the app:
+
+```bash
+eas build
+```
+
+2. Submit it to App Store Connect:
+
+```bash
+eas submit -p ios
+```
+
+### App Store Connect Subscriptions
+
+1. Open your app in [App Store Connect](https://appstoreconnect.apple.com/apps).
+2. Under `Monetization`, open `Subscriptions`.
+3. Create a subscription group.
+4. Add localization details.
+5. Create a subscription and configure:
+   - Reference name
+   - Product ID, for example `new_app_subscription_monthly`
+   - Duration
+   - Availability
+   - Price
+   - Localization
+6. Back on the subscriptions overview page, configure a billing grace period.
+
 ![Attach product](assets/images/monetization.png)
-3. At the `Subscription Groups` section, create a new one with a name that make most sense. If you are also developing in Android, I recommend using the same name for both
-4. Add the app store localization (subscription group display name as it will appear to users for this localization,  [Learn More](https://developer.apple.com/help/app-store-connect/manage-subscriptions/offer-auto-renewable-subscriptions))
-5. In the subscription section, create a new one
 
-   - `5.1` The `reference name` will be the one that appears in App Store Connect
-   - `5.2` The product should have the following example format (using underscore): `new_app_subscription_monthly`
-   - `5.3` Add subscription duration (weekly, monthly, yearly, etc.)
-   - `5.4` Set up availability by choosing the countries where it will be available
-   - `5.5` Add a subscription price
-   - `5.6` Add the subscription localization, name of the subscription and description, this two will appear in the app for your users
+### In-App Purchase Key
 
-6. Go back to the main `Subscriptions` page, add the `Billing Grace Period` that makes sense for your app (16 days, 3 days, etc)
+1. Open [Users and Access](https://appstoreconnect.apple.com/access/users).
+2. Select the `Integrations` tab.
+3. Open `In-App Purchase`.
+4. Generate a new key.
+5. Download the key file.
+6. Copy the Issuer ID.
 
-#### In-app purchase key configuration steps
+### Connect App Store to RevenueCat
 
-1. Go to your [Users and Access page](https://appstoreconnect.apple.com/access/users) in the app store
-2. Select the `Integrations` tab in the top bar, then `In-App Purchase` in the left bar
-3. Generate an `in-app purchase key` by pressing the plus button, and give it an appropriate name (for example: `RC-Pro-Accounts`)
-4. Download the key in your machine ( save it for the next steps )
-5. Copy and save the `Issuer ID` from the In-App Purchase page you are now ( save it for the next steps )
+1. In RevenueCat, open `Apps`.
+2. Create a new `App Store` app.
+3. Add your iOS bundle ID.
+4. Upload the key file.
+5. Add the Issuer ID.
+6. Save.
 
-### RevenueCat Configurations 
-1. On your [projects page](https://app.revenuecat.com/projects/), choose your app
-2. On the left bar, press on `Apps` > create a `New App Store app`
-3. Press the `+ Add app` button and select `App Store`
-4. Add the App Bundle ID ( the one in your app.json file )
-5. Upload the key file downloaded in the previos step
-6. Add the Issuer ID copied in the previos step
-7. Save changes 
+### Add the App Store product in RevenueCat
 
-### Add new product
-1. In the same `Product catalog` > `Products` page, click the `New Product` button
-2. Choose your App Store product
-2. On a separate tab, go to your Subscription app store [page](https://appstoreconnect.apple.com/apps), select the subscription recently created
-3. Copy the `Product ID`, go back to the revenue cat product page, add the id to the Identifier field
-4. Add a human readable name to the `Display name` field
-5. After the product has been created, attached the `Entitlement` to your product by pressing the attach button
+1. In RevenueCat, open `Product catalog` > `Products`.
+2. Click `New Product`.
+3. Choose your App Store product.
+4. In App Store Connect, open the subscription and copy the product ID.
+5. Paste that into RevenueCat as the identifier.
+6. Add a display name.
+7. Attach the entitlement.
+8. Refresh and verify it saved correctly.
+
 ![Attached Entitlements](assets/images/attached-entitlements.png)
-6. Refresh the screen and check it is being saved correctly, if the status should say `Could not check`, don't worry about that yet
 
-#### Offerings
-1. On the left bar, go to `Product catalog` > `Offerings`
-2. Press the `+ New Offering` button
-2. Add the Identifier and Display name 
-3. Bellow, press on `+ New Package`, select the Identifier (Monthly, Annual, etc)
-4. Add the Product in the drop down and save
+### Offerings
 
-### API keys
-1. On the left bar, go to `App & providers` > `API keys` 
-2. Copy the SDK API keys and paste them in your .env file (EXPO_PUBLIC_REVENUECAT_APPLE_API_KEY & EXPO_PUBLIC_REVENUECAT_GOOGLE_API_KEY)
-3. Go to `Product catalog` > `Entitlements`, copy the Identifier recently created and added to `EXPO_PUBLIC_REVENUECAT_ENTITLEMENT_ID` in your .env file
-4. Go to `Product catalog` > `Offerings`, copy the Identifier recently created and added to  EXPO_PUBLIC_REVENUECAT_OFFERING_ID in your .env file
+1. Open `Product catalog` > `Offerings`.
+2. Click `+ New Offering`.
+3. Add an identifier and display name.
+4. Add packages such as monthly or annual.
+5. Assign the matching products.
 
-## Skills
-There are some skills files already, feel free to use more
+### API Keys
 
-https://github.com/expo/skills
+Copy these values into your env file:
 
-https://skills.sh/trending
+```bash
+EXPO_PUBLIC_REVENUECAT_APPLE_API_KEY=...
+EXPO_PUBLIC_REVENUECAT_GOOGLE_API_KEY=...
+EXPO_PUBLIC_REVENUECAT_ENTITLEMENT_ID=...
+EXPO_PUBLIC_REVENUECAT_OFFERING_ID=...
+```
+
+You can find them in RevenueCat under:
+
+- `App & providers` > `API keys`
+- `Product catalog` > `Entitlements`
+- `Product catalog` > `Offerings`
 
 ## Troubleshooting
-1. Clear caches — npx expo start --clear
-2. Clean prebuild — npx expo prebuild --clean
-3. Review console warnings — Legacy modules log compatibility warnings
 
-## More about Expo
+- Clear Metro cache: `npx expo start --clear`
+- Clean native prebuild: `npx expo prebuild --clean`
+- Review console warnings, especially native compatibility warnings
 
-To learn more about developing your project with Expo, look at the following resources:
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
+## Extra Resources
 
+### Skills
 
-## Expo community
+- https://github.com/expo/skills
+- https://skills.sh/trending
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+### Expo
+
+- [Expo documentation](https://docs.expo.dev/)
+- [Expo GitHub](https://github.com/expo/expo)
+- [Expo Discord community](https://chat.expo.dev)
