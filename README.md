@@ -1,13 +1,10 @@
-# Expo SaaS Template
+# Expo SaaS Template 💵
 
 Opinionated React Native template built with [Expo](https://expo.dev), [Supabase](https://supabase.com/), [Stripe](https://stripe.com/), [RevenueCat](https://www.revenuecat.com/), and native Google/Apple Sign-In.
 
 Most features have been tested on iOS first.
 
 ## Menu
-
-- [What you get](#what-you-get)
-- [Prerequisites](#prerequisites)
 - [Quick start](#quick-start)
 - [Authentication setup](#authentication-setup)
 - [RevenueCat setup](#revenuecat-setup)
@@ -16,7 +13,7 @@ Most features have been tested on iOS first.
 
 ## What You Get
 
-### Included
+### Included ✅
 
 - Google Sign-In for iOS and Android
 - Apple Sign-In for iOS
@@ -24,7 +21,7 @@ Most features have been tested on iOS first.
 - Bottom sheet login UI
 - RevenueCat subscriptions
 
-### Planned
+### Planned ⏳
 
 - Apple payments
 - Stripe payments
@@ -149,7 +146,7 @@ EXPO_PUBLIC_SUPABASE_ANON_KEY=...
 
 This template supports Google Sign-In and Apple Sign-In. For iOS App Store release, Apple Sign-In is required if you provide third-party sign-in.
 
-### Google Sign-In
+### Google Sign-In 🔐
 
 #### 1. Create a Google Cloud project
 
@@ -222,7 +219,7 @@ Replace `EXPO_PUBLIC_IOS_CLIENT_ID` in the plugin config with the real iOS clien
 }
 ```
 
-### Apple Sign-In and EAS
+### Apple Sign-In and EAS 
 
 1. Run an iOS build:
 
@@ -245,7 +242,7 @@ npx expo run:ios
 npx expo run:android
 ```
 
-## RevenueCat Setup
+## RevenueCat Setup 😺
 
 1. Create an account at [RevenueCat](https://www.revenuecat.com/).
 2. Create a new project from the [projects page](https://app.revenuecat.com/projects/).
@@ -259,7 +256,7 @@ npx expo run:android
 2. Create a new entitlement.
 3. Use a clear identifier and display name, for example `pro_account`.
 
-### Android Subscription Setup
+### Android Subscription Setup 🤖
 
 This flow moves between Google Play Console, Google Cloud Console, and RevenueCat.
 
@@ -367,7 +364,7 @@ It can take up to 36 hours for Google Play credentials to fully propagate.
 
 ![Attach product](assets/images/attched-product.png)
 
-### iOS Subscription Setup
+### iOS Subscription Setup 
 
 Official guide: [RevenueCat iOS entitlements guide](https://www.revenuecat.com/docs/getting-started/entitlements/ios-products)
 
