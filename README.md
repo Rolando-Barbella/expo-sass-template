@@ -5,8 +5,6 @@ Opinionated React Native template built with [Expo](https://expo.dev), [Supabase
 Most features have been tested on iOS first.
 
 ## Menu
-- [What you get](#what-you-get)
-- [Prerequisites](#prerequisites)
 - [Quick start](#quick-start)
 - [Authentication setup](#authentication-setup)
   - [Google Sign-In](#google-sign-in)
