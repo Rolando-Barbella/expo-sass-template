@@ -59,9 +59,8 @@
           }
         }
       ],
-      [
-        "expo-apple-authentication"
-      ],
+      "expo-apple-authentication",
+      "./plugins/with-ios-pod-fixes",
       "expo-secure-store"
     ],
     "experiments": {
