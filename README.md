@@ -47,7 +47,7 @@ Before starting, make sure you have:
 - A [Firebase account](https://console.firebase.google.com/) for Android push notifications
 - `eas-cli` installed: `npm install -g eas-cli`
 
-If you plan to release on Android, also install:
+If you plan to release on Android, you also need:
 
 - [Android Studio](https://developer.android.com/studio)
 - A [Google Play developer account](https://play.google.com/console/signup)
@@ -69,12 +69,6 @@ cd my-app
 
 Update `package.json` with your details:
 
-Naming rules:
-
-- iOS bundle identifier: reverse-domain format, for example `com.yourcompany.appname`
-- Android package name: usually the same format as the iOS bundle identifier
-- App scheme: lowercase, no spaces, for example `myapp`
-
 ```json
 {
   "name": "expo-sass",
@@ -83,6 +77,12 @@ Naming rules:
 ```
 
 Update `app.json`:
+
+Naming rules:
+
+- iOS bundle identifier: reverse-domain format, for example `com.yourcompany.appname`
+- Android package name: usually the same format as the iOS bundle identifier
+- App scheme: lowercase, no spaces, for example `myapp`
 
 ```json
 {
