@@ -11,8 +11,9 @@ Most features have been tested on iOS first.
 - [Authentication setup](#authentication-setup)
   - [Google Sign-In](#google-sign-in)
   - [Apple Sign-In and EAS](#apple-sign-in-and-eas)
-- [Push notifications setup (Android)](#push-notifications-setup-android)
-  - [What remains for iOS](#what-remains-for-ios)
+- [Push Notifications](#push-notifications)
+  - [Android](#push-notifications-android)
+  - [iOS](#push-notifications-ios)
 - [RevenueCat setup](#revenuecat-setup)
   - [Android subscription setup](#android-subscription-setup)
   - [iOS subscription setup](#ios-subscription-setup)
@@ -257,43 +258,26 @@ npx expo run:ios
 npx expo run:android
 ```
 
-<a id="push-notifications-setup-android"></a>
+<a id="push-notifications"></a>
 
-## Push Notifications Setup (Android) 🔔
+## Push Notifications 🔔
 
-The template includes an end-to-end Android notification example. Pressing the **Push Notifications** card requests notification permission, gets the device's Expo push token, and asks Expo's push service to deliver a notification back to that device. The notification itself is the success signal, so the app only displays a modal when an error occurs.
+Choose the platform path you need:
 
-The implementation lives in:
+- **Android only:** complete the shared setup, then the [Android](#push-notifications-android) setup.
+- **iOS only:** complete the shared setup, then the [iOS](#push-notifications-ios) setup. Firebase is not required.
+- **Both platforms:** complete the shared setup once, then complete both platform sections.
 
-- `lib/notifications.ts`: permission handling, Android notification channel creation, Expo push-token registration, and the test request to Expo's push API
+### Shared Setup for Android and iOS
+
+The template includes a shared end-to-end notification example. Pressing the **Push Notifications** card requests permission, gets the device's Expo push token, and asks Expo's push service to deliver a notification back to that device. The notification itself is the success signal; a modal appears only when an error occurs.
+
+The shared implementation lives in:
+
+- `lib/notifications.ts`: permission handling, Expo push-token registration, Android channel creation when running on Android, and the request to Expo's push API
 - `providers/PushNotificationsProvider.tsx`: foreground notification behavior and received/opened listeners
 - `app/_layout.tsx`: installs the notification provider at the app root
 - `app/index.tsx`: interactive card, loading state, and error-only alert
-
-The checked-in template is currently connected to Firebase project `expo-sass-template`, Android package `com.rolandobarbella.exposass`, and EAS project `@rolando-barbella/expo-sass`. The non-secret EAS project ID and `google-services.json` are already configured. Forks should replace those values with their own Firebase app, package name, and EAS project.
-
-
-### 1. Create and connect the Firebase Android app
-
-1. Open the [Firebase console](https://console.firebase.google.com/) and create or select a project.
-2. Add an Android app. Its package name must exactly match `expo.android.package` in `app.json`.
-3. Download `google-services.json` and place it in the project root.
-4. Point Expo to that file in `app.json`:
-
-```json
-{
-  "expo": {
-    "android": {
-      "package": "com.yourcompany.appname",
-      "googleServicesFile": "./google-services.json"
-    }
-  }
-}
-```
-
-`google-services.json` contains identifiers used by the Android client and may be committed. It is different from the private Firebase service-account key described below.
-
-### 3. Configure the Expo project and notifications plugin
 
 Link the app to an EAS project if it is not linked already:
 
@@ -301,9 +285,9 @@ Link the app to an EAS project if it is not linked already:
 eas init
 ```
 
-This writes the EAS project ID to `expo.extra.eas.projectId`. The notification helper reads that value when requesting an Expo push token.
+This writes the EAS project ID to `expo.extra.eas.projectId`. The notification helper uses that ID when requesting an Expo push token.
 
-Add the notifications plugin to `app.json` and choose an Android notification icon and color:
+Add the shared notifications plugin and EAS project ID to `app.json`:
 
 ```json
 {
@@ -326,10 +310,42 @@ Add the notifications plugin to `app.json` and choose an Android notification ic
 }
 ```
 
-### 4. Upload the Firebase Cloud Messaging credential to EAS
+The plugin is required for both platforms. Its `icon` and `color` options customize Android notifications.
+
+Push notifications require a native build and are not supported in Expo Go. Each platform also needs its own credentials and a new native build, as described below.
+
+<a id="push-notifications-android"></a>
+
+### Android 🤖
+
+Android uses Firebase Cloud Messaging (FCM). It does not use Apple APNs credentials.
+
+The checked-in template is already connected to Firebase project `expo-sass-template`, Android package `com.rolandobarbella.exposass`, and EAS project `@rolando-barbella/expo-sass`. Its non-secret EAS project ID and `google-services.json` are configured. Forks should replace them with your own Firebase app, package name, and EAS project.
+
+#### 1. Create and connect the Firebase Android app
+
+1. Open the [Firebase console](https://console.firebase.google.com/) and create or select a project.
+2. Add an Android app. Its package name must exactly match `expo.android.package` in `app.json`.
+3. Download `google-services.json` and place it in the project root.
+4. Point Expo to that file in `app.json`:
+
+```json
+{
+  "expo": {
+    "android": {
+      "package": "com.yourcompany.appname",
+      "googleServicesFile": "./google-services.json"
+    }
+  }
+}
+```
+
+`google-services.json` contains public-facing Android client identifiers and may be committed. It is not the private Firebase service-account key.
+
+#### 2. Upload the FCM V1 credential to EAS
 
 1. In Firebase, open `Project settings` > `Service accounts`.
-2. Click `Generate new private key` and download the JSON file.
+2. Click `Generate new private key` and download the service-account JSON.
 3. Run:
 
 ```bash
@@ -337,85 +353,81 @@ eas credentials --platform android
 ```
 
 4. Select the build profile, then `Google Service Account` > `Manage your Google Service Account Key for Push Notifications (FCM V1)` > `Set up a Google Service Account Key for Push Notifications (FCM V1)`.
-5. Upload the downloaded service-account JSON key.
+5. Upload the service-account JSON.
 
-The service-account JSON is a secret. Never commit it or ship it in the app. After EAS stores the credential, remove the local copy or keep it in a secure secret manager. The template ignores files named `firebase-service-account*.json`, but you must also ignore the exact filename if you use a different name.
+The service-account JSON is secret. Never commit or ship it. After EAS stores it, remove the local copy or move it to a secure secret manager. The template ignores `firebase-service-account*.json`; also ignore the exact filename if yours uses another name.
 
-See Expo's official [FCM V1 credentials guide](https://docs.expo.dev/push-notifications/fcm-credentials/) for the current console flow.
+#### 3. Build and test Android
 
-### 5. Build and test
-
-Push notifications require a native development build; they are not supported in Expo Go. Use either a physical Android device or an Android emulator image that includes Google Play services.
-
-Because `google-services.json` and the Expo notifications plugin change native configuration, rebuild after adding or changing them:
+Use a physical Android device or an Android emulator image with Google Play services. Rebuild after adding or changing `google-services.json` or the notification plugin:
 
 ```bash
 npx expo run:android
 ```
 
-Then:
+Open the app, press the **Push Notifications** card, grant permission, and wait a few seconds for delivery.
 
-1. Press the **Push Notifications** card.
-3. Allow notification permission when Android asks.
-3. If the notification doesn't display immediately, wait a few seconds until it arrives
+Android reference: [Expo FCM V1 credentials guide](https://docs.expo.dev/push-notifications/fcm-credentials/).
 
-<a id="what-remains-for-ios"></a>
+<a id="push-notifications-ios"></a>
 
-### Notifications for iOS 
+### iOS 
 
-Most of the iOS implementation is already complete. The notification permission flow, Expo push-token registration, notification handler/listeners, EAS project ID, and **Push Notifications** test card are shared with Android. The `expo-notifications` config plugin and iOS bundle identifier are also already configured in `app.json`. Firebase and `google-services.json` are Android-only and are not needed for iOS.
+iOS uses Apple Push Notification service (APNs). It does not use Firebase, FCM credentials, or `google-services.json`.
 
-The remaining work is Apple credential setup and an iOS rebuild:
+The shared TypeScript implementation, `expo-notifications` plugin, EAS project ID, and test card are already ready for iOS. The remaining work is Apple credential setup and a signed iOS rebuild.
 
-1. Make sure again you have a paid [Apple Developer Program](https://developer.apple.com/programs/) account with permission to manage certificates, identifiers, and profiles.
-2. Confirm that the App ID matching `com.rolandobarbella.exposass` exists in the Apple Developer portal. EAS should enable its Push Notifications capability automatically during credential/build setup.
-3. Configure an Apple Push Notification service (APNs) key. The easiest route is:
+#### 1. Prepare the Apple app and credentials
+
+1. Use a paid [Apple Developer Program](https://developer.apple.com/programs/) account with permission to manage certificates, identifiers, and profiles.
+2. Confirm the App ID matching the `com.youraccount.bundleIdentifier` in `app.json` exists in the Apple Developer portal. For this template it is `com.rolandobarbella.exposass`.
+
+![Apple Developer Bundle ID](assets/images/BundleID.png)
+
+3. Configure an APNs key:
 
    ```bash
    eas credentials --platform ios
    ```
 
-   Select the appropriate build profile, then `Push Notifications: Manage your Apple Push Notifications Key`, and allow EAS to generate or reuse a key. Alternatively, start the first EAS iOS build and answer **Yes** when asked to set up push notifications and generate an Apple Push Notifications key.
+   Select the appropriate build profile, then `Push Notifications: Manage your Apple Push Notifications Key`, and allow EAS to generate or reuse a key. The first EAS iOS build can also prompt you to enable push notifications and generate the key.
 
+EAS should enable the App ID's Push Notifications capability and manage the required provisioning profile. If the profile predates that capability, allow EAS to regenerate it during the next build.
 
-4. For a physical iPhone, register the device with EAS if it has not been registered already:
+#### 2. Prepare an iOS development build
 
-   ```bash
-   eas device:create
-   ```
+For a physical iPhone or iPad, register the device if needed:
 
-6. Create and install a new development build so the signed app contains the Push Notifications capability and `aps-environment` entitlement:
+```bash
+eas device:create
+```
+Create and install a new signed build containing the Push Notifications capability and `aps-environment` entitlement:
 
-   ```bash
-   eas build --platform ios --profile development
-   ```
+```bash
+eas build --platform ios --profile development
+```
 
-7. Start Metro, open the development build, press the **Push Notifications** card, grant notification permission, and wait for the notification:
+#### 3. Test iOS
 
-   ```bash
-   npx expo start --dev-client
-   ```
+Start Metro and open the installed development build:
 
-You can test on a physical iPhone or iPad. Expo also supports an iOS Simulator running iOS 16 or later with Xcode 14 or later on macOS 13 or later. The existing `development` EAS profile targets registered physical devices; for a simulator, use a local `npx expo run:ios` build or add a separate EAS profile with `ios.simulator: true`.
+```bash
+npx expo start --dev-client
+```
 
-If the app's provisioning profile was created before Push Notifications was enabled, let EAS regenerate the profile during the next build. No TypeScript changes should be necessary unless the iOS notification should 4have platform-specific content or behavior.
+Press the **Push Notifications** card, grant permission, and wait for delivery.
 
-Apple limits the number of APNs authentication keys per developer account, and a key may be shared by multiple apps. Do not revoke an existing shared key without checking which production apps use it.
+You can test on a physical iPhone or iPad. Expo also supports an iOS Simulator running iOS 16+ with Xcode 14+ on macOS 13+. The current EAS development profile targets registered physical devices; for a simulator, use `npx expo run:ios` locally or add a separate EAS profile with `ios.simulator: true`.
 
-Official references:
+Apple limits APNs authentication keys per developer account, and one key may serve multiple apps. Do not revoke a shared key without checking which production apps use it.
 
-- [Expo push notification setup](https://docs.expo.dev/push-notifications/push-notifications-setup/)
-- [EAS-managed push notification credentials](https://docs.expo.dev/app-signing/managed-credentials/#push-notification-credentials)
-- [Create an iOS development build](https://docs.expo.dev/tutorial/eas/ios-development-build-for-devices/)
+iOS references: [EAS-managed push credentials](https://docs.expo.dev/app-signing/managed-credentials/#push-notification-credentials) and [iOS development builds](https://docs.expo.dev/tutorial/eas/ios-development-build-for-devices/).
 
-### Production note
+### Shared Production Note
 
-The card sends directly to Expo's push endpoint only as a self-contained development example. In a production app, send notifications from a trusted backend instead: associate Expo push tokens with authenticated users, protect the send operation with authorization, validate the payload, and handle invalid or expired tokens and delivery receipts.
+The card sends directly to Expo's push endpoint only as a self-contained development example. For either platform in production, send notifications from a trusted backend: associate Expo push tokens with authenticated users, authorize and validate requests, and process invalid tokens and delivery receipts.
 
-Official references:
-
-- [Expo push notification setup](https://docs.expo.dev/push-notifications/push-notifications-setup/)
-- [Expo FCM V1 credential setup](https://docs.expo.dev/push-notifications/fcm-credentials/)
+Shared reference: [Expo push notification setup](https://docs.expo.dev/push-notifications/push-notifications-setup/).
 
 <a id="revenuecat-setup"></a>
 
