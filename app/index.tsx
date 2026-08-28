@@ -1,29 +1,48 @@
-import { Redirect, Stack, useRouter } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
-import { StatusBar } from 'expo-status-bar';
-import { useEffect, useState } from 'react';
+import { Redirect, Stack, useRouter } from "expo-router";
+import { LinearGradient } from "expo-linear-gradient";
+import { StatusBar } from "expo-status-bar";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   Image,
   Platform,
   Pressable,
   ScrollView,
   StyleSheet,
   View,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { HelloWave } from '@/components/HelloWave';
-import { ThemedText } from '@/components/ThemedText';
-import { supabase } from '@/lib/supabase';
-import type { Session } from '@supabase/supabase-js';
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { HelloWave } from "@/components/HelloWave";
+import { ThemedText } from "@/components/ThemedText";
+import { supabase } from "@/lib/supabase";
+import { sendTestPushNotificationAsync } from "@/lib/notifications";
+import type { Session } from "@supabase/supabase-js";
 
-const googleLogo = require('@/assets/images/google-sign-in.png');
+const googleLogo = require("@/assets/images/google-sign-in.png");
 
 export default function HomeScreen() {
   const router = useRouter();
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSendingPush, setIsSendingPush] = useState(false);
+
+  const sendTestPushNotification = async () => {
+    if (isSendingPush) return;
+
+    setIsSendingPush(true);
+
+    try {
+      await sendTestPushNotificationAsync();
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : "An unknown error occurred.";
+      Alert.alert("Could not send notification", message);
+    } finally {
+      setIsSendingPush(false);
+    }
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -34,10 +53,12 @@ export default function HomeScreen() {
       setIsLoading(false);
     });
 
-    const { data: authSubscription } = supabase.auth.onAuthStateChange((_event, nextSession) => {
-      setSession(nextSession);
-      setIsLoading(false);
-    });
+    const { data: authSubscription } = supabase.auth.onAuthStateChange(
+      (_event, nextSession) => {
+        setSession(nextSession);
+        setIsLoading(false);
+      },
+    );
 
     return () => {
       isMounted = false;
@@ -50,7 +71,7 @@ export default function HomeScreen() {
       <View style={styles.container}>
         <StatusBar style="light" />
         <LinearGradient
-          colors={['#0a0a0a', '#1a1a2e', '#0a0a0a']}
+          colors={["#0a0a0a", "#1a1a2e", "#0a0a0a"]}
           style={styles.gradient}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
@@ -73,7 +94,7 @@ export default function HomeScreen() {
       <View style={styles.container}>
         <StatusBar style="light" />
         <LinearGradient
-          colors={['#0a0a0a', '#1a1a2e', '#0a0a0a']}
+          colors={["#0a0a0a", "#1a1a2e", "#0a0a0a"]}
           style={styles.gradient}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
@@ -82,13 +103,13 @@ export default function HomeScreen() {
             <ScrollView contentContainerStyle={styles.scrollContent}>
               <View style={styles.heroSection}>
                 <LinearGradient
-                  colors={['#00d4ff', '#0099ff', '#7000ff']}
+                  colors={["#00d4ff", "#0099ff", "#7000ff"]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
                   style={styles.logoGradient}
                 >
                   <Image
-                    source={require('@/assets/images/icon.png')}
+                    source={require("@/assets/images/icon.png")}
                     style={styles.reactLogo}
                   />
                 </LinearGradient>
@@ -102,7 +123,7 @@ export default function HomeScreen() {
               </View>
 
               <Pressable
-                onPress={() => router.push('/login-sheet')}
+                onPress={() => router.push("/login-sheet")}
                 style={({ pressed }) => [
                   styles.card,
                   pressed && styles.cardPressed,
@@ -113,7 +134,11 @@ export default function HomeScreen() {
                     Sign in
                   </ThemedText>
                   <View style={styles.signInIcons}>
-                    <Image source={googleLogo} style={styles.signInGoogleIcon} resizeMode="contain" />
+                    <Image
+                      source={googleLogo}
+                      style={styles.signInGoogleIcon}
+                      resizeMode="contain"
+                    />
                     <Ionicons name="logo-apple" size={18} color="#ffffff" />
                   </View>
                 </View>
@@ -123,7 +148,7 @@ export default function HomeScreen() {
               </Pressable>
 
               <Pressable
-                onPress={() => router.push('/subscription-sheet' as never)}
+                onPress={() => router.push("/subscription-sheet" as never)}
                 style={({ pressed }) => [
                   styles.card,
                   pressed && styles.cardPressed,
@@ -135,35 +160,54 @@ export default function HomeScreen() {
                   </ThemedText>
                   <View style={styles.signInIcons}>
                     <Ionicons name="cash-outline" size={18} color="#ffffff" />
-                  </View>  
+                  </View>
                 </View>
                 <ThemedText style={styles.cardText}>
-                  Tap to open a sample subscription sheet and start the RevenueCat flow.
-                </ThemedText>  
+                  Tap to open a sample subscription sheet and start the
+                  RevenueCat flow.
+                </ThemedText>
               </Pressable>
 
-              <View style={styles.card}>
+              <Pressable
+                disabled={isSendingPush}
+                onPress={sendTestPushNotification}
+                style={({ pressed }) => [
+                  styles.card,
+                  pressed && styles.cardPressed,
+                  isSendingPush && styles.cardDisabled,
+                ]}
+              >
                 <View style={styles.signInTitleRow}>
                   <ThemedText type="subtitle" style={styles.cardTitle}>
                     Push Notifications
                   </ThemedText>
                   <View style={styles.signInIcons}>
-                    <Ionicons name="notifications-outline" size={18} color="#ffffff" />
+                    {isSendingPush ? (
+                      <ActivityIndicator size="small" color="#00d4ff" />
+                    ) : (
+                      <Ionicons
+                        name="notifications-outline"
+                        size={18}
+                        color="#ffffff"
+                      />
+                    )}
                   </View>
                 </View>
                 <ThemedText style={styles.cardText}>
-                  {`Configure push notifications with Firebase and Expo and send them to your users.`}
+                  {isSendingPush
+                    ? "Sending a test notification…"
+                    : "Tap to send a test push notification to this device."}
                 </ThemedText>
-              </View>
+              </Pressable>
 
               <View style={styles.card}>
                 <View style={styles.signInTitleRow}>
-                <ThemedText type="subtitle" style={styles.cardTitle}>
-                  Emails with Resend
-                </ThemedText>
-                <View style={styles.signInIcons}>
-                  <Ionicons name="mail-outline" size={18} color="#ffffff" />
-                </View>
+                  <ThemedText type="subtitle" style={styles.cardTitle}>
+                    Emails with Resend
+                  </ThemedText>
+                  <View style={styles.signInIcons}>
+                    <Ionicons name="mail-outline" size={18} color="#ffffff" />
+                  </View>
                 </View>
                 <ThemedText style={styles.cardText}>
                   {`Configure emails with Resend and send them to your users.`}
@@ -180,7 +224,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0a0a0a',
+    backgroundColor: "#0a0a0a",
   },
   gradient: {
     flex: 1,
@@ -190,21 +234,21 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 24,
-    paddingTop: Platform.OS === 'web' ? 60 : 32,
+    paddingTop: Platform.OS === "web" ? 60 : 32,
     paddingBottom: 32,
     gap: 16,
   },
   heroSection: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 8,
   },
   logoGradient: {
     width: 96,
     height: 96,
     borderRadius: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#00d4ff',
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#00d4ff",
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.35,
     shadowRadius: 16,
@@ -214,49 +258,52 @@ const styles = StyleSheet.create({
   reactLogo: {
     width: 76,
     height: 76,
-    resizeMode: 'contain',
+    resizeMode: "contain",
   },
   titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
   },
   title: {
-    color: '#ffffff',
+    color: "#ffffff",
     fontSize: 34,
-    fontWeight: '800' as const,
+    fontWeight: "800" as const,
     letterSpacing: -0.5,
   },
   card: {
     padding: 18,
     borderRadius: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    backgroundColor: "rgba(255, 255, 255, 0.06)",
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderColor: "rgba(255, 255, 255, 0.1)",
     gap: 8,
   },
   cardPressed: {
     opacity: 0.8,
     transform: [{ scale: 0.99 }],
   },
+  cardDisabled: {
+    opacity: 0.65,
+  },
   cardTitle: {
-    color: '#ffffff',
+    color: "#ffffff",
     fontSize: 18,
-    fontWeight: '700' as const,
+    fontWeight: "700" as const,
   },
   cardText: {
-    color: '#b8b8c8',
+    color: "#b8b8c8",
     fontSize: 15,
     lineHeight: 22,
   },
   signInTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     // justifyContent: 'space-between',
   },
   signInIcons: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     left: 10,
     gap: 8,
   },
@@ -265,11 +312,11 @@ const styles = StyleSheet.create({
     height: 18,
   },
   textStrong: {
-    color: '#ffffff',
+    color: "#ffffff",
   },
   loadingContainer: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
