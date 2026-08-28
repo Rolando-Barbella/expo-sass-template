@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "528634136215",
+    "project_id": "expo-sass-template",
+    "storage_bucket": "expo-sass-template.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:528634136215:android:6e97ad739500a536cccbd2",
+        "android_client_info": {
+          "package_name": "com.rolandobarbella.exposass"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDakh4cpZOCQ15UBIHkiu6tb_vAlO60TrA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

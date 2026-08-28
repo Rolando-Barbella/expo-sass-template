@@ -26,7 +26,8 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.rolandobarbella.exposass"
+      "package": "com.rolandobarbella.exposass",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "output": "static",
@@ -73,8 +74,10 @@
     },
     "extra": {
       "eas": {
-        "projectId": ""
-      }
-    }
+        "projectId": "6d65e7e9-fe71-47dc-8d50-a3d11a1d2526"
+      },
+      "router": {}
+    },
+    "owner": "rolando-barbella"
   }
 }
