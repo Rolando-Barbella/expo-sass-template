@@ -31,8 +31,6 @@ Most features have been tested on iOS first.
 
 ### Planned ⏳
 
-- Apple payments
-- Stripe payments
 - Emails with [Resend](https://resend.com/emails)
 
 ## Prerequisites
@@ -173,58 +171,14 @@ As of August 2026, Expo SDK 57 is the latest stable release. Expo recommends upg
 
 1. Commit or back up the current working version.
 2. Read the release notes for every target SDK: [SDK 55](https://expo.dev/changelog/sdk-55), [SDK 56](https://expo.dev/changelog/sdk-56), and [SDK 57](https://expo.dev/changelog/sdk-57).
-3. Confirm the required Node.js, Android Studio/Gradle, and Xcode versions. SDK 55 and later require Node.js `20.19.4+`, and SDK 55 requires Xcode 26 for local iOS builds.
-4. Check that every native dependency supports the target Expo and React Native versions. This project particularly needs compatibility checks for Google Sign-In, Stripe, RevenueCat, Reanimated/Worklets, Supabase, and `expo-notifications`.
-5. Review the custom `plugins/with-ios-pod-fixes.js` config plugin. Native workarounds may become unnecessary or incompatible after an SDK upgrade.
-
-### Upgrade process
-
-Upgrade and validate one SDK at a time. For example, start with SDK 55:
-
-```bash
-npx expo install expo@^55.0.0 --fix
-npx expo-doctor@latest
-```
-
-Resolve every dependency mismatch and review the SDK 55 release notes before continuing. Once SDK 55 builds and all features work, repeat with `expo@^56.0.0`, and then `expo@^57.0.0`.
-
-This project uses Expo Prebuild/Continuous Native Generation: `/ios` and `/android` are generated and ignored by Git. Regenerate them after each SDK upgrade:
-
-```bash
-npx expo prebuild --clean
-npx expo run:android
-npx expo run:ios
-```
-
-Create new development and production builds after upgrading because the native runtime has changed. Existing EAS and FCM credentials remain stored remotely, but confirm that `google-services.json`, the Android package, the iOS bundle identifier, and the EAS project ID are still correct.
-
-### Required changes when moving from SDK 54 to 55+
-
-- Remove the top-level `expo.notification` object from `app.json`. SDK 55 removed that field. This template already has the equivalent icon and color under the `expo-notifications` config plugin.
-- Remove `expo.android.edgeToEdgeEnabled` from `app.json`; edge-to-edge is mandatory in SDK 55 and the field was removed.
-- Keep the New Architecture enabled. SDK 55 no longer supports the Legacy Architecture.
-- Let `npx expo install --fix` select compatible Expo, React, React Native, Router, Reanimated, and Worklets versions instead of updating them independently.
-- Rebuild the native app; restarting Metro alone is not enough after an SDK or native dependency change.
-
-### Verification checklist
-
-After every SDK step, run:
-
-```bash
-npx expo-doctor@latest
-npx tsc --noEmit
-npm run lint
-```
-
-Then test Android and iOS native builds, Google and Apple authentication, Supabase session restoration, RevenueCat purchases, Stripe, routing/sheets, and push registration and delivery. The push test should be run from the **Push Notifications** card on an Android device or emulator with Google Play services.
-
-See Expo's official [SDK upgrade walkthrough](https://docs.expo.dev/workflow/upgrading-expo-sdk-walkthrough/) for the maintained upgrade procedure.
-
-<a id="authentication-setup"></a>
+3. Confirm the required Node.js, Android Studio/Gradle, and Xcode versions. SDK 55 and later require Node.js `20.19.4+`, and SDK 55 requires Xcode 26 for local iOS builds, plus macOS Tahoe
+*There is a skill file in the project that help you further
 
 ## Authentication Setup
 
-This template supports Google Sign-In and Apple Sign-In. For iOS App Store release, Apple Sign-In is required if you provide third-party sign-in, otherwise your app will be rejected.
+This template supports Google Sign-In and Apple Sign-In. 
+
+IMPORTANT: For iOS App Store release, Apple Sign-In is required if you provide third-party sign-in, otherwise your app will be rejected.
 
 <a id="google-sign-in"></a>
 
