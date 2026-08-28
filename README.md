@@ -5,10 +5,13 @@ Opinionated React Native template built with [Expo](https://expo.dev), [Supabase
 Most features have been tested on iOS first.
 
 ## Menu
+
 - [Quick start](#quick-start)
+- [Expo SDK and upgrades](#expo-sdk-and-upgrades)
 - [Authentication setup](#authentication-setup)
   - [Google Sign-In](#google-sign-in)
   - [Apple Sign-In and EAS](#apple-sign-in-and-eas)
+- [Push notifications setup (Android)](#push-notifications-setup-android)
 - [RevenueCat setup](#revenuecat-setup)
   - [Android subscription setup](#android-subscription-setup)
   - [iOS subscription setup](#ios-subscription-setup)
@@ -24,23 +27,24 @@ Most features have been tested on iOS first.
 - Supabase authentication and backend integration
 - Bottom sheet login UI
 - RevenueCat subscriptions
+- Android push notifications with Firebase Cloud Messaging and Expo
 
 ### Planned ⏳
 
 - Apple payments
 - Stripe payments
-- Push notifications with Firebase and Expo
 - Emails with [Resend](https://resend.com/emails)
 
 ## Prerequisites
 
 Before starting, make sure you have:
 
-- [Node.js](https://nodejs.org/) `18+`
+- [Node.js](https://nodejs.org/) `20.19.4+`
 - `npm` or `yarn`
 - [Xcode](https://developer.apple.com/xcode/) for iOS development
 - An [Apple Developer account](https://developer.apple.com/account) for App Store release
 - An [Expo account](https://expo.dev/)
+- A [Firebase account](https://console.firebase.google.com/) for Android push notifications
 - `eas-cli` installed: `npm install -g eas-cli`
 
 If you plan to release on Android, also install:
@@ -146,12 +150,84 @@ EXPO_PUBLIC_SUPABASE_ANON_KEY=...
 ![Left Bar Supabase](assets/images/left-bar-supbase.png)
 ![Supabase API Key](assets/images/supbase-api-key.png)
 
+<a id="expo-sdk-and-upgrades"></a>
+
+## Expo SDK and Upgrades
+
+### Current versions
+
+This template currently uses:
+
+| Component    | Version              |
+| ------------ | -------------------- |
+| Expo SDK     | 54 (`expo ~54.0.35`) |
+| React Native | 0.81.5               |
+| React        | 19.1.0               |
+| TypeScript   | 5.9.2                |
+
+The New Architecture is enabled by default, and React Compiler is enabled through `expo.experiments.reactCompiler` in `app.json`. There is no `sdkVersion` field in the app config; Expo derives the SDK from the installed `expo` package.
+
+As of August 2026, Expo SDK 57 is the latest stable release. Expo recommends upgrading one SDK at a time, so this project should move from 54 to 55, then 56, then 57 instead of skipping directly to 57.
+
+### Before upgrading
+
+1. Commit or back up the current working version.
+2. Read the release notes for every target SDK: [SDK 55](https://expo.dev/changelog/sdk-55), [SDK 56](https://expo.dev/changelog/sdk-56), and [SDK 57](https://expo.dev/changelog/sdk-57).
+3. Confirm the required Node.js, Android Studio/Gradle, and Xcode versions. SDK 55 and later require Node.js `20.19.4+`, and SDK 55 requires Xcode 26 for local iOS builds.
+4. Check that every native dependency supports the target Expo and React Native versions. This project particularly needs compatibility checks for Google Sign-In, Stripe, RevenueCat, Reanimated/Worklets, Supabase, and `expo-notifications`.
+5. Review the custom `plugins/with-ios-pod-fixes.js` config plugin. Native workarounds may become unnecessary or incompatible after an SDK upgrade.
+
+### Upgrade process
+
+Upgrade and validate one SDK at a time. For example, start with SDK 55:
+
+```bash
+npx expo install expo@^55.0.0 --fix
+npx expo-doctor@latest
+```
+
+Resolve every dependency mismatch and review the SDK 55 release notes before continuing. Once SDK 55 builds and all features work, repeat with `expo@^56.0.0`, and then `expo@^57.0.0`.
+
+This project uses Expo Prebuild/Continuous Native Generation: `/ios` and `/android` are generated and ignored by Git. Regenerate them after each SDK upgrade:
+
+```bash
+npx expo prebuild --clean
+npx expo run:android
+npx expo run:ios
+```
+
+Create new development and production builds after upgrading because the native runtime has changed. Existing EAS and FCM credentials remain stored remotely, but confirm that `google-services.json`, the Android package, the iOS bundle identifier, and the EAS project ID are still correct.
+
+### Required changes when moving from SDK 54 to 55+
+
+- Remove the top-level `expo.notification` object from `app.json`. SDK 55 removed that field. This template already has the equivalent icon and color under the `expo-notifications` config plugin.
+- Remove `expo.android.edgeToEdgeEnabled` from `app.json`; edge-to-edge is mandatory in SDK 55 and the field was removed.
+- Keep the New Architecture enabled. SDK 55 no longer supports the Legacy Architecture.
+- Let `npx expo install --fix` select compatible Expo, React, React Native, Router, Reanimated, and Worklets versions instead of updating them independently.
+- Rebuild the native app; restarting Metro alone is not enough after an SDK or native dependency change.
+
+### Verification checklist
+
+After every SDK step, run:
+
+```bash
+npx expo-doctor@latest
+npx tsc --noEmit
+npm run lint
+```
+
+Then test Android and iOS native builds, Google and Apple authentication, Supabase session restoration, RevenueCat purchases, Stripe, routing/sheets, and push registration and delivery. The push test should be run from the **Push Notifications** card on an Android device or emulator with Google Play services.
+
+See Expo's official [SDK upgrade walkthrough](https://docs.expo.dev/workflow/upgrading-expo-sdk-walkthrough/) for the maintained upgrade procedure.
+
 <a id="authentication-setup"></a>
+
 ## Authentication Setup
 
 This template supports Google Sign-In and Apple Sign-In. For iOS App Store release, Apple Sign-In is required if you provide third-party sign-in, otherwise your app will be rejected.
 
 <a id="google-sign-in"></a>
+
 ### Google Sign-In 🔐
 
 #### 1. Create a Google Cloud project
@@ -226,6 +302,7 @@ Replace `EXPO_PUBLIC_IOS_CLIENT_ID` in the plugin config with the real iOS clien
 ```
 
 <a id="apple-sign-in-and-eas"></a>
+
 ### Apple Sign-In and EAS 
 
 1. Run an iOS build:
@@ -249,7 +326,131 @@ npx expo run:ios
 npx expo run:android
 ```
 
+<a id="push-notifications-setup-android"></a>
+
+## Push Notifications Setup (Android) 🔔
+
+The template includes an end-to-end Android notification example. Pressing the **Push Notifications** card requests notification permission, gets the device's Expo push token, and asks Expo's push service to deliver a notification back to that device. The notification itself is the success signal, so the app only displays a modal when an error occurs.
+
+The implementation lives in:
+
+- `lib/notifications.ts`: permission handling, Android notification channel creation, Expo push-token registration, and the test request to Expo's push API
+- `providers/PushNotificationsProvider.tsx`: foreground notification behavior and received/opened listeners
+- `app/_layout.tsx`: installs the notification provider at the app root
+- `app/index.tsx`: interactive card, loading state, and error-only alert
+
+The checked-in template is currently connected to Firebase project `expo-sass-template`, Android package `com.rolandobarbella.exposass`, and EAS project `@rolando-barbella/expo-sass`. The non-secret EAS project ID and `google-services.json` are already configured. Forks should replace those values with their own Firebase app, package name, and EAS project.
+
+### 1. Install the Expo packages
+
+These packages are already included in the template. For a fresh project, install them with:
+
+```bash
+npx expo install expo-notifications expo-constants
+```
+
+### 2. Create and connect the Firebase Android app
+
+1. Open the [Firebase console](https://console.firebase.google.com/) and create or select a project.
+2. Add an Android app. Its package name must exactly match `expo.android.package` in `app.json`.
+3. Download `google-services.json` and place it in the project root.
+4. Point Expo to that file in `app.json`:
+
+```json
+{
+  "expo": {
+    "android": {
+      "package": "com.yourcompany.appname",
+      "googleServicesFile": "./google-services.json"
+    }
+  }
+}
+```
+
+`google-services.json` contains identifiers used by the Android client and may be committed. It is different from the private Firebase service-account key described below.
+
+### 3. Configure the Expo project and notifications plugin
+
+Link the app to an EAS project if it is not linked already:
+
+```bash
+eas init
+```
+
+This writes the EAS project ID to `expo.extra.eas.projectId`. The notification helper reads that value when requesting an Expo push token.
+
+Add the notifications plugin to `app.json` and choose an Android notification icon and color:
+
+```json
+{
+  "expo": {
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/android-icon-monochrome.png",
+          "color": "#E6F4FE"
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "YOUR_EAS_PROJECT_ID"
+      }
+    }
+  }
+}
+```
+
+### 4. Upload the Firebase Cloud Messaging credential to EAS
+
+1. In Firebase, open `Project settings` > `Service accounts`.
+2. Click `Generate new private key` and download the JSON file.
+3. Run:
+
+```bash
+eas credentials --platform android
+```
+
+4. Select the build profile, then `Google Service Account` > `Manage your Google Service Account Key for Push Notifications (FCM V1)` > `Set up a Google Service Account Key for Push Notifications (FCM V1)`.
+5. Upload the downloaded service-account JSON key.
+
+The service-account JSON is a secret. Never commit it or ship it in the app. After EAS stores the credential, remove the local copy or keep it in a secure secret manager. The template ignores files named `firebase-service-account*.json`, but you must also ignore the exact filename if you use a different name.
+
+See Expo's official [FCM V1 credentials guide](https://docs.expo.dev/push-notifications/fcm-credentials/) for the current console flow.
+
+### 5. Build and test
+
+Push notifications require a native development build; they are not supported in Expo Go. Use either a physical Android device or an Android emulator image that includes Google Play services.
+
+Because `google-services.json` and the Expo notifications plugin change native configuration, rebuild after adding or changing them:
+
+```bash
+npx expo run:android
+```
+
+Then:
+
+1. Start the app with a single Metro server.
+2. Press the **Push Notifications** card.
+3. Allow notification permission when Android asks.
+4. Wait a few seconds for the notification to arrive.
+
+While the request is running, the card shows a spinner. A successful request does not show a confirmation modal. Registration or delivery-request errors appear in an alert.
+
+The foreground handler is configured to show the notification banner, play its sound, and update the badge. The provider also logs received and opened notifications during development.
+
+### Production note
+
+The card sends directly to Expo's push endpoint only as a self-contained development example. In a production app, send notifications from a trusted backend instead: associate Expo push tokens with authenticated users, protect the send operation with authorization, validate the payload, and handle invalid or expired tokens and delivery receipts.
+
+Official references:
+
+- [Expo push notification setup](https://docs.expo.dev/push-notifications/push-notifications-setup/)
+- [Expo FCM V1 credential setup](https://docs.expo.dev/push-notifications/fcm-credentials/)
+
 <a id="revenuecat-setup"></a>
+
 ## RevenueCat Setup 😺
 
 1. Create an account at [RevenueCat](https://www.revenuecat.com/).
@@ -265,6 +466,7 @@ npx expo run:android
 3. Use a clear identifier and display name, for example `pro_account`.
 
 <a id="android-subscription-setup"></a>
+
 ### Android Subscription Setup 🤖
 
 This flow moves between Google Play Console, Google Cloud Console, and RevenueCat.
@@ -374,6 +576,7 @@ It can take up to 36 hours for Google Play credentials to fully propagate.
 ![Attach product](assets/images/attched-product.png)
 
 <a id="ios-subscription-setup"></a>
+
 ### iOS Subscription Setup 
 
 Official guide: [RevenueCat iOS entitlements guide](https://www.revenuecat.com/docs/getting-started/entitlements/ios-products)
@@ -468,6 +671,8 @@ You can find them in RevenueCat under:
 - Clear Metro cache: `npx expo start --clear`
 - Clean native prebuild: `npx expo prebuild --clean`
 - Review console warnings, especially native compatibility warnings
+- If Android reports `Default FirebaseApp is not initialized`, confirm `google-services.json` matches the package in `app.json`, then rebuild the native app with `npx expo run:android`. Also stop stale Metro servers so the installed app connects to the current bundle.
+- If no Expo push token is returned, confirm the device or emulator has Google Play services and that `expo.extra.eas.projectId` is set.
 
 ## Extra Resources
 
