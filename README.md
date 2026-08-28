@@ -12,6 +12,7 @@ Most features have been tested on iOS first.
   - [Google Sign-In](#google-sign-in)
   - [Apple Sign-In and EAS](#apple-sign-in-and-eas)
 - [Push notifications setup (Android)](#push-notifications-setup-android)
+  - [What remains for iOS](#what-remains-for-ios)
 - [RevenueCat setup](#revenuecat-setup)
   - [Android subscription setup](#android-subscription-setup)
   - [iOS subscription setup](#ios-subscription-setup)
@@ -65,7 +66,13 @@ cd my-app
 
 ### 2. Customize project identity
 
-Update `package.json`:
+Update `package.json` with your details:
+
+Naming rules:
+
+- iOS bundle identifier: reverse-domain format, for example `com.yourcompany.appname`
+- Android package name: usually the same format as the iOS bundle identifier
+- App scheme: lowercase, no spaces, for example `myapp`
 
 ```json
 {
@@ -96,12 +103,6 @@ Update `app.json`:
   }
 }
 ```
-
-Naming rules:
-
-- iOS bundle identifier: reverse-domain format, for example `com.yourcompany.appname`
-- Android package name: usually the same format as the iOS bundle identifier
-- App scheme: lowercase, no spaces, for example `myapp`
 
 ### 3. Create your environment file
 
@@ -150,33 +151,9 @@ EXPO_PUBLIC_SUPABASE_ANON_KEY=...
 
 <a id="expo-sdk-and-upgrades"></a>
 
-## Expo SDK and Upgrades
-
-### Current versions
-
-This template currently uses:
-
-| Component    | Version              |
-| ------------ | -------------------- |
-| Expo SDK     | 54 (`expo ~54.0.35`) |
-| React Native | 0.81.5               |
-| React        | 19.1.0               |
-| TypeScript   | 5.9.2                |
-
-The New Architecture is enabled by default, and React Compiler is enabled through `expo.experiments.reactCompiler` in `app.json`. There is no `sdkVersion` field in the app config; Expo derives the SDK from the installed `expo` package.
-
-As of August 2026, Expo SDK 57 is the latest stable release. Expo recommends upgrading one SDK at a time, so this project should move from 54 to 55, then 56, then 57 instead of skipping directly to 57.
-
-### Before upgrading
-
-1. Commit or back up the current working version.
-2. Read the release notes for every target SDK: [SDK 55](https://expo.dev/changelog/sdk-55), [SDK 56](https://expo.dev/changelog/sdk-56), and [SDK 57](https://expo.dev/changelog/sdk-57).
-3. Confirm the required Node.js, Android Studio/Gradle, and Xcode versions. SDK 55 and later require Node.js `20.19.4+`, and SDK 55 requires Xcode 26 for local iOS builds, plus macOS Tahoe
-*There is a skill file in the project that help you further
-
 ## Authentication Setup
 
-This template supports Google Sign-In and Apple Sign-In. 
+This template supports Google Sign-In and Apple Sign-In.
 
 IMPORTANT: For iOS App Store release, Apple Sign-In is required if you provide third-party sign-in, otherwise your app will be rejected.
 
@@ -233,7 +210,7 @@ Helpful video: [Google setup walkthrough](http://youtube.com/watch?v=BDeKTPQzvR4
 1. In Supabase, open `Authentication` > `Sign In / Providers`.
 2. Enable Apple and Google.
 3. For Apple, add your app client ID such as `com.yourcompany.appname`.
-4. For Google, add:
+4. For Google, add this 3 variables separated with commas:
    `EXPO_PUBLIC_ANDROID_CLIENT_ID`, `EXPO_PUBLIC_IOS_CLIENT_ID`, `EXPO_PUBLIC_WEB_CLIENT_ID`
 5. Copy the callback URL shown by Supabase.
 6. Return to your Google web client and add that URL to `Authorized redirect URIs`.
@@ -295,15 +272,8 @@ The implementation lives in:
 
 The checked-in template is currently connected to Firebase project `expo-sass-template`, Android package `com.rolandobarbella.exposass`, and EAS project `@rolando-barbella/expo-sass`. The non-secret EAS project ID and `google-services.json` are already configured. Forks should replace those values with their own Firebase app, package name, and EAS project.
 
-### 1. Install the Expo packages
 
-These packages are already included in the template. For a fresh project, install them with:
-
-```bash
-npx expo install expo-notifications expo-constants
-```
-
-### 2. Create and connect the Firebase Android app
+### 1. Create and connect the Firebase Android app
 
 1. Open the [Firebase console](https://console.firebase.google.com/) and create or select a project.
 2. Add an Android app. Its package name must exactly match `expo.android.package` in `app.json`.
@@ -385,14 +355,58 @@ npx expo run:android
 
 Then:
 
-1. Start the app with a single Metro server.
-2. Press the **Push Notifications** card.
+1. Press the **Push Notifications** card.
 3. Allow notification permission when Android asks.
-4. Wait a few seconds for the notification to arrive.
+3. If the notification doesn't display immediately, wait a few seconds until it arrives
 
-While the request is running, the card shows a spinner. A successful request does not show a confirmation modal. Registration or delivery-request errors appear in an alert.
+<a id="what-remains-for-ios"></a>
 
-The foreground handler is configured to show the notification banner, play its sound, and update the badge. The provider also logs received and opened notifications during development.
+### Notifications for iOS 
+
+Most of the iOS implementation is already complete. The notification permission flow, Expo push-token registration, notification handler/listeners, EAS project ID, and **Push Notifications** test card are shared with Android. The `expo-notifications` config plugin and iOS bundle identifier are also already configured in `app.json`. Firebase and `google-services.json` are Android-only and are not needed for iOS.
+
+The remaining work is Apple credential setup and an iOS rebuild:
+
+1. Make sure again you have a paid [Apple Developer Program](https://developer.apple.com/programs/) account with permission to manage certificates, identifiers, and profiles.
+2. Confirm that the App ID matching `com.rolandobarbella.exposass` exists in the Apple Developer portal. EAS should enable its Push Notifications capability automatically during credential/build setup.
+3. Configure an Apple Push Notification service (APNs) key. The easiest route is:
+
+   ```bash
+   eas credentials --platform ios
+   ```
+
+   Select the appropriate build profile, then `Push Notifications: Manage your Apple Push Notifications Key`, and allow EAS to generate or reuse a key. Alternatively, start the first EAS iOS build and answer **Yes** when asked to set up push notifications and generate an Apple Push Notifications key.
+
+
+4. For a physical iPhone, register the device with EAS if it has not been registered already:
+
+   ```bash
+   eas device:create
+   ```
+
+6. Create and install a new development build so the signed app contains the Push Notifications capability and `aps-environment` entitlement:
+
+   ```bash
+   eas build --platform ios --profile development
+   ```
+
+7. Start Metro, open the development build, press the **Push Notifications** card, grant notification permission, and wait for the notification:
+
+   ```bash
+   npx expo start --dev-client
+   ```
+
+You can test on a physical iPhone or iPad. Expo also supports an iOS Simulator running iOS 16 or later with Xcode 14 or later on macOS 13 or later. The existing `development` EAS profile targets registered physical devices; for a simulator, use a local `npx expo run:ios` build or add a separate EAS profile with `ios.simulator: true`.
+
+If the app's provisioning profile was created before Push Notifications was enabled, let EAS regenerate the profile during the next build. No TypeScript changes should be necessary unless the iOS notification should 4have platform-specific content or behavior.
+
+Apple limits the number of APNs authentication keys per developer account, and a key may be shared by multiple apps. Do not revoke an existing shared key without checking which production apps use it.
+
+Official references:
+
+- [Expo push notification setup](https://docs.expo.dev/push-notifications/push-notifications-setup/)
+- [EAS-managed push notification credentials](https://docs.expo.dev/app-signing/managed-credentials/#push-notification-credentials)
+- [Create an iOS development build](https://docs.expo.dev/tutorial/eas/ios-development-build-for-devices/)
 
 ### Production note
 
@@ -619,6 +633,30 @@ You can find them in RevenueCat under:
 - `App & providers` > `API keys`
 - `Product catalog` > `Entitlements`
 - `Product catalog` > `Offerings`
+
+## Expo SDK and Upgrades
+
+### Current versions
+
+This template currently uses:
+
+| Component    | Version              |
+| ------------ | -------------------- |
+| Expo SDK     | 54 (`expo ~54.0.35`) |
+| React Native | 0.81.5               |
+| React        | 19.1.0               |
+| TypeScript   | 5.9.2                |
+
+The New Architecture is enabled by default, and React Compiler is enabled through `expo.experiments.reactCompiler` in `app.json`. There is no `sdkVersion` field in the app config; Expo derives the SDK from the installed `expo` package.
+
+As of August 2026, Expo SDK 57 is the latest stable release. Expo recommends upgrading one SDK at a time, so this project should move from 54 to 55, then 56, then 57 instead of skipping directly to 57.
+
+### Before upgrading
+
+1. Commit or back up the current working version.
+2. Read the release notes for every target SDK: [SDK 55](https://expo.dev/changelog/sdk-55), [SDK 56](https://expo.dev/changelog/sdk-56), and [SDK 57](https://expo.dev/changelog/sdk-57).
+3. Confirm the required Node.js, Android Studio/Gradle, and Xcode versions. SDK 55 and later require Node.js `20.19.4+`, and SDK 55 requires Xcode 26 for local iOS builds, plus macOS Tahoe
+   \*There is a skill file in the project that help you further
 
 ## Troubleshooting
 
