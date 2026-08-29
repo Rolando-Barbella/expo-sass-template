@@ -1,6 +1,6 @@
 # Expo SaaS Template 💵
 
-Opinionated React Native template built with [Expo](https://expo.dev), [Supabase](https://supabase.com/), [Stripe](https://stripe.com/), [RevenueCat](https://www.revenuecat.com/), and native Google/Apple Sign-In.
+Opinionated React Native template built with [Expo](https://expo.dev), [Supabase](https://supabase.com/), [RevenueCat](https://www.revenuecat.com/), and native Google/Apple Sign-In.
 
 Most features have been tested on iOS first.
 
@@ -30,6 +30,7 @@ Most features have been tested on iOS first.
 - Bottom sheet login UI
 - RevenueCat subscriptions
 - Android push notifications with Firebase Cloud Messaging and Expo
+- Apple push notifications
 
 ### Planned ⏳
 
