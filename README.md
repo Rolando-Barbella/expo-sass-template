@@ -216,12 +216,15 @@ Helpful video: [Google setup walkthrough](http://youtube.com/watch?v=BDeKTPQzvR4
 1. In your Supabase project, on to the left bar, go to `Authentication` > `Sign In / Providers`.
 ![Sign in social](assets/images/sign-in-social.png)
 2. Scroll down and enable Apple and Google.
-3. For Apple, add your app client ID such as `com.yourcompany.appname`.
+3. For Apple, add your app client ID such as `com.yourcompany.appname` and save.
 4. For Google, add this 3 env variables separated with commas to the client ID:
-   `EXPO_PUBLIC_ANDROID_CLIENT_ID`, `EXPO_PUBLIC_IOS_CLIENT_ID`, `EXPO_PUBLIC_WEB_CLIENT_ID`
-5. Copy the callback URL shown by Supabase.
+   `EXPO_PUBLIC_ANDROID_CLIENT_ID`, `EXPO_PUBLIC_IOS_CLIENT_ID`, `EXPO_PUBLIC_WEB_CLIENT_ID` and save.
+5. Copy the supabase callback URL.
 ![Google create client](assets/images/google-auth.png)
-6. Return to your Google web client and add that URL to `Authorized redirect URIs`.
+6. Return to your Google Cloud project, on your web client, add that URL to `Authorized redirect URIs`.
+![Web client google](assets/images/web-client-callback.png)
+
+
 
 ### Update `app.json` for Google Sign-In
 
