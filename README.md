@@ -168,8 +168,10 @@ IMPORTANT: For iOS App Store release, Apple Sign-In is required if you provide t
 1. Open [Google Cloud Console](https://console.cloud.google.com/).
 2. Create a new project or select an existing one.
 3. Go to `APIs & Services` > `Credentials`.
-4. If prompted, configure the consent screen first.
-5. In the audience section, choose `External` and complete the basic app information.
+4. Configure the consent screen if you have not done it.
+![Oauth configure](assets/images/oauth-configure.png)
+5. Add your app details
+6. In the audience section, choose `External` and complete the basic app information.
 
 ![Google Cloud Project](assets/images/google-claude-project.png)
 ![Consent screen](assets/images/consent-screen.png)
