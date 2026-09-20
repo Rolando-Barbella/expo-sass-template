@@ -236,7 +236,7 @@ Replace `EXPO_PUBLIC_IOS_CLIENT_ID` in the plugin config with the real iOS clien
     [
       "@react-native-google-signin/google-signin",
       {
-        "iosUrlScheme": "com.googleusercontent.apps.EXPO_PUBLIC_IOS_CLIENT_ID"
+        "iosUrlScheme": "com.googleusercontent.apps.YOUR_IOS_CLIENT_ID"
       }
     ]
   ]
