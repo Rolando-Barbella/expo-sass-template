@@ -185,7 +185,7 @@ Create these three OAuth client types:
 `iOS`
 
 - Application type: `iOS`
-- Bundle ID: must match `app.json`
+- Bundle ID: must match `app.json` (exp: com.rolandobarbella.exposass)
 - Save the generated client ID as `EXPO_PUBLIC_IOS_CLIENT_ID`
 
 `Android`
@@ -213,12 +213,14 @@ Helpful video: [Google setup walkthrough](http://youtube.com/watch?v=BDeKTPQzvR4
 
 ### Supabase Auth Provider Setup
 
-1. In Supabase, open `Authentication` > `Sign In / Providers`.
-2. Enable Apple and Google.
+1. In your Supabase project, on to the left bar, go to `Authentication` > `Sign In / Providers`.
+![Sign in social](assets/images/sign-in-social.png)
+2. Scroll down and enable Apple and Google.
 3. For Apple, add your app client ID such as `com.yourcompany.appname`.
-4. For Google, add this 3 variables separated with commas:
+4. For Google, add this 3 env variables separated with commas to the client ID:
    `EXPO_PUBLIC_ANDROID_CLIENT_ID`, `EXPO_PUBLIC_IOS_CLIENT_ID`, `EXPO_PUBLIC_WEB_CLIENT_ID`
 5. Copy the callback URL shown by Supabase.
+![Google create client](assets/images/google-auth.png)
 6. Return to your Google web client and add that URL to `Authorized redirect URIs`.
 
 ### Update `app.json` for Google Sign-In
