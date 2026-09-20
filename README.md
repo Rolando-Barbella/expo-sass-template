@@ -180,6 +180,8 @@ IMPORTANT: For iOS App Store release, Apple Sign-In is required if you provide t
 
 Create these three OAuth client types:
 
+![Google create client](assets/images/google-create-client.png)
+
 `iOS`
 
 - Application type: `iOS`
