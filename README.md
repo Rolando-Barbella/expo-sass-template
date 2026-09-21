@@ -228,7 +228,8 @@ Helpful video: [Google setup walkthrough](http://youtube.com/watch?v=BDeKTPQzvR4
 
 ### Update `app.json` for Google Sign-In
 
-Replace `EXPO_PUBLIC_IOS_CLIENT_ID` in the plugin config with the real iOS client ID value:
+Replace `URL SCHEME` in the plugin config with the appropiet one from Google Cloud:
+![Url Scheme](assets/images/url-scheme.png)
 
 ```json
 {
@@ -236,7 +237,7 @@ Replace `EXPO_PUBLIC_IOS_CLIENT_ID` in the plugin config with the real iOS clien
     [
       "@react-native-google-signin/google-signin",
       {
-        "iosUrlScheme": "com.googleusercontent.apps.YOUR_IOS_CLIENT_ID"
+        "iosUrlScheme": "com.googleusercontent.apps.URL_SCHEME"
       }
     ]
   ]
