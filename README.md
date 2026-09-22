@@ -116,17 +116,19 @@ Rename `.env.example` to `.env.local` or `.env`.
 npm install
 ```
 
-Create native projects:
+Create/link your own EAS projec
 
 ```bash
-npx expo prebuild
+npx eas-cli@latest init
 ```
 
-Run a platform build:
+ Verify the connection
 
 ```bash
-npx expo run:ios
+npx eas-cli@latest project:info
 ```
+
+Generate the native projects
 
 ```bash
 npx expo run:android
